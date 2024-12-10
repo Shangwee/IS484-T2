@@ -1,0 +1,62 @@
+# Python-specific
+*.pyc
+*.pyo
+__pycache__/
+*.pyd
+
+# Virtual environments
+.env/
+venv/
+.venv/
+
+# Environment variables and secrets
+.env
+*.env
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Logs and Debugging
+*.log
+logs/
+
+# Database
+*.sqlite3
+db.sqlite3
+
+# Migrations
+migrations/
+alembic/
+
+# Testing and Coverage
+.coverage
+htmlcov/
+.tox/
+
+# Static Files
+staticfiles/
+node_modules/
+
+# Deployment
+*.pid
+*.egg-info/
+dist/
+build/
+
+# PyTorch/Transformers (optional if used)
+*.pt
+*.pth
+.cache/
+
+# Generated Reports and Data
+*.csv
+*.xls
+*.xlsx
+data/
+
+# Other
+.DS_Store
+Thumbs.db
