@@ -1,7 +1,7 @@
 from app import db
 
 class News(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     publisher = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=False)
     published_date = db.Column(db.DateTime, nullable=False)
