@@ -33,4 +33,6 @@ def password_rule_checker(password):
     return True, "Password meets all requirements"
 
 
-
+def format_date_into_tuple_for_gnews(date):
+    date = date.split("-")
+    return (int(date[0]), int(date[1]), int(date[2]))

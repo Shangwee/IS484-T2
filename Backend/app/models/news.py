@@ -6,8 +6,10 @@ class News(db.Model):
     description = db.Column(db.Text, nullable=False)
     published_date = db.Column(db.DateTime, nullable=False)
     title = db.Column(db.String(255), nullable=False)
-    url = db.Column(db.String(500), nullable=False)
-    sentiment = db.Column(db.String(50), nullable=False)  # e.g., Positive, Neutral, Negative
+    url = db.Column(db.Text, nullable=False)
+    entity = db.Column(db.String(100), nullable=False)
+    sentiment = db.Column(db.String(50), nullable=True)  # e.g., Positive, Neutral, Negative
+
     
     def __repr__(self):
         return f"<News {self.title[:30]}...>"
