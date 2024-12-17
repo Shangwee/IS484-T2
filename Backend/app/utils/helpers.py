@@ -1,4 +1,6 @@
 from flask import jsonify
+from newspaper import Article
+from newspaper import Config
 
 # ** General-purpose helper functions for common tasks like formatting responses or handling dates.
 
@@ -36,3 +38,23 @@ def password_rule_checker(password):
 def format_date_into_tuple_for_gnews(date):
     date = date.split("-")
     return (int(date[0]), int(date[1]), int(date[2]))
+
+def get_article_details(url):
+    user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
+    config = Config()
+    config.browser_user_agent = user_agent
+
+    article = Article(url, config=config)
+    article.download()
+    article.parse()
+
+    if article.text == "":
+        return None
+    
+    details = {
+        "title": article.title,
+        "authors": article.authors,
+        "text": article.text,
+    }
+    
+    return details  

@@ -1,36 +1,8 @@
-import requests
 from gnews import GNews
 from app import db
 from app.models.news import News
-from newspaper import Article
-from newspaper import Config
+from app.utils.helpers import get_article_details
 from googlenewsdecoder import new_decoderv1
-
-## This still need to change for error 401 and 403
-# def get_article_details(url):
-
-#     user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
-#     config = Config()
-#     config.browser_user_agent = user_agent
-
-#     article = Article(url, config=config)
-#     article.download()
-#     article.parse()
-
-#     if article.text == "":
-#         print("No text found")
-#         print(url)
-    
-#     details = {
-#         "title": article.title,
-#         "authors": article.authors,
-#         "publish_date": article.publish_date,
-#         "text": article.text,
-#         "top_image": article.top_image,
-#         "movies": article.movies,
-#     }
-    
-#     return details  
 
 class DataIngestion:
     def __init__(self, query):
@@ -63,6 +35,12 @@ class DataIngestion:
                 if decoded_url.get("status"):
                     # place the decoded url in the news object
                     news["url"] = decoded_url["decoded_url"]
+
+                    # get article details
+                    article_details = get_article_details(decoded_url["decoded_url"])
+
+                    # place the article details in the news object
+                    news["description"] = article_details["text"]
                 else:
                     print("Error:", decoded_url["message"])
             except Exception as e:
