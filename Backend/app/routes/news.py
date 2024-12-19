@@ -3,6 +3,7 @@ from app.models.news import News
 from app import db
 from app.utils.decorators import jwt_required
 from app.services.data_ingestion import DataIngestion
+from app.services.sentiment_analysis import get_sentiment_from_entity
 from app.utils.helpers import format_response, format_date_into_tuple_for_gnews
 from datetime import date, timedelta
 
@@ -53,3 +54,21 @@ def ingest_news():
     
     return format_response([], "No news data found", 404)
 
+# ** generate news sentiment based on entity
+@news_bp.route('/sentiment/<string:entity>', methods=['GET'])
+def get_sentiment(entity):
+    news = get_sentiment_from_entity(entity)
+    news_list = []
+    for n in news:
+        news_list.append({
+            "id": n.id,
+            "publisher": n.publisher,
+            "description": n.description,
+            "published_date": n.published_date,
+            "title": n.title,
+            "url": n.url,
+            "entity": n.entity,
+            "sentiment": n.sentiment
+        }) 
+        
+    return format_response(news_list, "News sentiment fetched successfully", 200)

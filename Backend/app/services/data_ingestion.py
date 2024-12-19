@@ -2,6 +2,7 @@ from gnews import GNews
 from app import db
 from app.models.news import News
 from app.utils.helpers import get_article_details
+from app.services.sentiment_analysis import get_sentiment
 from googlenewsdecoder import new_decoderv1
 
 class DataIngestion:
@@ -45,6 +46,14 @@ class DataIngestion:
                     print("Error:", decoded_url["message"])
             except Exception as e:
                 print(f"Error occurred: {e}")
+
+            # get the sentiment of the article
+            combine_text = news["title"] + ": " + news["description"]
+
+            sentiment = get_sentiment(combine_text)
+
+            news["sentiment"] = sentiment
+            
 
         return self.data
     
