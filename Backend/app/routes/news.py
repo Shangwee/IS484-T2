@@ -1,8 +1,8 @@
 from flask import Blueprint, request
 from app.models.news import News
-from app import db
 from app.utils.decorators import jwt_required
 from app.services.data_ingestion import DataIngestion
+from app.services.data_ingestion_finviz import get_finviz_news
 from app.services.sentiment_analysis import get_sentiment_from_entity
 from app.utils.helpers import format_response, format_date_into_tuple_for_gnews
 from datetime import date, timedelta
@@ -54,6 +54,21 @@ def ingest_news():
     
     return format_response([], "No news data found", 404)
 
+# ** generate news data based on entity using finviz
+@news_bp.route('/finviz', methods=['POST'])
+def ingest_news_finviz():
+    # Get the entity, period, start_date, and end_date from the request
+    entity = request.json.get('entity')
+
+    # Get the news using finviz and save it to the database
+    news = get_finviz_news(entity)
+
+    if len(news) > 0:
+        return format_response(news, "News data generated and saved successfully", 201)
+    
+    return format_response([], "No news data found", 404)
+
+
 # ** generate news sentiment based on entity
 @news_bp.route('/sentiment/<string:entity>', methods=['GET'])
 def get_sentiment(entity):
@@ -72,3 +87,4 @@ def get_sentiment(entity):
         }) 
         
     return format_response(news_list, "News sentiment fetched successfully", 200)
+

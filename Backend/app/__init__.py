@@ -1,9 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
-import nltk
-
-nltk.download(['vader_lexicon', 'punkt', 'punkt_tab'])
 
 db = SQLAlchemy()
 jwt = JWTManager()
