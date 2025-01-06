@@ -28,10 +28,12 @@ def get_news(entity):
 
 
 # ** generate news data based on entity
-@news_bp.route('/', methods=['POST'])
+@news_bp.route('/gnews', methods=['POST'])
 def ingest_news():
     # Get the entity, period, start_date, and end_date from the request
     entity = request.json.get('entity')
+
+    # Get the start_date from the first day of last month and end_date as today
     start_date = (date.today().replace(day=1) - timedelta(days=1)).replace(day=1).strftime("%Y-%m-%d")
     end_date = date.today().strftime("%Y-%m-%d")
 
@@ -48,8 +50,6 @@ def ingest_news():
     Result = data_ingestion.ingest_data()
 
     if Result:
-        # Insert the data into the database
-        data_ingestion.insert_data_to_db()
         return format_response(Result, "News data generated and saved successfully", 201)
     
     return format_response([], "No news data found", 404)

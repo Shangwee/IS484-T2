@@ -2,7 +2,6 @@ from gnews import GNews
 from app import db
 from app.models.news import News
 from app.utils.helpers import get_article_details
-from app.services.sentiment_analysis import get_sentiment
 from googlenewsdecoder import new_decoderv1
 
 class DataIngestion:
@@ -31,6 +30,14 @@ class DataIngestion:
         for news in self.data:
             # the url is encoded in google rss, so we need to decode it to get the actual url
             url = news["url"]
+
+            # check if the url in DB
+            existing_news = News.query.filter_by(url=news['url']).first()
+            if existing_news:
+                # skip the news and remove from the data
+                self.data.remove(news)
+                continue
+
             try:
                 decoded_url = new_decoderv1(url)
                 if decoded_url.get("status"):
@@ -47,15 +54,12 @@ class DataIngestion:
             except Exception as e:
                 print(f"Error occurred: {e}")
 
-            # get the sentiment of the article
-            combine_text = news["title"] + ": " + news["description"]
+        # insert the data into the database
+        check_if_data_inserted = self.insert_data_to_db()
 
-            sentiment = get_sentiment(combine_text)
-
-            news["sentiment"] = sentiment
-            
-
-        return self.data
+        if check_if_data_inserted:
+            return self.data
+        return False
     
     def insert_data_to_db(self):
         for news in self.data:

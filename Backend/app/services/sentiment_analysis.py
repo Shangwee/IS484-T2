@@ -20,7 +20,6 @@ def get_sentiment(text):
 def get_sentiment_from_entity(entity):
     # Get all news related to the entity
     news = News.query.filter_by(entity=entity).all()
-    sia = SentimentIntensityAnalyzer()
 
     # Get the sentiment of each news
     for n in news:
