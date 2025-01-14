@@ -27,10 +27,6 @@ logs/
 *.sqlite3
 db.sqlite3
 
-# Migrations
-migrations/
-alembic/
-
 # Testing and Coverage
 .coverage
 htmlcov/
