@@ -4,10 +4,10 @@ import os
 load_dotenv()
 
 class Config:
-    SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret_key')
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URI', 'postgresql+psycopg2://postgres:root@localhost:5432/SentiFinance')
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URI')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', '6aac1730b11b403a9cd49ac1659d6ec39066b3178025a20578901eb02db0c426')
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
     JWT_TOKEN_LOCATION = 'headers'
     APP_DEBUG = os.getenv('APP_DEBUG', True)
     PORT = os.getenv('PORT', 5000)
