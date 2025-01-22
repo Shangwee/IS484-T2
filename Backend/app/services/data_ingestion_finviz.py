@@ -5,7 +5,7 @@ from app.utils.helpers import get_article_details
 import pandas as pd
 
 # Foe this service we will be using finviz to get the news
-def get_finviz_news(query):
+def get_finviz_news_by_entity(query):
 
     try:
         stock = finvizfinance(query)
@@ -42,6 +42,9 @@ def get_finviz_news(query):
 
         if existing_news:
             continue
+        
+        # change entities to this format e.g., {entities:["Tesla", "Apple", "Microsoft"]}
+        enitities_list = {"entities": [news['entity']]}
 
         news_db = News(
             publisher=news['publisher'],
@@ -49,7 +52,7 @@ def get_finviz_news(query):
             published_date=news['published_date'],
             title=news['title'],
             url=news['url'],
-            entity=news['entity']
+            entities=enitities_list
         )
 
         db.session.add(news_db)

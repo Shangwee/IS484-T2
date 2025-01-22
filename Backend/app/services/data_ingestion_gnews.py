@@ -1,7 +1,7 @@
 from gnews import GNews
 from app import db
 from app.models.news import News
-from app.utils.helpers import get_article_details
+from app.utils.helpers import get_article_details, URL_decoder
 from googlenewsdecoder import new_decoderv1
 
 class DataIngestion:
@@ -39,18 +39,18 @@ class DataIngestion:
                 continue
 
             try:
-                decoded_url = new_decoderv1(url)
-                if decoded_url.get("status"):
-                    # place the decoded url in the news object
-                    news["url"] = decoded_url["decoded_url"]
+                # decode the url
+                decoded_url = URL_decoder(url)
+                
+                # place the decoded url in the news object
+                news["url"] = decoded_url
 
-                    # get article details
-                    article_details = get_article_details(decoded_url["decoded_url"])
+                # get article details
+                article_details = get_article_details(decoded_url["decoded_url"])
 
-                    # place the article details in the news object
-                    news["description"] = article_details["text"]
-                else:
-                    print("Error:", decoded_url["message"])
+                # place the article details in the news object
+                news["description"] = article_details["text"]
+
             except Exception as e:
                 print(f"Error occurred: {e}")
 
@@ -68,13 +68,16 @@ class DataIngestion:
             if existing_news:
                 continue
 
+            # change entities to a list format like this e.g., {entities:["Tesla", "Apple", "Microsoft"]}
+            entities_list = {"entities": [self.query]}
+
             n = News(
             publisher=news['publisher']['title'],
             description=news['description'],
             published_date=news['published date'],
             title=news['title'],
             url=news['url'],
-            entity=self.query
+            entities=entities_list
             )
             db.session.add(n)
         db.session.commit()
