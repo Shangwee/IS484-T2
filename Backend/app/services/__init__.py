@@ -1,4 +1,4 @@
-from .data_ingestion_gnews import DataIngestion
-from .data_ingestion_finviz import get_finviz_news_by_entity
+from .data_ingestion_gnews import get_gnews_news_by_entity, get_all_top_gnews
+from .data_ingestion_finviz import get_finviz_news_by_entity, get_all_finviz
 from .sentiment_analysis import get_sentiment
 

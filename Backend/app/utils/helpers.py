@@ -45,7 +45,7 @@ def URL_decoder(url):
     try: 
         decoded_url = new_decoderv1(url)
         if decoded_url.get("status"):
-            return decoded_url["decoded_url"]
+            return decoded_url
         else:
             print("Error:", decoded_url["message"])
     except Exception as e:
