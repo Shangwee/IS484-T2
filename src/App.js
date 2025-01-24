@@ -5,9 +5,9 @@ import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Entity from './components/Entity';
 import Sentimentscore from './components/Sentimentscore';
-import News from './components/News';
+import Entitynews from './components/Entitynews';
 import Newspage from './pages/Newspage';
-import Homepage from './pages/Homepage'; 
+import Entitiespage from './pages/Entitiespage'; 
 import Entityvisuals from './components/entityvisuals';
 import './App.css';
 
@@ -27,14 +27,15 @@ function App() {
             <Entity />
             <Sentimentscore />
             <Entityvisuals/>
-            <News/>
-          </>
-        )}
+            <Entitynews/>
 
+          </>
+
+        )}
 
         <Routes> 
           {/* Define the routes for different pages */}
-          <Route path="/Homepage" element={<Homepage />} /> {/* Home Page (root) */}
+          <Route path="/Entitiespage" element={<Entitiespage />} /> {/* Entities Page  */}
           <Route path="/Newspage" element={<Newspage />} /> {/* News Page */}
         </Routes>
         
