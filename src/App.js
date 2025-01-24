@@ -8,6 +8,7 @@ import Sentimentscore from './components/Sentimentscore';
 import Entitynews from './components/Entitynews';
 import Newspage from './pages/Newspage';
 import Entitiespage from './pages/Entitiespage'; 
+import Price from './components/Price';
 // import Entityvisuals from './components/entityvisuals';
 import './App.css';
 
@@ -17,15 +18,15 @@ function App() {
   const containerStyle = {
     display: 'flex',
     alignItems: 'center',  // Vertically align
-    justifyContent: 'space-between', // Distribute space between the items
     marginBottom: '15px', // Optional: add some space below the container
-    width: '100%', 
+    width: '100%',
+    position: "fixed",
+    top:" 225px", 
+    left: "569px",
   };
-
 
   return (
     
-      
     <div className="App">
       <header className="App-header">
         <Header/>
@@ -35,12 +36,11 @@ function App() {
         {location.pathname === '/' && 
         (
           <>
-            <div  style={containerStyle} className="entity-sentiment-container">
-              <Entity  / >
+            <div style={containerStyle}>
+              <Entity />
+              <Price/>
               <Sentimentscore />
             </div>
-
-            {/* <Entityvisuals/> */}
             <Entitynews/>
           </>
 

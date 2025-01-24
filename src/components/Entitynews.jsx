@@ -7,33 +7,32 @@ import SentimentScore from './Sentimentscore';
 const newsData = [
   {
     id: 1,
-    title: 'Dummy news 1',
+    title: 'Google-related news 1',
     date: '2023-10-15',
     link: 'https://example.com/news1',
     summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ',
   },
   {
     id: 2,
-    title: 'Dummy news 2',
+    title: 'Google-related news 2',
     date: '2023-10-15',
     link: 'https://example.com/news1',
     summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   },
   {
     id: 3,
-    title: 'Dummy news 3',
+    title: 'Google-related news 3',
     date: '2023-10-15',
     link: 'https://example.com/news1',
     summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem.',
   },
   {
     id: 4,
-    title: 'Dummy news 4',
+    title: 'Google-related news 4',
     date: '2023-10-15',
     link: 'https://example.com/news1',
     summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem.',
-  },
- 
+  }
 
 ];
 
