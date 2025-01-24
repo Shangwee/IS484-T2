@@ -1,6 +1,7 @@
 import React from 'react';
 import NewsHeader from './newsheader';
 import NewsSummary from './newssummary';
+import PropTypes from 'prop-types'; // For type-checking props
 
 const NewsBox = ({ newsItem }) => {
   return (
@@ -14,3 +15,4 @@ const NewsBox = ({ newsItem }) => {
 
 
 export default NewsBox;
+

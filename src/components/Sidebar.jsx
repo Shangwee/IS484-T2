@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'; // Install react-icons if not done yet
+import { Link } from 'react-router-dom'; // Import Link for routing
+import Newspage from "../pages/Newspage"
 import '../App.css';
 
 function Sidebar() {
@@ -34,8 +36,15 @@ function Sidebar() {
 
       <h1> Senti Finance</h1> 
         <ul>
-        <li style={styles.list1}>Entities</li>
-        <li style={styles.list2}>Events</li>
+        <li style={styles.list1}>
+            {/* Entities */}
+            <Link to="/Homepage" className="sidebar-link">Entities</Link>
+        </li>
+        <li style={styles.list2}>
+          <Link to="/Newspage" className="sidebar-link">News</Link>
+
+
+        </li>
       </ul>
       </div>
     </div>
