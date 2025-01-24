@@ -16,9 +16,9 @@ const styles = {
     position: "fixed",
     top: 0,
     zIndex: 1000,       
-    padding: "30px 40px 30px 40px",
+    padding: "20px 30px",  // Adjusted padding for better responsiveness
     display: "flex",
-    justifyContent: "right",
+    justifyContent: "flex-end",  // Aligning the content to the right
     width: "100%",   
   },
 };

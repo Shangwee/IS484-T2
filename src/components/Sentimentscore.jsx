@@ -17,9 +17,10 @@ greenbox:
   justifyContent: "center",
   alignItems: "center",
   color: "black",
-  fontSize: "80px",
+  fontSize: "calc(12px + 1vw)",  // Adjust font size dynamically based on viewport width
   fontWeight: "bold",
-  padding: "5px 15px"
+  padding: "5px 15px",
+
 }
 };
 

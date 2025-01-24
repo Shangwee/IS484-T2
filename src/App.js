@@ -16,16 +16,18 @@ import './App.css';
 function App() {
   const location = useLocation();
 
-  const containerStyle = {
-    display: 'flex',
-    alignItems: 'center',  // Vertically align
-    marginBottom: '15px', // Optional: add some space below the container
-    width: '100%',
-    position: "fixed",
-    top:" 225px", 
-    left: "569px",
-  };
+    const containerStyle = {
+      display: 'flex', // Use flexbox to align elements horizontally in the same row
+      alignItems: 'center', // Vertically align the items to the center
+      width: '100%',
+      position: 'fixed',
+      top: '100px',
+      left: '669px',
+       };
 
+      
+    
+  
   return (
     
     <div className="App">
@@ -39,9 +41,10 @@ function App() {
           <>
             <div style={containerStyle}>
               <Entity />
-              <Price/>
-              <Sentimentscore />
+              <Price />
+              <Sentimentscore  />
             </div>
+
             <Entitynews/>
           </>
 

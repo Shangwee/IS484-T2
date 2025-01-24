@@ -16,11 +16,17 @@ greenbox:
   justifyContent: "center",
   alignItems: "center",
   color: "black",
-  fontSize: "80px",
+  fontSize: "20px",
   fontWeight: "bold",
   padding: "5px 15px",
   marginRight: "50px",
   marginLeft: "50px",
+  position: "fixed",
+  display: "flex",
+  top: "100px",
+  left: "760px",
+  height: "50px",
+  
 }
 };
 

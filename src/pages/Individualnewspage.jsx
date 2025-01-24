@@ -5,7 +5,7 @@ function Individualnewspage() {
   console.log('Rendering Individualnewspage ');
   return (
     <div style={{ color:'black', padding: '20px' }}>
-      <h1 style={{ fontSize: '294px', justifyContent:'center' }}> individual news story </h1>
+      <h1 style={{ fontSize: '54px', justifyContent:'center' }}> individual news story </h1>
 
     </div>
   );

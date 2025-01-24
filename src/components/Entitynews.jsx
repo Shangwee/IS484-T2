@@ -48,26 +48,26 @@ const News = () => {
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
       },
     newsHeader: {
-      fontSize: '58px',
+      fontSize: 'calc(16px + 1vw)', // Dynamic font size
       fontWeight: 'bold',
       color: '#555555',
 
     },
     newsSummary: {
-      fontSize: '54px',
+      fontSize: 'calc(12px + 0.5vw)', // Dynamic font size
       color: '#555555',
     },
     newsDate: {
-      fontSize: '54px',
+      fontSize: 'calc(12px + 0.5vw)', // Dynamic font size
       color: '#555555',
     },
     
     newsLink: {
-      fontSize: '54px',
+      fontSize: 'calc(12px + 0.5vw)', // Dynamic font size
       color: '#555555',
     },
     sentimentScore: {
-        fontSize: '18px',
+        fontSize: '20px',
         color: '#4CAF50', // Example color for sentiment score
         fontWeight: 'bold',
         position: 'absolute', // Position sentiment score absolutely inside the news box

@@ -15,12 +15,15 @@ function Sidebar() {
     list1: {
       listStyleImage: 'url("https://img.icons8.com/ios-filled/50/combo-chart--v1.png")'
       ,marginBottom: "80px",
+      marginLeft:'40px',
       fontWeight:'bold'
     },
   
     list2: {
       listStyleImage: 'url("https://img.icons8.com/ios/50/event-accepted-tentatively.png")'    
-    ,fontWeight:'bold'
+      ,marginLeft:'40px'
+
+      ,fontWeight:'bold'
     },
     
   };

@@ -19,16 +19,16 @@ const styles = {
 },
     button: {
         position:'fixed',
-        display: 'flex',
-        left: "579px",
+        left: '20vw',  // Positioning based on viewport width for responsiveness
+        top: '0px',  // Adjusted for spacing from top
+
         color: 'grey',
-        padding: '40px 20px',
         cursor: 'pointer',
         border: 'none',
         background: 'none',
       },
       icon: {
-        fontSize: '50px'
+        fontSize: '3rem'
       },
 };
 

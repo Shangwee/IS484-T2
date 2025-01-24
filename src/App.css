@@ -14,7 +14,8 @@ body, html, #root {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  /* font-size: calc(10px + 2vmin); */
+  font-size: calc(1rem + 2vmin); /* Adjusted for better responsiveness */
   color: white;
 }
 
@@ -29,9 +30,10 @@ body, html, #root {
   background: linear-gradient(to right, #38BBF0, #18506C);
   overflow-y: auto; 
   color: white;    
-  padding: 100px;   
+  padding: 20px;  /* Reduced padding for better responsiveness */
+  width: 15vw;  /* Adjusted width for responsive layout */
+  max-width: 500px; /* Max width for larger screens */
   overflow: hidden;
-  width: 500px;
   transition: width 0.5s ease, padding 0.5s ease;
 }
 
@@ -65,7 +67,7 @@ body, html, #root {
 }
 .sidebar-content h1 {
   margin-top: 0;
-  font-size: 104px;
+  font-size: 3rem;  /* Scalable font size */
   margin-bottom: 100px; 
 }
 
@@ -77,7 +79,7 @@ body, html, #root {
 .sidebar-content li {
   margin: 10px 0;
   text-align: center; 
-  font-size: 70px;
+  font-size: 2.5rem;  /* Scalable font size */
 }
 
 .sidebar-content li:hover {
@@ -88,7 +90,8 @@ body, html, #root {
 /* List style for the first list (list1) */
 .list1 {
   list-style-image: url("https://img.icons8.com/ios-filled/50/combo-chart--v1.png");
-  margin-bottom: 80px;
+  margin-bottom: 40px; /* Reduced margin for better responsiveness */
+  margin-left: 30px;
   font-weight: bold;
 }
 
@@ -105,12 +108,12 @@ body, html, #root {
   position: fixed;  
   top: 0;          
   left: 0;         
-  width: 304;    
+  width: 100%;  /* Full width for header */
   height: 100vh;   
   background: linear-gradient(to right, #38BBF0, #18506C);
   overflow-y: auto; 
   color: white;    /* Text color */
-  padding: 100px;   /* Add some padding */
+  padding: 20px;  /* Reduced padding */
 }
 
 /* NEWS */
@@ -122,7 +125,7 @@ body {
 
 .news-container {
   position: fixed;
-  left: 559px;
+  left: 15vw;  /* Adjusted to accommodate sidebar */
   bottom: 0;  /* Pushes the container to the bottom of the screen */
   display: flex;  /* Use flex for positioning the content */
   flex-direction: column;
@@ -133,9 +136,7 @@ body {
   
 
 .news-box {
-
-
-  padding: 50px; 
+  padding: 20px; /* Reduced padding for responsiveness */
   border: 1px solid #ccc;
   border-radius: 8px;
   display: flex;
@@ -146,13 +147,13 @@ body {
 }
 
 .news-header h1 {
-  font-size: 32px; /* Adjusted font size for better fit */
+  font-size: 2rem; /* Adjusted font size */
   margin: 0 0 10px 0; /* Space below header */
   color: black;
 }
 
 .news-summary p {
-  font-size: 18px; /* Adjust font size for summary text */
+  font-size: 1.2rem; /* Adjusted font size for summary */
   color: #555;
   margin: 0; /* Remove default margin for a cleaner look */
 }

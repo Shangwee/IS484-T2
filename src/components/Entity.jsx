@@ -12,15 +12,13 @@ function Entity() {
 
 const styles = {
   entityname: {
-    // color: "black", 
-    // position: "fixed",
-    // display: "flex",
-    // fontWeight: "700",  
-    // fontSize:"130px",
-    
+    position: "fixed",
+    display: "flex",
+    top: "100px",
+    left: "16vw",
     color: "black", 
     fontWeight: "700",  
-    fontSize: "130px",
+    fontSize: "50px",
   }
 };
 
