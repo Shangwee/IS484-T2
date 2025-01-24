@@ -20,15 +20,14 @@ const styles = {
     button: {
         position:'fixed',
         left: '20vw',  // Positioning based on viewport width for responsiveness
-        top: '0px',  // Adjusted for spacing from top
-
+        top: '10px',  // Adjusted for spacing from top
         color: 'grey',
         cursor: 'pointer',
         border: 'none',
         background: 'none',
       },
       icon: {
-        fontSize: '3rem'
+        fontSize: '2.5rem'
       },
 };
 
