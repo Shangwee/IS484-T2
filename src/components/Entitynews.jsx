@@ -1,6 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col } from 'react-bootstrap';
+import SentimentScore from './Sentimentscore';
 
 // Dummy news data
 const newsData = [
@@ -41,10 +42,11 @@ const News = () => {
   const styles = {
 
     newsBox: {
-      padding: '15px',
-      borderRadius: '8px',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    },
+        position: 'relative',
+        padding: '15px',
+        borderRadius: '8px',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+      },
     newsHeader: {
       fontSize: '58px',
       fontWeight: 'bold',
@@ -64,6 +66,15 @@ const News = () => {
       fontSize: '54px',
       color: '#555555',
     },
+    sentimentScore: {
+        fontSize: '18px',
+        color: '#4CAF50', // Example color for sentiment score
+        fontWeight: 'bold',
+        position: 'absolute', // Position sentiment score absolutely inside the news box
+        top: '20px',  // Adjust this value for vertical positioning
+        right: '80px', // Adjust this value for horizontal positioning
+      }
+  
 
   };
 
@@ -74,6 +85,9 @@ const News = () => {
           <Col key={newsItem.id} md={5} className="mb-4 ml-4">
             <div style={styles.newsBox} className="news-box">
               <h4 style={styles.newsHeader}>{newsItem.title}</h4> 
+              <div style={styles.sentimentScore}>
+              <SentimentScore  newsId={newsItem.id} />
+              </div>
               <h4 style={styles.newsDate}>{newsItem.date}</h4> 
               <h4 style={styles.newsLink}>{newsItem.link}</h4> 
               <p style={styles.newsSummary}>{newsItem.summary}</p> 

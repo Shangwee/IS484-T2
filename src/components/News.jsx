@@ -2,7 +2,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col } from 'react-bootstrap';
-
+import SentimentScore from './Sentimentscore';
 // Dummy news data
 const newsData = [
   {
@@ -49,13 +49,6 @@ const newsData = [
   },
   {
     id: 7,
-    title: 'Dummy news 1',
-    date: '2023-10-15',
-    link: 'https://example.com/news1',
-    summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  },
-  {
-    id: 7,
     title: 'Dummy news 7',
     date: '2023-10-15',
     link: 'https://example.com/news1',
@@ -67,7 +60,7 @@ const newsData = [
     date: '2023-10-15',
     link: 'https://example.com/news1',
     summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  },
+  }
 
 ];
 
@@ -76,6 +69,7 @@ const News = () => {
   const styles = {
 
     newsBox: {
+      position: 'relative',
       padding: '15px',
       borderRadius: '8px',
       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
@@ -98,7 +92,15 @@ const News = () => {
     newsLink: {
       fontSize: '54px',
       color: '#555555',
-    },
+    }, 
+    sentimentScore: {
+      fontSize: '18px',
+      color: '#4CAF50', // Example color for sentiment score
+      fontWeight: 'bold',
+      position: 'absolute', // Position sentiment score absolutely inside the news box
+      top: '20px',  // Adjust this value for vertical positioning
+      right: '80px', // Adjust this value for horizontal positioning
+    }
 
   };
 
@@ -109,9 +111,15 @@ const News = () => {
           <Col key={newsItem.id} md={5} className="mb-4 ml-4">
             <div style={styles.newsBox} className="news-box">
               <h4 style={styles.newsHeader}>{newsItem.title}</h4> 
+              <div style={styles.sentimentScore}>
+              <SentimentScore  newsId={newsItem.id} />
+              </div>
               <h4 style={styles.newsDate}>{newsItem.date}</h4> 
               <h4 style={styles.newsLink}>{newsItem.link}</h4> 
               <p style={styles.newsSummary}>{newsItem.summary}</p> 
+              <div style={styles.sentimentScore}>
+              </div>
+
             </div>
           </Col>
         ))}

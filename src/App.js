@@ -8,11 +8,21 @@ import Sentimentscore from './components/Sentimentscore';
 import Entitynews from './components/Entitynews';
 import Newspage from './pages/Newspage';
 import Entitiespage from './pages/Entitiespage'; 
-import Entityvisuals from './components/entityvisuals';
+// import Entityvisuals from './components/entityvisuals';
 import './App.css';
 
 function App() {
   const location = useLocation();
+
+  const containerStyle = {
+    display: 'flex',
+    alignItems: 'center',  // Vertically align
+    justifyContent: 'space-between', // Distribute space between the items
+    marginBottom: '15px', // Optional: add some space below the container
+    width: '100%', 
+  };
+
+
   return (
     
       
@@ -21,20 +31,21 @@ function App() {
         <Header/>
    
         <Sidebar/>
+
         {location.pathname === '/' && 
         (
           <>
-            <Entity />
-            <Sentimentscore />
-            <Entityvisuals/>
-            <Entitynews/>
+            <div  style={containerStyle} className="entity-sentiment-container">
+              <Entity  / >
+              <Sentimentscore />
+            </div>
 
+            {/* <Entityvisuals/> */}
+            <Entitynews/>
           </>
 
         )}
-
         <Routes> 
-          {/* Define the routes for different pages */}
           <Route path="/Entitiespage" element={<Entitiespage />} /> {/* Entities Page  */}
           <Route path="/Newspage" element={<Newspage />} /> {/* News Page */}
         </Routes>
