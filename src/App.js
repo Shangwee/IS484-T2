@@ -7,6 +7,7 @@ import Entity from './components/Entity';
 import Sentimentscore from './components/Sentimentscore';
 import Entitynews from './components/Entitynews';
 import Newspage from './pages/Newspage';
+import Individualnewspage from './pages/Individualnewspage';
 import Entitiespage from './pages/Entitiespage'; 
 import Price from './components/Price';
 // import Entityvisuals from './components/entityvisuals';
@@ -48,6 +49,7 @@ function App() {
         <Routes> 
           <Route path="/Entitiespage" element={<Entitiespage />} /> {/* Entities Page  */}
           <Route path="/Newspage" element={<Newspage />} /> {/* News Page */}
+          <Route path="/Individualnewspage" element={<Individualnewspage />} />
         </Routes>
         
 

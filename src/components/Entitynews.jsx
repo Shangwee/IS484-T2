@@ -2,6 +2,7 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col } from 'react-bootstrap';
 import SentimentScore from './Sentimentscore';
+import { Link } from 'react-router-dom'; 
 
 // Dummy news data
 const newsData = [
@@ -82,6 +83,7 @@ const News = () => {
       <Row>
         {newsData.map((newsItem) => (
           <Col key={newsItem.id} md={5} className="mb-4 ml-4">
+            <Link to="/Individualnewspage" key={newsItem.id} style={{ textDecoration: 'none' }}> 
             <div style={styles.newsBox} className="news-box">
               <h4 style={styles.newsHeader}>{newsItem.title}</h4> 
               <div style={styles.sentimentScore}>
@@ -91,6 +93,7 @@ const News = () => {
               <h4 style={styles.newsLink}>{newsItem.link}</h4> 
               <p style={styles.newsSummary}>{newsItem.summary}</p> 
             </div>
+            </Link>
           </Col>
         ))}
       </Row>
