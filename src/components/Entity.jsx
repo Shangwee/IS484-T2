@@ -4,7 +4,7 @@ function Entity() {
   return (
     <div>
       <h1 style={styles.entityname}>
-        Google (GOOG)
+        Taiwan Semiconductor Manufacturing Company Limited (TSMC)
       </h1>
     </div>
   );

@@ -1,12 +1,11 @@
 import React from 'react';
-import News from '../components/News';
+import NewsSources from '../components/NewsSources';
 
 function Individualnewspage() {
   console.log('Rendering Individualnewspage ');
   return (
     <div style={{ color:'black', padding: '20px' }}>
-      <h1 style={{ fontSize: '54px', justifyContent:'center' }}> individual news story </h1>
-
+      <NewsSources/>
     </div>
   );
 }
