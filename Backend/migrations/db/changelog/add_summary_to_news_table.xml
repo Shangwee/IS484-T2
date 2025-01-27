@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>	
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -10,7 +10,14 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
         http://www.liquibase.org/xml/ns/pro
         http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
-    
-    <include file="db/changelog/changeset-initial-stage-1.xml"/>
-    <include file="db/changelog/add_summary_to_news_table.xml"/>
+    <changeSet id="3" author="Shang Wee">
+       <!-- Add the 'summary' column as TEXT, allowing NULL -->
+        <addColumn tableName="news">
+            <column name="summary" type="TEXT" />
+        </addColumn>
+        <rollback>
+            <!-- Rollback changes: Drop the 'summary' column -->
+            <dropColumn tableName="news" columnName="summary" />
+        </rollback>
+    </changeSet>
 </databaseChangeLog>

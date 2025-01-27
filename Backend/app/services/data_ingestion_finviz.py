@@ -30,6 +30,7 @@ def get_finviz_news_by_entity(query):
             #get article details
             article_details = get_article_details(row['Link'])
             description = article_details['text']
+            summary = article_details['summary']
         except Exception as e:
             print(f"An error occurred: {e}")
             
@@ -39,7 +40,8 @@ def get_finviz_news_by_entity(query):
             "description": description,
             "url": row['Link'],
             "publisher": row['Source'],
-            "entity": query
+            "entity": query,
+            "summary": summary
         })
 
     # Insert the data into the database
@@ -51,14 +53,15 @@ def get_finviz_news_by_entity(query):
             continue
         # change entities to this format e.g., {entities:["Tesla", "Apple", "Microsoft"]}
         entities_list = {"entities": [news['entity']]}
-
+        
         news_db = NewsModel(
             publisher=news['publisher'],
             description=news['description'],
             published_date=news['published_date'],
             title=news['title'],
             url=news['url'],
-            entities=entities_list
+            entities=entities_list,
+            summary=news['summary']
         )
 
         db.session.add(news_db)
@@ -85,6 +88,7 @@ def get_all_finviz():
             #get article details
             article_details = get_article_details(row['Link'])
             description = article_details['text']
+            summary = article_details['summary']
         except Exception as e:
             print(f"An error occurred: {e}")
             continue
@@ -96,7 +100,8 @@ def get_all_finviz():
             "title": row['Title'],
             "description": description,
             "url": row['Link'],
-            "publisher": row['Source']
+            "publisher": row['Source'],
+            "summary": summary
         })
 
     # Insert the data into the database
@@ -115,7 +120,8 @@ def get_all_finviz():
             published_date=news['published_date'],
             title=news['title'],
             url=news['url'],
-            entities=entities_list
+            entities=entities_list,
+            summary=news['summary']
         )
 
         db.session.add(news_db)

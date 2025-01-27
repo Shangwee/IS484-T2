@@ -1,6 +1,6 @@
 from flask import jsonify
 import requests
-from newspaper import Article
+from newspaper import article
 from googlenewsdecoder import new_decoderv1
 
 # ** General-purpose helper functions for common tasks like formatting responses or handling dates.
@@ -52,31 +52,37 @@ def URL_decoder(url):
         print(f"Error occurred: {e}")
 
 def get_article_details(url):
-    user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
-    headers = {
-        'User-Agent': user_agent,
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Referer': 'https://www.google.com/',  # Mimics coming from Google search
-    }
+    # user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
+    # headers = {
+    #     'User-Agent': user_agent,
+    #     'Accept-Language': 'en-US,en;q=0.9',
+    #     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    #     'Referer': 'https://www.google.com/',  # Mimics coming from Google search
+    # }
 
-    # Use `requests` to get the page content
-    response = requests.get(url, headers=headers)
+    # # Use `requests` to get the page content
+    # response = requests.get(url, headers=headers)
 
-    # Check if the request was successful
-    if response.status_code != 200:
-        print(f"Error: HTTP {response.status_code}")
-        return None
+    # # Check if the request was successful
+    # if response.status_code != 200:
+    #     print(f"Error: HTTP {response.status_code}")
+    #     return None
 
-    article = Article(url)
-    article.set_html(response.text)  # Provide the HTML manually
-    article.parse()
+    try:
+        article_result = article(url)
+        article_result.nlp()
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return {
+            "text": "An error occurred while fetching the article details",
+            "summary": "An error occurred while fetching the article details"}
 
 
     details = {
-        "title": article.title,
-        "authors": article.authors,
-        "text": article.text,
+        "title": article_result.title,
+        "authors": article_result.authors,
+        "text": article_result.text,
+        "summary": article_result.summary
     }
     
-    return details  
+    return details
