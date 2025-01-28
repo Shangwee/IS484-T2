@@ -13,4 +13,5 @@
     
     <include file="db/changelog/changeset-initial-stage-1.xml"/>
     <include file="db/changelog/add_summary_to_news_table.xml"/>
+    <include file="db/changelog/add_summary_sentiment_to_entity.xml"/>
 </databaseChangeLog>
