@@ -7,8 +7,9 @@ class News(db.Model):
     published_date = db.Column(db.DateTime, nullable=False)
     title = db.Column(db.String(255), nullable=False)
     url = db.Column(db.Text, nullable=False, unique=True)
-    entity = db.Column(db.String(100), nullable=False)
+    entities = db.Column(db.JSON, nullable=True)  # e.g., {entities:["Tesla", "Apple", "Microsoft"]}
     sentiment = db.Column(db.String(50), nullable=True)  # e.g., Positive, Neutral, Negative
+    summary = db.Column(db.Text, nullable=True)
 
     
     def __repr__(self):

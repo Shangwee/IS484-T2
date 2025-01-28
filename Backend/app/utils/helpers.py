@@ -1,6 +1,7 @@
 from flask import jsonify
-from newspaper import Article
-from newspaper import Config
+import requests
+from newspaper import article
+from googlenewsdecoder import new_decoderv1
 
 # ** General-purpose helper functions for common tasks like formatting responses or handling dates.
 
@@ -39,22 +40,49 @@ def format_date_into_tuple_for_gnews(date):
     date = date.split("-")
     return (int(date[0]), int(date[1]), int(date[2]))
 
+def URL_decoder(url):
+    # Decode the URL
+    try: 
+        decoded_url = new_decoderv1(url)
+        if decoded_url.get("status"):
+            return decoded_url
+        else:
+            print("Error:", decoded_url["message"])
+    except Exception as e:
+        print(f"Error occurred: {e}")
+
 def get_article_details(url):
-    user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
-    config = Config()
-    config.browser_user_agent = user_agent
+    # user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
+    # headers = {
+    #     'User-Agent': user_agent,
+    #     'Accept-Language': 'en-US,en;q=0.9',
+    #     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    #     'Referer': 'https://www.google.com/',  # Mimics coming from Google search
+    # }
 
-    article = Article(url, config=config)
-    article.download()
-    article.parse()
+    # # Use `requests` to get the page content
+    # response = requests.get(url, headers=headers)
 
-    if article.text == "":
-        return None
-    
+    # # Check if the request was successful
+    # if response.status_code != 200:
+    #     print(f"Error: HTTP {response.status_code}")
+    #     return None
+
+    try:
+        article_result = article(url)
+        article_result.nlp()
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return {
+            "text": "An error occurred while fetching the article details",
+            "summary": "An error occurred while fetching the article details"}
+
+
     details = {
-        "title": article.title,
-        "authors": article.authors,
-        "text": article.text,
+        "title": article_result.title,
+        "authors": article_result.authors,
+        "text": article_result.text,
+        "summary": article_result.summary
     }
     
-    return details  
+    return details
