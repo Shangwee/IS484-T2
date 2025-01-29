@@ -25,8 +25,15 @@ function App() {
       left: '669px',
        };
 
-      
-    
+  const sentimentStyle = {
+    position: 'fixed',
+    top: '300px',
+    left: '440px', // Adjust this value to position it next to Price
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+  
   
   return (
     
@@ -42,7 +49,9 @@ function App() {
             <div style={containerStyle}>
               <Entity />
               <Price />
-              <Sentimentscore  />
+              <div style={sentimentStyle}>
+              <Sentimentscore />
+              </div>
             </div>
 
             <Entitynews/>
