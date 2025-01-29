@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Row, Col } from 'react-bootstrap';
-import SentimentScore from './Sentimentscore';
+import { Container, Row, Col, Pagination } from 'react-bootstrap';import SentimentScore from './Sentimentscore';
 import { Link } from 'react-router-dom'; 
 
 // Dummy news data
@@ -9,6 +8,8 @@ const newsData = [
   {
     id: 1,
     title: 'Google-related news 1',
+    publisher : "Yahoo Finance",
+    description : "Taiwan Semiconductor Manufacturing Company Limited TSM, better known as TSMC...",
     date: '2023-10-15',
     link: 'https://example.com/news1',
     summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ',
@@ -16,6 +17,8 @@ const newsData = [
   {
     id: 2,
     title: 'Google-related news 2',
+    publisher : "Google Finance",
+    description : "Taiwan Semiconductor Manufacturing Company Limited TSM, better known as TSMC...",
     date: '2023-10-15',
     link: 'https://example.com/news1',
     summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -23,6 +26,8 @@ const newsData = [
   {
     id: 3,
     title: 'Google-related news 3',
+    description : "Taiwan Semiconductor Manufacturing Company Limited TSM, better known as TSMC...",
+    publisher : "Test Finance",
     date: '2023-10-15',
     link: 'https://example.com/news1',
     summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem.',
@@ -30,76 +35,173 @@ const newsData = [
   {
     id: 4,
     title: 'Google-related news 4',
+    description : "Taiwan Semiconductor Manufacturing Company Limited TSM, better known as TSMC...",
+    publisher : "Go Finance",
     date: '2023-10-15',
     link: 'https://example.com/news1',
     summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem.',
   }
+, 
+{
+  id: 5,
+  title: 'Google-related news 122',
+  description : "Taiwan Semiconductor Manufacturing Company Limited TSM, better known as TSMC...",
+  publisher : "Go Finance",
+  date: '2023-10-15',
+  link: 'https://example.com/news1',
+  summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem.',
+}
+,
+{
+  id: 6,
+  title: 'Google-related news 123',
+  description : "Taiwan Semiconductor Manufacturing Company Limited TSM, better known as TSMC...",
+  publisher : "Go Finance",
+  date: '2023-10-15',
+  link: 'https://example.com/news1',
+  summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem.',
+}
 
 ];
 
 // Main News Component
 const News = () => {
   const styles = {
-
     newsBox: {
-        position: 'relative',
-        padding: '15px',
-        borderRadius: '8px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-      },
+      position: 'relative',
+      marginTop:'300px',
+      marginLeft: '145px',
+      height: '300px',
+      width: '565px',
+      borderRadius: '8px',
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+      padding: '20px',
+      backgroundColor: '#fff',
+      marginBottom: '20px',
+    },
     newsHeader: {
-      fontSize: 'calc(16px + 1vw)', // Dynamic font size
+      fontSize: 'calc(10px + 1vw)', // Dynamic font size
       fontWeight: 'bold',
-      color: '#555555',
-
+      color: 'black',
     },
     newsSummary: {
       fontSize: 'calc(12px + 0.5vw)', // Dynamic font size
-      color: '#555555',
+      color: 'black',
     },
     newsDate: {
       fontSize: 'calc(12px + 0.5vw)', // Dynamic font size
-      color: '#555555',
+      color: 'black',
     },
-    
     newsLink: {
       fontSize: 'calc(12px + 0.5vw)', // Dynamic font size
-      color: '#555555',
+      color: 'black',
+      textDecoration: 'none',
     },
     sentimentScore: {
-        fontSize: '20px',
-        color: '#4CAF50', // Example color for sentiment score
-        fontWeight: 'bold',
-        position: 'absolute', // Position sentiment score absolutely inside the news box
-        top: '20px',  // Adjust this value for vertical positioning
-        right: '80px', // Adjust this value for horizontal positioning
-      }
-  
-
+      fontSize: '14px',
+      color: 'black',
+      fontWeight: 'bold',
+      position: 'absolute',
+      top: '20px',
+      right: '10px',
+    },
+    paginationWrapper: {
+      marginTop: '20px',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    
   };
 
-  return (
-    <Container fluid className="news-container">
+  const [currentPage, setCurrentPage] = useState(1);
+  const newsPerPage = 2;
+
+  // Calculate total pages
+  const totalPages = Math.ceil(newsData.length / newsPerPage);
+
+  // Get the news for the current page
+  const indexOfLastNews = currentPage * newsPerPage;
+  console.log(indexOfLastNews);
+  const indexOfFirstNews = indexOfLastNews - newsPerPage;
+  
+  const cleanedNewsData = newsData.filter(Boolean);
+  const currentNews = cleanedNewsData.slice(indexOfFirstNews, indexOfLastNews);
+
+  console.log("Current Page:", currentPage);
+  console.log("Total Pages:", totalPages);
+  console.log("Index of First News:", indexOfFirstNews);
+  console.log("Index of Last News:", indexOfLastNews);
+  console.log("Current News Length:", currentNews.length);
+  console.log("Total News Items:", newsData.length);
+  console.log("Current News Data:", currentNews);
+
+  // Handle pagination
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Pagination items (Show only a range of pages for better UX)
+  const paginationItems = [];
+  const pageRange = 5; // Maximum number of visible page buttons
+  let startPage = Math.max(1, currentPage - Math.floor(pageRange / 2));
+  let endPage = Math.min(totalPages, startPage + pageRange - 1);
+
+  if (endPage - startPage < pageRange) {
+    startPage = Math.max(1, endPage - pageRange + 1);
+  }
+
+  for (let number = startPage; number <= endPage; number++) {
+    paginationItems.push(
+      <Pagination.Item 
+        key={number} 
+        active={number === currentPage} 
+        onClick={() => paginate(number)}
+      >
+        {number}
+      </Pagination.Item>
+    );
+  }return (
+    <Container>
+      <h2 className="text-center my-4">Latest News</h2>
       <Row>
-        {newsData.map((newsItem) => (
-          <Col key={newsItem.id} md={5} className="mb-4 ml-4">
-            <Link to="/Individualnewspage" key={newsItem.id} style={{ textDecoration: 'none' }}> 
-            <div style={styles.newsBox} className="news-box">
-              <h4 style={styles.newsHeader}>{newsItem.title}</h4> 
-              <div style={styles.sentimentScore}>
-              <SentimentScore  newsId={newsItem.id} />
+        {currentNews.map((news, index) => {
+          if (!news) {
+            console.warn(`News item at index ${index} is missing or undefined`);
+            return null;
+          }
+  
+          return (
+            <Col key={news.id || index} md={6} className="mb-4">
+              <div style={styles.newsBox}>
+                <h4 style={styles.newsHeader}>
+                  <Link to={news.link} target="_blank" rel="noopener noreferrer" style={styles.newsLink}>
+                    {news.title}
+                  </Link>
+                </h4>
+                <p style={styles.newsSummary}><strong>Publisher:</strong> {news.publisher}</p>
+                <p style={styles.newsDate}><strong>Date:</strong> {new Date(news.date).toDateString()}</p>
+                <p style={styles.newsSummary}>{news.description?.slice(0, 150)}...</p>
+                {/* SentimentScore component */}
+                <div style={styles.sentimentScore}>
+                  <SentimentScore sentiment={news.sentiment || "N/A"} />
+                </div>
               </div>
-              <h4 style={styles.newsDate}>{newsItem.date}</h4> 
-              <h4 style={styles.newsLink}>{newsItem.link}</h4> 
-              <p style={styles.newsSummary}>{newsItem.summary}</p> 
-            </div>
-            </Link>
-          </Col>
-        ))}
+            </Col>
+          );
+        })}
       </Row>
+
+      {/* Pagination Controls */}
+      <div style={styles.paginationWrapper}>
+        <Pagination>
+          {paginationItems}
+        </Pagination>
+      </div>
     </Container>
   );
 };
 
 export default News;
 
+export { newsData };

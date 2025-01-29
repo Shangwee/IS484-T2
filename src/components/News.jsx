@@ -3,7 +3,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col } from 'react-bootstrap';
 import SentimentScore from './Sentimentscore';
 import { Link } from 'react-router-dom'; 
-import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Pagination from 'react-bootstrap/Pagination';
 
