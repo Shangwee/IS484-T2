@@ -11,7 +11,7 @@
         http://www.liquibase.org/xml/ns/pro
         http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
     <!-- ChangeSet to add 'ticker' column to 'entity' table -->
-    <changeSet id="5" author="your_name">
+    <changeSet id="5" author="Shang Wee">
         <!-- Add the 'ticker' column as VARCHAR(20) and allow NULL -->
         <addColumn tableName="entity">
             <column name="ticker" type="VARCHAR(20)" />
@@ -23,7 +23,7 @@
         </rollback>
     </changeSet>
     <!-- ChangeSet to insert ticker symbols into 'entity' table -->
-    <changeSet id="6" author="your_name" runOnChange="true">
+    <changeSet id="6" author="Shang Wee" runOnChange="true">
         <update tableName="entity">
             <column name="ticker" value="TSLA"/>
             <where>name = 'Tesla'</where>

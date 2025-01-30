@@ -49,6 +49,7 @@ build/
 
 # Generated Reports and Data
 *.csv
+!news_data.csv
 *.xls
 *.xlsx
 data/
