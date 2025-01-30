@@ -1,8 +1,12 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
+import json
+from sqlalchemy import any_, func
 from app.models.news import News
+from app.models.entity import Entity
 from app.utils.decorators import jwt_required
 from app.services.data_ingestion_gnews import get_gnews_news_by_entity, get_all_top_gnews
 from app.services.data_ingestion_finviz import get_finviz_news_by_entity, get_all_finviz
+from app.services.data_ingestion_yfinance import get_stock_news
 from app.utils.helpers import format_response, format_date_into_tuple_for_gnews
 from datetime import date, timedelta
 
@@ -45,6 +49,20 @@ def ingest_news_finviz_entity():
     
     return format_response([], "No news data found", 404)
 
+# ** generate news data based on entity using yfinance
+@news_bp.route('/yfinance', methods=['POST'])
+def ingest_news_yfinance_entity():
+    # Get the entity, period, start_date, and end_date from the request
+    name = request.json.get('entity')
+
+    # Get the news using yfinance and save it to the database
+    news = get_stock_news(name)
+
+    if len(news) > 0:
+        return format_response(news, "News data generated and saved successfully", 201)
+    
+    return format_response([], "No news data found", 404)
+
 # ** generate all news from latest news
 @news_bp.route('/all', methods=['POST'])
 def ingest_all_news():
@@ -67,7 +85,15 @@ def ingest_all_news():
 # ** get news based on entity
 @news_bp.route("/<string:entity>", methods=['GET'])
 def get_news(entity):
-    news = News.query.filter(News.entities.contains({"entities": [entity]})).all()
+
+    # Query using PostgreSQL ANY operator for array type
+    news = News.query.filter(
+        entity == any_(News.entities)
+    ).all()
+
+    if not news:
+        return format_response([], "No news found for this entity", 404)
+
     news_list = []
     for n in news:
         news_list.append({

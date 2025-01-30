@@ -12,7 +12,8 @@
         http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
     
     <include file="db/changelog/changeset-initial-stage-1.xml"/>
-    <include file="db/changelog/add_summary_to_news_table.xml"/>
-    <include file="db/changelog/add_summary_sentiment_to_entity.xml"/>
-    <include file="db/changelog/add_ticker_to_entity.xml"/>
+    <include file="db/changelog/add-summary-to-news-table-2.xml"/>
+    <include file="db/changelog/add-summary-sentiment-to-entity-3.xml"/>
+    <include file="db/changelog/add-ticker-to-entity-4.xml"/>
+    <include file="db/changelog/add-seed-news-data-5.xml"/>
 </databaseChangeLog>
