@@ -56,3 +56,4 @@ data/
 # Other
 .DS_Store
 Thumbs.db
+yfinance.cache
