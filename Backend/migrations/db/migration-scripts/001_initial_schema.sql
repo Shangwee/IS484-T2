@@ -17,7 +17,7 @@ CREATE TABLE "news" (
     published_date TIMESTAMP NOT NULL,
     title VARCHAR(255) NOT NULL,
     url TEXT NOT NULL UNIQUE,
-    entities JSONB,
+    entities TEXT[],
     sentiment VARCHAR(50)
 );
 

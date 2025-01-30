@@ -11,8 +11,8 @@ def insert_data_to_db(data, query):
         if existing_news:
             continue
 
-        # change entities to a list format like this e.g., {entities:["Tesla", "Apple", "Microsoft"]}
-        entities_list = {"entities": [query]}
+        # change entities to this format e.g., ["Tesla", "Apple", "Microsoft"]
+        entities_list = [query]
 
         n = News(
         publisher=news['publisher']['title'],

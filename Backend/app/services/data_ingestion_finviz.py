@@ -51,8 +51,8 @@ def get_finviz_news_by_entity(query):
 
         if existing_news:
             continue
-        # change entities to this format e.g., {entities:["Tesla", "Apple", "Microsoft"]}
-        entities_list = {"entities": [news['entity']]}
+        # change entities to this format e.g., ["Tesla", "Apple", "Microsoft"]
+        entities_list = [news['entity']]
         
         news_db = NewsModel(
             publisher=news['publisher'],
@@ -111,8 +111,7 @@ def get_all_finviz():
 
         if existing_news:
             continue
-
-        entities_list = {"entities": ["Top News"]}
+        entities_list = ["Top News"]
 
         news_db = NewsModel(
             publisher=news['publisher'],
