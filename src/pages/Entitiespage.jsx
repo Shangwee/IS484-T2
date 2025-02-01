@@ -1,5 +1,5 @@
 import React from 'react';
-import Entity from '../components/EntitiesSummary';
+import Entity from '../components/entity/EntitiesSummary';
 
 function Entitiespage() {
   console.log('Rendering Entities Page');

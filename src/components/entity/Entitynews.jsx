@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Row, Col, Pagination } from 'react-bootstrap';import SentimentScore from './Sentimentscore';
+import { Container, Row, Col, Pagination } from 'react-bootstrap';
+import SentimentScore from '../ui/Sentimentscore';
 import { Link } from 'react-router-dom'; 
 
 // Dummy news data

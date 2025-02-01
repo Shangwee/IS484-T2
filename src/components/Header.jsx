@@ -1,6 +1,6 @@
 import React from 'react';
-import Searchbar from './Searchbar';
-import Backbutton from './Backbutton';
+import Searchbar from './ui/Searchbar';
+import Backbutton from './ui/Backbutton';
 
 const Header = () => {
   return (

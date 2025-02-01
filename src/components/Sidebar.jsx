@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'; // Install react-icons if not done yet
 import { Link } from 'react-router-dom'; // Import Link for routing
-import '../App.css';
+import '../styles/App.css';
 
 function Sidebar() {
 
@@ -44,8 +44,6 @@ function Sidebar() {
         </li>
         <li style={styles.list2}>
           <Link to="/Newspage" className="sidebar-link">News</Link>
-
-
         </li>
       </ul>
       </div>
