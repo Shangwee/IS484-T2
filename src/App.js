@@ -3,15 +3,15 @@ import { useLocation } from 'react-router-dom'; // Import useLocation correctly
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import Router
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
-import Entity from './components/Entity';
-import Sentimentscore from './components/Sentimentscore';
-import Entitynews from './components/Entitynews';
+import Entity from './components/entity/Entity';
+import Sentimentscore from './components/ui/Sentimentscore';
+import Entitynews from './components/entity/Entitynews';
 import Newspage from './pages/Newspage';
 import Individualnewspage from './pages/Individualnewspage';
 import Entitiespage from './pages/Entitiespage'; 
-import Price from './components/Price';
+import Price from './components/ui/Price';
 // import Entityvisuals from './components/entityvisuals';
-import './App.css';
+import './styles/App.css';
 
 function App() {
   const location = useLocation();

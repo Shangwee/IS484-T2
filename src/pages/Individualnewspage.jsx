@@ -1,5 +1,5 @@
 import React from 'react';
-import NewsSources from '../components/NewsSources';
+import NewsSources from '../components/news/NewsSources';
 
 function Individualnewspage() {
   console.log('Rendering Individualnewspage ');
