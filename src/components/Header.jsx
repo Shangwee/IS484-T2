@@ -23,7 +23,7 @@ const styles = {
     position: "fixed",
     top: 0,
     zIndex: 1000,       
-    padding: "20px 30px",  // Adjusted padding for better responsiveness
+    padding: "10px 10px",  // Adjusted padding for better responsiveness
     display: "flex",
     justifyContent: "flex-end",  // Aligning the content to the right
     width: "100%",   

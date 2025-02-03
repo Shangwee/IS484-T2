@@ -15,7 +15,7 @@ const styles = {
     position: "fixed",
     display: "flex",
     top: "100px",
-    left: "16vw",
+    left: "10vw",
     color: "black", 
     fontWeight: "700",  
     fontSize: "50px",

@@ -10,25 +10,26 @@ import Newspage from './pages/Newspage';
 import Individualnewspage from './pages/Individualnewspage';
 import Entitiespage from './pages/Entitiespage'; 
 import Price from './components/ui/Price';
+import SearchBar from './components/ui/Searchbar';
 // import Entityvisuals from './components/entityvisuals';
 import './styles/App.css';
 
 function App() {
   const location = useLocation();
 
-    const containerStyle = {
-      display: 'flex', // Use flexbox to align elements horizontally in the same row
-      alignItems: 'center', // Vertically align the items to the center
-      width: '100%',
-      position: 'fixed',
-      top: '100px',
-      left: '669px',
-       };
+  const containerStyle = {
+    display: 'flex', // Use flexbox to align elements horizontally in the same row
+    alignItems: 'center', // Vertically align the items to the center
+    width: '100%',
+    position: 'fixed',
+    top: '100px',
+    left: '669px',
+      };
 
   const sentimentStyle = {
     position: 'fixed',
-    top: '300px',
-    left: '440px', // Adjust this value to position it next to Price
+    top: '230px',
+    left: '290px', // Adjust this value to position it next to Price
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -40,7 +41,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <Header/>
-   
+        <SearchBar/>
         <Sidebar/>
 
         {location.pathname === '/' && 
@@ -49,9 +50,9 @@ function App() {
             <div style={containerStyle}>
               <Entity />
               <Price />
-              <div style={sentimentStyle}>
+              <span style={sentimentStyle}>
               <Sentimentscore />
-              </div>
+              </span>
             </div>
 
             <Entitynews/>

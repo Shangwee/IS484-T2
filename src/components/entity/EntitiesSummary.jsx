@@ -47,12 +47,16 @@ const Entity = () => {
         },
       };
       
-    return (
+    return ( 
         <Container fluid className="news-container">
           <Row>
             {entityData.map((entityItem) => (
               <Col key={entityItem.id} md={5} className="mb-4 ml-4">
-                 <Link to="/" key={entityItem.id} style={{ textDecoration: 'none' }}> 
+                 <Link 
+                    to="/" 
+                    state= {{ entity: entityItem.name }}
+                    key={entityItem.id} 
+                    style={{ textDecoration: 'none' }}> 
                 <div style={styles.entityBox} className="news-box">
                     <div style={styles.entityHeader} className='entity-header'>
                         <h4 style={styles.entityName}>{entityItem.name}</h4> 
