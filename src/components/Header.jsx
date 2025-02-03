@@ -6,7 +6,7 @@ const Header = () => {
   return (
     <header style={styles.header}>
       <Backbutton/>
-      <Searchbar />
+      {/* <Searchbar /> */}
     </header>
   );
 };
