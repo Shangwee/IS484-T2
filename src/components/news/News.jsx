@@ -5,6 +5,7 @@ import SentimentScore from '../ui/Sentimentscore';
 import { Link } from 'react-router-dom'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Pagination from 'react-bootstrap/Pagination';
+import SearchBar from '../ui/Searchbar';
 
 // Dummy news data
 const newsData = [
@@ -376,20 +377,33 @@ const News = () => {
     },
     
   };
-
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const newsPerPage = 4;
 
-  // Calculate total pages
-  const totalPages = Math.ceil(newsData.length / newsPerPage);
+  // Filter news based on search term
+  const filteredNews = newsData.filter((news) =>
+    news.title.toLowerCase().includes(searchTerm.toLowerCase()) 
+    // || news.publisher.toLowerCase().includes(searchTerm.toLowerCase()) 
+    // || news.summary.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+   // Handle search term change
+   const handleSearchChange = (term) => {
+    console.log('Search Term:', term);  // Check the updated search term
+    setSearchTerm(term); // Update search term in the parent component
+  };
+
+  // Calculate total pages only if filteredNews has data
+  const totalPages = filteredNews.length > 0 ? Math.ceil(filteredNews.length / newsPerPage) : 1;
 
   // Get the news for the current page
   const indexOfLastNews = currentPage * newsPerPage;
   console.log(indexOfLastNews);
   const indexOfFirstNews = indexOfLastNews - newsPerPage;
   
-  const cleanedNewsData = newsData.filter(Boolean);
-  const currentNews = cleanedNewsData.slice(indexOfFirstNews, indexOfLastNews);
+  // const cleanedNewsData = newsData.filter(Boolean);
+  const currentNews = filteredNews.length > 0 ? filteredNews.slice(indexOfFirstNews, indexOfLastNews) : [];
 
   console.log("Current Page:", currentPage);
   console.log("Total Pages:", totalPages);
@@ -427,6 +441,8 @@ const News = () => {
   }return (
     <Container>
       <h2 className="text-center my-4">Latest News</h2>
+      <SearchBar onSearchChange={handleSearchChange} />
+
       <Row>
         {currentNews.map((news, index) => {
           if (!news) {
