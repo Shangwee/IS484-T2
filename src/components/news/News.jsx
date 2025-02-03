@@ -329,7 +329,6 @@ const newsData = [
 ];
 
 // Main News Component
-
 const News = () => {
   const styles = {
     newsBox: {
@@ -438,6 +437,7 @@ const News = () => {
         {number}
       </Pagination.Item>
     );
+    
   }return (
     <Container>
       <h2 className="text-center my-4">Latest News</h2>
@@ -448,14 +448,18 @@ const News = () => {
           if (!news) {
             console.warn(`News item at index ${index} is missing or undefined`);
             return null;
-          }
+          } 
   
           return (
             <Col key={news.id || index} md={6} className="mb-4">
               <div style={styles.newsBox}>
                 <h4 style={styles.newsHeader}>
-                  <Link to={news.url} target="_blank" rel="noopener noreferrer" style={styles.newsLink}>
-                    {news.title}
+                  <Link 
+                    to='/Individualnewspage'
+                    state= {{ id: news.id }}
+                    rel="noopener noreferrer" 
+                    style={styles.newsLink}>
+                      {news.title}
                   </Link>
                 </h4>
                 <p style={styles.newsSummary}><strong>Publisher:</strong> {news.publisher}</p>
