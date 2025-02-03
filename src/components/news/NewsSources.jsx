@@ -122,7 +122,12 @@ const NewsSources = () => {
       <Row style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
         {filteredNewsData.map((newsItem) => (
           <Col key={newsItem.id} md={5} className="mb-4 ml-4" style={{ display: 'flex' }}>
-             <Link to={newsItem.url} style={{ textDecoration: 'none', flex: '1' }}>  
+             <Link 
+              to={newsItem.url} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style={styles.newsLink}
+              >  
             <div style={styles.newsBox} className="news-box">
               <h4 style={styles.newsHeader}>{newsItem.title}</h4>   
               <div style={styles.sentiment}>
