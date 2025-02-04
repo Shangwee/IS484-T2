@@ -1,7 +1,7 @@
 import React from 'react';
-import Entity from '../components/entity/EntitiesSummary';
+import Entity from '../../components/entity/EntitiesSummary';
 
-function Entitiespage() {
+function EntitiesPage() {
   console.log('Rendering Entities Page');
   return (
     <div style={{ color:'black', padding: '20px' }}>
@@ -9,4 +9,4 @@ function Entitiespage() {
     </div>
   );
 }
-export default Entitiespage
+export default EntitiesPage

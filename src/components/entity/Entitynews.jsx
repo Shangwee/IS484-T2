@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col, Pagination } from 'react-bootstrap';
-import SentimentScore from '../ui/Sentimentscore';
+import SentimentScore from '../ui/SentimentScore';
 import { Link } from 'react-router-dom'; 
 import { useLocation } from 'react-router-dom';
 

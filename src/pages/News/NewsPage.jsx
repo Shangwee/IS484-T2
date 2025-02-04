@@ -1,7 +1,6 @@
 import React from 'react';
-import News from '../components/news/News';
-
-function Newspage() {
+import News from '../../components/news/NewsSources';
+function NewsPage() {
   console.log('Rendering News Page');
   return (
     <div>
@@ -9,4 +8,4 @@ function Newspage() {
     </div>
   );
 }
-export default Newspage
+export default NewsPage
