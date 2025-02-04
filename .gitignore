@@ -58,3 +58,4 @@ data/
 .DS_Store
 Thumbs.db
 yfinance.cache
+Backend/app/test_summarisation.py
