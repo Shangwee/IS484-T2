@@ -16,7 +16,7 @@ def summarise_news(news_text, summary_length):
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel("gemini-1.5-flash")
 
-    response = model.generate_content("summarise this in" + str(summary_length) + "words or less: " + news_text)
+    response = model.generate_content(f"summarise this in {summary_length} words or less: {news_text}")
 
     # Print the response object to inspect its structure
     print(response)
