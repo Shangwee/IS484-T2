@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { getData } from "../services/api"; // ✅ Use api.js
 
-const useFetch = (url) => {
+const useFetch = (endpoint) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -8,9 +9,7 @@ const useFetch = (url) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Failed to fetch data");
-        const result = await response.json();
+        const result = await getData(endpoint);
         setData(result);
       } catch (err) {
         setError(err.message);
@@ -20,7 +19,7 @@ const useFetch = (url) => {
     };
 
     fetchData();
-  }, [url]);
+  }, [endpoint]);
 
   return { data, loading, error };
 };
