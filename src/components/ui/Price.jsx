@@ -21,8 +21,8 @@ function Price(id) {
 const styles = {
   container: {
     position: 'fixed', // Fixes the position relative to the viewport
-    top: '300px', // Adjust this value to your preference
-    left: '200px', // Adjust this value to your preference
+    top: '230px', // Adjust this value to your preference
+    left: '80px', // Adjust this value to your preference
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',

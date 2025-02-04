@@ -3,12 +3,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col, Pagination } from 'react-bootstrap';
 import SentimentScore from '../ui/Sentimentscore';
 import { Link } from 'react-router-dom'; 
+import { useLocation } from 'react-router-dom';
 
-// Dummy news data
+// Dummy news data 
 const newsData = [
   {
     id: 1,
     title: 'Google-related news 1',
+    entity: ['TSMC', 'Google'],
     publisher : "Yahoo Finance",
     description : "Taiwan Semiconductor Manufacturing Company Limited TSM, better known as TSMC...",
     date: '2023-10-15',
@@ -18,6 +20,7 @@ const newsData = [
   {
     id: 2,
     title: 'Google-related news 2',
+    entity: ['TSMC', 'Google'],
     publisher : "Google Finance",
     description : "Taiwan Semiconductor Manufacturing Company Limited TSM, better known as TSMC...",
     date: '2023-10-15',
@@ -27,6 +30,7 @@ const newsData = [
   {
     id: 3,
     title: 'Google-related news 3',
+    entity: ['TSMC', 'Google'],
     description : "Taiwan Semiconductor Manufacturing Company Limited TSM, better known as TSMC...",
     publisher : "Test Finance",
     date: '2023-10-15',
@@ -36,6 +40,7 @@ const newsData = [
   {
     id: 4,
     title: 'Google-related news 4',
+    entity: ['TSMC', 'Google'],
     description : "Taiwan Semiconductor Manufacturing Company Limited TSM, better known as TSMC...",
     publisher : "Go Finance",
     date: '2023-10-15',
@@ -46,6 +51,7 @@ const newsData = [
 {
   id: 5,
   title: 'Google-related news 122',
+  entity: ['TSMC', 'Google'],
   description : "Taiwan Semiconductor Manufacturing Company Limited TSM, better known as TSMC...",
   publisher : "Go Finance",
   date: '2023-10-15',
@@ -56,6 +62,7 @@ const newsData = [
 {
   id: 6,
   title: 'Google-related news 123',
+  entity: ['TSMC', 'Google'],
   description : "Taiwan Semiconductor Manufacturing Company Limited TSM, better known as TSMC...",
   publisher : "Go Finance",
   date: '2023-10-15',
@@ -63,15 +70,13 @@ const newsData = [
   summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem.',
 }
 
-];
+]; 
 
 // Main News Component
 const News = () => {
   const styles = {
     newsBox: {
       position: 'relative',
-      marginTop:'300px',
-      marginLeft: '145px',
       height: '300px',
       width: '565px',
       borderRadius: '8px',
@@ -118,16 +123,32 @@ const News = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const newsPerPage = 2;
 
-  // Calculate total pages
-  const totalPages = Math.ceil(newsData.length / newsPerPage);
+  const location = useLocation();
+  console.log("Location object:", location);
+
+  // Retrieve the entity from the location state
+  const { entity } = location.state || {entity: null};
+  console.log(entity);  
+  
+  // Filter the news data based on whether the entity exists in the entity array
+  const filteredNews = entity
+    ? newsData.filter((newsItem) =>
+        newsItem.entity.some((item) => item === entity) // Check if the entity is in the list
+      )
+    : newsData;
+
+  console.log("Filtered News:", filteredNews);
+
+  // Calculate total pages only if filteredNews has data
+  const totalPages = filteredNews.length > 0 ? Math.ceil(filteredNews.length / newsPerPage) : 1;
 
   // Get the news for the current page
   const indexOfLastNews = currentPage * newsPerPage;
   console.log(indexOfLastNews);
   const indexOfFirstNews = indexOfLastNews - newsPerPage;
   
-  const cleanedNewsData = newsData.filter(Boolean);
-  const currentNews = cleanedNewsData.slice(indexOfFirstNews, indexOfLastNews);
+  // const cleanedNewsData = newsData.filter(Boolean);
+  const currentNews = filteredNews.length > 0 ? filteredNews.slice(indexOfFirstNews, indexOfLastNews) : [];
 
   console.log("Current Page:", currentPage);
   console.log("Total Pages:", totalPages);
@@ -165,6 +186,7 @@ const News = () => {
   }return (
     <Container>
       <h2 className="text-center my-4">Latest News</h2>
+
       <Row>
         {currentNews.map((news, index) => {
           if (!news) {

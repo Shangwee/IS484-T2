@@ -1,56 +1,49 @@
 import React, { useState } from 'react';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'; // Install react-icons if not done yet
-import { Link } from 'react-router-dom'; // Import Link for routing
-import '../styles/App.css';
+import { FaChevronLeft, FaChevronRight, FaChartBar, FaNewspaper } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+import '../styles/App.css'; // Import your CSS file here
 
 function Sidebar() {
-
   const [isCollapsed, setIsCollapsed] = useState(false);
+
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
-  };  
-
-  const styles = {
-
-    list1: {
-      listStyleImage: 'url("https://img.icons8.com/ios-filled/50/combo-chart--v1.png")'
-      ,marginBottom: "80px",
-      marginLeft:'40px',
-      fontWeight:'bold'
-    },
-  
-    list2: {
-      listStyleImage: 'url("https://img.icons8.com/ios/50/event-accepted-tentatively.png")'    
-      ,marginLeft:'40px'
-
-      ,fontWeight:'bold'
-    },
-    
   };
-  
+
+  // Function to handle navigation programmatically
+  const navigateTo = (path) => {
+    console.log(`Navigating to ${path}`);
+    // Replace this with your actual navigation logic (e.g., using window.location or history.push)
+    window.location.href = path; // Example: Redirects to the specified path
+  };
 
   return (
     <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
-      <button className="toggle-btn" onClick={toggleSidebar}>
+      {/* Toggle Button */}
+      <button 
+        className="toggle-btn" 
+        onClick={toggleSidebar} 
+        aria-label={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+      >
         {isCollapsed ? <FaChevronRight /> : <FaChevronLeft />}
       </button>
-      <div className="sidebar-content">
 
-      <h1> Senti Finance</h1> 
+      {/* Sidebar Content */}
+      <div className="sidebar-content">
+        <h1 aria-hidden={true}>Senti Finance</h1>
         <ul>
-        <li style={styles.list1}>
-            {/* Entities */}
-            <Link to="/Entitiespage" className="sidebar-link">Entities</Link>
-        </li>
-        <li style={styles.list2}>
-          <Link to="/Newspage" className="sidebar-link">News</Link>
-        </li>
-      </ul>
+          <li onClick={() => navigateTo('/Entitiespage')}>
+            <FaChartBar />
+            <span className="sidebar-text">Entities</span>
+          </li>
+          <li onClick={() => navigateTo('/Newspage')}>
+            <FaNewspaper />
+            <span className="sidebar-text">News</span>
+          </li>
+        </ul>
       </div>
     </div>
   );
 }
 
-
 export default Sidebar;
-

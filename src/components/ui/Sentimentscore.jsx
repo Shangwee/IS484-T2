@@ -4,7 +4,6 @@ function Sentimentscore() {
   return (
          <div style={styles.greenbox}>
           0.95
-
          </div>
   );
 }
@@ -20,7 +19,7 @@ greenbox:
   fontSize: "calc(12px + 1vw)",  // Adjust font size dynamically based on viewport width
   fontWeight: "bold",
   padding: "5px 15px",
-
+  height: '50px',
 }
 };
 

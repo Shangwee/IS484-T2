@@ -19,15 +19,15 @@ const BackButton = () => {
 const styles = {
   button: {
     position: 'fixed',
-    left: '20vw', // Positioning based on viewport width for responsiveness
-    top: '10px', // Adjusted for spacing from top
+    left: '10vw', // Positioning based on viewport width for responsiveness
+    top: '15px', // Adjusted for spacing from top
     color: 'grey',
     cursor: 'pointer',
     border: 'none',
     background: 'none',
   },
   icon: {
-    fontSize: '2.5rem',
+    fontSize: '2rem',
   },
 };
 

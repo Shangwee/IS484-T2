@@ -17,30 +17,30 @@ body, html, #root {
   /* font-size: calc(10px + 2vmin); */
   font-size: calc(1rem + 2vmin); /* Adjusted for better responsiveness */
   color: white;
+  padding: 15px;
 }
 
 
 /* Sidebar styles */
 .sidebar {
-  border-radius: 10px; 
+  border-radius: 5px; 
   position: fixed;  
   top: 0;          
   left: 0;         
   height: 100vh;
-  background: linear-gradient(to right, #38BBF0, #18506C);
+  background: linear-gradient(to right, #1b80a7, #245a75);
   overflow-y: auto; 
   color: white;    
-  padding: 20px;  /* Reduced padding for better responsiveness */
+  padding: 10px;  /* Reduced padding for better responsiveness */
   width: 15vw;  /* Adjusted width for responsive layout */
   max-width: 500px; /* Max width for larger screens */
+  transition: width 0.3s ease, opacity 0.3s ease;
+  flex-direction: column;
   overflow: hidden;
-  transition: width 0.5s ease, padding 0.5s ease;
 }
-
 
 .sidebar.collapsed {
   width: 80px;
-  margin: 10px 0;
 }
 
 .sidebar.collapsed .sidebar-content {
@@ -51,10 +51,15 @@ body, html, #root {
   color: white;
   background: none;
   border: none;
-  padding: 20px;
+  padding: 5px;
   cursor: pointer;
   margin-bottom: 20px;
-  
+}
+
+.toggle-btn:hover {
+  background-color: #a6d6ee;
+  border-radius: 100px;
+  padding-bottom: 10px;
 }
 
 .sidebar-content {
@@ -62,24 +67,31 @@ body, html, #root {
   flex-direction: column;
 }
 
-.sidebar-content h2 {
-  margin-top: 0;
-}
 .sidebar-content h1 {
-  margin-top: 0;
-  font-size: 3rem;  /* Scalable font size */
-  margin-bottom: 100px; 
+  text-align: left;
+  margin: 5px 0;
+  white-space: nowrap;
+  font-size: 1.7rem;  /* Scalable font size */
+  margin-bottom: 2px; 
 }
 
 .sidebar-content ul {
   list-style-type: none;
-  padding: 0;
+  padding: 5px;
 }
 
 .sidebar-content li {
-  margin: 10px 0;
-  text-align: center; 
-  font-size: 2.5rem;  /* Scalable font size */
+  margin: 15px 0;
+  text-align: left; 
+  font-size: 1rem;  /* Scalable font size */
+  font-weight: bold;
+}
+
+.sidebar-content li span{
+  margin: 15px 0;
+  text-align: left; 
+  font-size: 1rem;  /* Scalable font size */
+  font-weight: bold;
 }
 
 .sidebar-content li:hover {

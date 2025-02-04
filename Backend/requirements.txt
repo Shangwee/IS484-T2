@@ -26,6 +26,9 @@ requests_cache
 nltk==3.9.1
 transformers==4.47.0  # For advanced NLP (e.g., OpenAI GPT models)
 
+# Summarisation and Text Generation
+google-generativeai
+
 # Utility Libraries
 python-dotenv==1.0.1  # For environment variable management
 validators==0.34.0  # For input validation
