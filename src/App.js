@@ -4,14 +4,13 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Im
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Entity from './components/entity/Entity';
-import Sentimentscore from './components/ui/Sentimentscore';
-import Entitynews from './components/entity/Entitynews';
-import Newspage from './pages/Newspage';
-import Individualnewspage from './pages/Individualnewspage';
-import Entitiespage from './pages/Entitiespage'; 
+import SentimentScore from './components/ui/SentimentScore';
+import EntityNews from './components/entity/EntityNews';
+import NewsPage from './pages/News/NewsPage';
+import IndividualNewsPage from './pages/News/IndividualNewsPage';
+import EntitiesPage from './pages/Entities/EntitiesPage'; 
 import Price from './components/ui/Price';
-import SearchBar from './components/ui/Searchbar';
-// import Entityvisuals from './components/entityvisuals';
+import SearchBar from './components/ui/SearchBar';
 import './styles/App.css';
 
 function App() {
@@ -53,18 +52,18 @@ function App() {
               <Entity />
               <Price id="2"/>
               <span style={sentimentStyle}>
-              <Sentimentscore />
+              <SentimentScore />
               </span>
             </div>
 
-            <Entitynews/>
+            <EntityNews/>
           </>
 
         )}
         <Routes> 
-          <Route path="/Entitiespage" element={<Entitiespage />} /> {/* Entities Page  */}
-          <Route path="/Newspage" element={<Newspage />} /> {/* News Page */}
-          <Route path="/Individualnewspage" element={<Individualnewspage />} />
+          <Route path="/EntitiesPage" element={<EntitiesPage />} /> {/* Entities Page  */}
+          <Route path="/NewsPage" element={<NewsPage />} /> {/* News Page */}
+          <Route path="/IndividualNewsPage" element={<IndividualNewsPage />} />
         </Routes>
         
 

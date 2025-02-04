@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col } from 'react-bootstrap';
-import SentimentScore from '../ui/Sentimentscore';
+import SentimentScore from '../ui/SentimentScore';
 import { Link } from 'react-router-dom'; 
 // Dummy news data
 const entityData = [

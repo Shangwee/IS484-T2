@@ -9,10 +9,12 @@ function Price(id) {
 
   const { data, loading, error } = useFetch(url);
 
+  const price = data ? data.data.stock_price : "N/A";
+
   return (
     <div style={styles.container}>
       <div style={styles.price}>
-        Price = {loading ? 'Loading...' : error ? 'Error' : data.data.stock_price}
+        Price = {loading ? 'Loading...' : error ? 'Error' : price}
       </div>
     </div>
   );

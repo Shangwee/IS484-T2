@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Sentimentscore() {
+function SentimentScore() {
   return (
          <div style={styles.greenbox}>
           0.95
@@ -23,5 +23,5 @@ greenbox:
 }
 };
 
-export default Sentimentscore;
+export default SentimentScore;
 

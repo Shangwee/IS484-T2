@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 
-function Entityvisuals() {
+function EntityVisuals() {
     return (
       <Container fluid className="entity-container">
         <Row className="justify-content-center">
@@ -38,4 +38,4 @@ const styles = {
   },
 };
 
-export default Entityvisuals;
+export default EntityVisuals;
