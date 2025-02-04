@@ -1,10 +1,18 @@
 import React from 'react';
+import useFetch from "../../hooks/useFetch"
 
-function Price() {
+function Price(id) {
+
+  const number = id.id;
+  
+  const url = `/entities/${number}/stock`;
+
+  const { data, loading, error } = useFetch(url);
+
   return (
     <div style={styles.container}>
       <div style={styles.price}>
-        Price = $0.10
+        Price = {loading ? 'Loading...' : error ? 'Error' : data.data.stock_price}
       </div>
     </div>
   );

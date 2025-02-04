@@ -33,6 +33,8 @@ function App() {
     alignItems: 'center',
     justifyContent: 'center',
   };
+
+  const stockID = "1"; // Hardcoded stock ID for now
   
   
   return (
@@ -48,7 +50,7 @@ function App() {
           <>
             <div style={containerStyle}>
               <Entity />
-              <Price />
+              <Price id="2"/>
               <div style={sentimentStyle}>
               <Sentimentscore />
               </div>
