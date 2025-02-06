@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col } from 'react-bootstrap';
-import SentimentScore from '../ui/Sentimentscore';
+import SentimentScore from '../ui/SentimentScore';
 import { Link } from 'react-router-dom'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Pagination from 'react-bootstrap/Pagination';
-import SearchBar from '../ui/Searchbar';
+import SearchBar from '../ui/SearchBar';
 import Filter from "./Filter";
 
 // Dummy news data
@@ -397,12 +397,15 @@ const News = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState("all"); // Store selected filter
   const newsPerPage = 4;
+
+  
   const now = new Date();
 
   // Handle search term change
   const handleSearchChange = (term) => {
     console.log('Search Term:', term);
     setSearchTerm(term);
+
   };
 
   // Handle filter change
@@ -423,8 +426,14 @@ const News = () => {
       if (filter === "7d") return hoursAgo <= 168; // 7 days * 24 hours
       return true; // "All Time" (default)
     })
-    .filter((news) => news.title.toLowerCase().includes(searchTerm.toLowerCase()));
-
+    .filter((news) => {
+      const lowerCaseSearch = searchTerm.toLowerCase();
+      return (
+        news.title.toLowerCase().includes(lowerCaseSearch) ||
+        (news.description && news.description.toLowerCase().includes(lowerCaseSearch))
+      );
+    });
+    
   // Calculate total pages
   const totalPages = filteredNews.length > 0 ? Math.ceil(filteredNews.length / newsPerPage) : 1;
 
