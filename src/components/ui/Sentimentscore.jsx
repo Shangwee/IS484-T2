@@ -11,6 +11,7 @@ function SentimentScore() {
 const styles = {
 greenbox:
 {
+  display: "flex",
   backgroundColor: "#00CB14",
   borderRadius: "15px",
   justifyContent: "center",
@@ -19,7 +20,7 @@ greenbox:
   fontSize: "calc(12px + 1vw)",  // Adjust font size dynamically based on viewport width
   fontWeight: "bold",
   padding: "5px 15px",
-  height: '50px',
+  // height: '50px',
 }
 };
 

@@ -12,6 +12,7 @@ import EntitiesPage from './pages/Entities/EntitiesPage';
 import Price from './components/ui/Price';
 import SearchBar from './components/ui/SearchBar';
 import './styles/App.css';
+import EntityVisuals from './components/entity/Entityvisuals';
 
 function App() {
   const location = useLocation();
@@ -27,8 +28,8 @@ function App() {
 
   const sentimentStyle = {
     position: 'fixed',
-    top: '230px',
-    left: '290px', // Adjust this value to position it next to Price
+    top: '30px',
+    left: '18vw', // Adjust this value to position it next to Price
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -52,10 +53,10 @@ function App() {
               <Entity />
               <Price id="2"/>
               <span style={sentimentStyle}>
-              <SentimentScore />
+              <SentimentScore /> 
               </span>
             </div>
-
+            <EntityVisuals/>
             <EntityNews/>
           </>
 

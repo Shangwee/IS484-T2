@@ -78,6 +78,8 @@ const News = () => {
   const styles = {
     newsBox: {
       position: 'relative',
+      left: '10vw',
+      top:'220px',
       height: '300px',
       width: '565px',
       borderRadius: '8px',
@@ -105,6 +107,7 @@ const News = () => {
       textDecoration: 'none',
     },
     sentimentScore: {
+
       fontSize: '14px',
       color: 'black',
       fontWeight: 'bold',
@@ -113,13 +116,15 @@ const News = () => {
       right: '10px',
     },
     paginationWrapper: {
-      marginTop: '20px',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    
-  };
+        position: 'absolute',  // Use absolute positioning
+        bottom: '5px',        // 20px from the bottom of the page
+        left: '55%',           // Center horizontally
+        transform: 'translateX(-50%)', // Adjust to truly center (50% offset)
+        // marginTop: '20px',
+        // display: 'flex',
+        // justifyContent: 'center' // Center the pagination items within the flex container  
+  }}
+
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const newsPerPage = 2;
