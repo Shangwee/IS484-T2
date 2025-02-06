@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col } from 'react-bootstrap';
-import SentimentScore from '../ui/SentimentScore';
+import SentimentScore from '../ui/Sentimentscore';
 import { Link } from 'react-router-dom'; 
 import { useLocation } from 'react-router-dom';
 
@@ -122,14 +122,16 @@ const NewsSources = () => {
       <Row style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
         {filteredNewsData.map((newsItem) => (
           <Col key={newsItem.id} md={5} className="mb-4 ml-4" style={{ display: 'flex' }}>
-             <Link 
+             
+            <div style={styles.newsBox} className="news-box">
+              <Link 
               to={newsItem.url} 
               target="_blank" 
               rel="noopener noreferrer" 
               style={styles.newsLink}
               >  
-            <div style={styles.newsBox} className="news-box">
-              <h4 style={styles.newsHeader}>{newsItem.title}</h4>   
+                <h4 style={styles.newsHeader}>{newsItem.title}</h4>  
+              </Link> 
               <div style={styles.sentiment}>
                 <SentimentScore  newsId={newsItem.id} />
               </div>
@@ -141,8 +143,6 @@ const NewsSources = () => {
               
 
             </div>
-            </Link>
-
           </Col>
         ))}
       </Row>
