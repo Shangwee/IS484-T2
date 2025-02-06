@@ -65,11 +65,12 @@ const newsData = [
 const SearchBar = ({ onSearchChange }) => {
   const [searchTerm, setSearchTerm] = useState('');
   
-  // Handle search term change
-  const handleSearchChange = (term) => {
-  console.log('Search Term:', term);  // Check the updated search term
-  setSearchTerm(term); // Update search term in the parent component
-    };
+  const handleSearchChange = (event) => {
+    const term = event.target.value;
+    console.log('Search Term:', term);  
+    setSearchTerm(term); // Update local state
+    onSearchChange(term); // Notify parent component
+  };
 
   return (
     <div style={styles.searchBar}>

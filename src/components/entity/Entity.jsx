@@ -15,10 +15,10 @@ const styles = {
     position: "fixed",
     display: "flex",
     top: "100px",
-    left: "10vw",
+    left: "18vw",
     color: "black", 
     fontWeight: "700",  
-    fontSize: "50px",
+    fontSize: "40px",
   }
 };
 

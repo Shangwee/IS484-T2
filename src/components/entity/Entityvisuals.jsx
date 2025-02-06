@@ -18,9 +18,9 @@ function EntityVisuals() {
 const styles = {
   entityBox: {
     position:'fixed',
-    top: '555px',
-    left: '559px',
-    width:'3600px',
+    top: '185px',
+    left: '259px',
+    width:'1180px',
     display: "flex", 
     backgroundColor: 'lightgrey',
     borderRadius: '15px',
@@ -28,7 +28,7 @@ const styles = {
     boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '40%',
+    height: '38%',
   },
   entityText: {
     fontSize: '98px',

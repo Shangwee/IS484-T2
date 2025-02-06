@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col, Pagination } from 'react-bootstrap';
-import SentimentScore from '../ui/Sentimentscore';
+import SearchBar from '../ui/SearchBar';
+import SentimentScore from '../ui/SentimentScore';
 import { Link } from 'react-router-dom'; 
 import { useLocation } from 'react-router-dom';
 
@@ -77,6 +78,8 @@ const News = () => {
   const styles = {
     newsBox: {
       position: 'relative',
+      left: '10vw',
+      top:'220px',
       height: '300px',
       width: '565px',
       borderRadius: '8px',
@@ -104,6 +107,7 @@ const News = () => {
       textDecoration: 'none',
     },
     sentimentScore: {
+
       fontSize: '14px',
       color: 'black',
       fontWeight: 'bold',
@@ -112,14 +116,16 @@ const News = () => {
       right: '10px',
     },
     paginationWrapper: {
-      marginTop: '20px',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    
-  };
+        position: 'absolute',  // Use absolute positioning
+        bottom: '5px',        // 20px from the bottom of the page
+        left: '55%',           // Center horizontally
+        transform: 'translateX(-50%)', // Adjust to truly center (50% offset)
+        // marginTop: '20px',
+        // display: 'flex',
+        // justifyContent: 'center' // Center the pagination items within the flex container  
+  }}
 
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const newsPerPage = 2;
 
@@ -130,15 +136,19 @@ const News = () => {
   const { entity } = location.state || {entity: null};
   console.log(entity);  
   
-  // Filter the news data based on whether the entity exists in the entity array
-  const filteredNews = entity
-    ? newsData.filter((newsItem) =>
-        newsItem.entity.some((item) => item === entity) // Check if the entity is in the list
-      )
-    : newsData;
 
-  console.log("Filtered News:", filteredNews);
+  // Filter news based on search term
+  const filteredNews = newsData.filter((news) =>
+    news.title.toLowerCase().includes(searchTerm.toLowerCase()) 
+    || news.summary.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
+    // Handle search term change
+    const handleSearchChange = (term) => {
+    console.log('Search Term:', term);  // Check the updated search term
+    setSearchTerm(term); // Update search term in the parent component
+  };
+  
   // Calculate total pages only if filteredNews has data
   const totalPages = filteredNews.length > 0 ? Math.ceil(filteredNews.length / newsPerPage) : 1;
 
@@ -186,6 +196,7 @@ const News = () => {
   }return (
     <Container>
       <h2 className="text-center my-4">Latest News</h2>
+      <SearchBar onSearchChange={handleSearchChange} />
 
       <Row>
         {currentNews.map((news, index) => {

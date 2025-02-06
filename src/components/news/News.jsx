@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col } from 'react-bootstrap';
-import SentimentScore from '../ui/Sentimentscore';
+import SentimentScore from '../ui/SentimentScore';
 import { Link } from 'react-router-dom'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Pagination from 'react-bootstrap/Pagination';
-import SearchBar from '../ui/Searchbar';
+import SearchBar from '../ui/SearchBar';
 import Filter from "./Filter";
 import Sort from './Sort'; 
 
@@ -399,6 +399,8 @@ const News = () => {
   const [filter, setFilter] = useState("all"); // Store selected filter
   const [sortOrder, setSortOrder] = useState('asc'); // Default sorting to ascending
   const newsPerPage = 4;
+
+  
   const now = new Date();
 
   console.log("Current Page:", currentPage);
@@ -416,6 +418,7 @@ const News = () => {
   const handleSearchChange = (term) => {
     console.log('Search Term:', term);
     setSearchTerm(term);
+
   };
 
   // Handle filter change

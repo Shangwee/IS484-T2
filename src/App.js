@@ -4,14 +4,15 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Im
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Entity from './components/entity/Entity';
-import SentimentScore from './components/ui/Sentimentscore';
+import SentimentScore from './components/ui/SentimentScore';
 import EntityNews from './components/entity/Entitynews';
 import NewsPage from './pages/News/NewsPage';
 import IndividualNewsPage from './pages/News/IndividualNewsPage';
 import EntitiesPage from './pages/Entities/EntitiesPage'; 
 import Price from './components/ui/Price';
-import SearchBar from './components/ui/Searchbar';
+import SearchBar from './components/ui/SearchBar';
 import './styles/App.css';
+import EntityVisuals from './components/entity/Entityvisuals';
 
 function App() {
   const location = useLocation();
@@ -27,8 +28,8 @@ function App() {
 
   const sentimentStyle = {
     position: 'fixed',
-    top: '230px',
-    left: '290px', // Adjust this value to position it next to Price
+    top: '30px',
+    left: '18vw', // Adjust this value to position it next to Price
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -52,10 +53,10 @@ function App() {
               <Entity />
               <Price id="2"/>
               <span style={sentimentStyle}>
-              <SentimentScore />
+              <SentimentScore /> 
               </span>
             </div>
-
+            <EntityVisuals/>
             <EntityNews/>
           </>
 
