@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Pagination from 'react-bootstrap/Pagination';
 import SearchBar from '../ui/Searchbar';
 import Filter from "./Filter";
+import Sort from './Sort'; 
 
 // Dummy news data
 const newsData = [
@@ -18,7 +19,7 @@ const newsData = [
     "title" : "3 Reasons to Buy TSMC Stock Beyond Record Q4 Net Profit - Yahoo Finance",
     "url" : "https:\/\/finance.yahoo.com\/news\/3-reasons-buy-tsmc-stock-200500471.html",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.67
   },
   {
     "id" : 137,
@@ -28,7 +29,7 @@ const newsData = [
     "title" : "TSMC Arizona offers new jobs via Technician Apprentice Program - Arizona Big Media",
     "url" : "https:\/\/azbigmedia.com\/business\/tsmc-arizona-offers-new-jobs-via-technician-apprentice-program\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.65
   },
   {
     "id" : 138,
@@ -38,7 +39,7 @@ const newsData = [
     "title" : "TSMC says all its sites operating following Taiwan quake - AOL",
     "url" : "https:\/\/www.aol.com\/news\/tsmc-says-sites-operating-following-040739515.html",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.92
   },
   {
     "id" : 139,
@@ -48,7 +49,7 @@ const newsData = [
     "title" : "[News] TSMC Reportedly Expects Fab 18 Recovery by Jan. 23, Fab 14 Timeline Uncertain After 6.4 Earthquake - TrendForce",
     "url" : "https:\/\/www.trendforce.com\/news\/2025\/01\/24\/news-tsmc-reportedly-expects-fab-18-recovery-by-jan-23-fab-14-timeline-uncertain-after-6-4-magnitude-earthquake\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.43
   },
   {
     "id" : 140,
@@ -58,7 +59,7 @@ const newsData = [
     "title" : "[News] TSMC Reportedly Expects Fab 18 Recovery by Jan. 23, Fab 14 Timeline Uncertain After 6.4 Earthquake - TrendForce",
     "url" : "https:\/\/www.trendforce.com\/news\/2025\/01\/24\/news-tsmc-reportedly-expects-fab-18-recovery-by-jan-23-fab-14-timeline-uncertain-after-6-4-magnitude-earthquake\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.23
   }, 
   {
     "id" : 141,
@@ -68,7 +69,7 @@ const newsData = [
     "title" : "3 Reasons to Buy TSMC Stock Beyond Record Q4 Net Profit - Yahoo Finance",
     "url" : "https:\/\/finance.yahoo.com\/news\/3-reasons-buy-tsmc-stock-200500471.html",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.3
   },
   {
     "id" : 142,
@@ -78,7 +79,7 @@ const newsData = [
     "title" : "TSMC Arizona offers new jobs via Technician Apprentice Program - Arizona Big Media",
     "url" : "https:\/\/azbigmedia.com\/business\/tsmc-arizona-offers-new-jobs-via-technician-apprentice-program\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.8
   },
   ,
   {
@@ -89,7 +90,7 @@ const newsData = [
     "title" : "[News] TSMC Reportedly Expects Fab 18 Recovery by Jan. 23, Fab 14 Timeline Uncertain After 6.4 Earthquake - TrendForce",
     "url" : "https:\/\/www.trendforce.com\/news\/2025\/01\/24\/news-tsmc-reportedly-expects-fab-18-recovery-by-jan-23-fab-14-timeline-uncertain-after-6-4-magnitude-earthquake\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.92
   }, 
   {
     "id" : 145,
@@ -99,7 +100,7 @@ const newsData = [
     "title" : "3 Reasons to Buy TSMC Stock Beyond Record Q4 Net Profit - Yahoo Finance",
     "url" : "https:\/\/finance.yahoo.com\/news\/3-reasons-buy-tsmc-stock-200500471.html",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.83
   },
   {
     "id" : 146,
@@ -109,7 +110,7 @@ const newsData = [
     "title" : "TSMC Arizona offers new jobs via Technician Apprentice Program - Arizona Big Media",
     "url" : "https:\/\/azbigmedia.com\/business\/tsmc-arizona-offers-new-jobs-via-technician-apprentice-program\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.43
   },
   ,
   {
@@ -120,7 +121,7 @@ const newsData = [
     "title" : "[News] TSMC Reportedly Expects Fab 18 Recovery by Jan. 23, Fab 14 Timeline Uncertain After 6.4 Earthquake - TrendForce",
     "url" : "https:\/\/www.trendforce.com\/news\/2025\/01\/24\/news-tsmc-reportedly-expects-fab-18-recovery-by-jan-23-fab-14-timeline-uncertain-after-6-4-magnitude-earthquake\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.49
   }, 
   {
     "id" : 148,
@@ -130,7 +131,7 @@ const newsData = [
     "title" : "3 Reasons to Buy TSMC Stock Beyond Record Q4 Net Profit - Yahoo Finance",
     "url" : "https:\/\/finance.yahoo.com\/news\/3-reasons-buy-tsmc-stock-200500471.html",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.33
   },
   {
     "id" : 149,
@@ -140,7 +141,7 @@ const newsData = [
     "title" : "TSMC Arizona offers new jobs via Technician Apprentice Program - Arizona Big Media",
     "url" : "https:\/\/azbigmedia.com\/business\/tsmc-arizona-offers-new-jobs-via-technician-apprentice-program\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.93
   },
   ,
   {
@@ -151,7 +152,7 @@ const newsData = [
     "title" : "[News] TSMC Reportedly Expects Fab 18 Recovery by Jan. 23, Fab 14 Timeline Uncertain After 6.4 Earthquake - TrendForce",
     "url" : "https:\/\/www.trendforce.com\/news\/2025\/01\/24\/news-tsmc-reportedly-expects-fab-18-recovery-by-jan-23-fab-14-timeline-uncertain-after-6-4-magnitude-earthquake\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.97
   }, 
   {
     "id" : 151,
@@ -161,7 +162,7 @@ const newsData = [
     "title" : "3 Reasons to Buy TSMC Stock Beyond Record Q4 Net Profit - Yahoo Finance",
     "url" : "https:\/\/finance.yahoo.com\/news\/3-reasons-buy-tsmc-stock-200500471.html",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.45
   },
   {
     "id" : 152,
@@ -171,7 +172,7 @@ const newsData = [
     "title" : "TSMC Arizona offers new jobs via Technician Apprentice Program - Arizona Big Media",
     "url" : "https:\/\/azbigmedia.com\/business\/tsmc-arizona-offers-new-jobs-via-technician-apprentice-program\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.32
   },
   ,
   {
@@ -182,7 +183,7 @@ const newsData = [
     "title" : "[News] TSMC Reportedly Expects Fab 18 Recovery by Jan. 23, Fab 14 Timeline Uncertain After 6.4 Earthquake - TrendForce",
     "url" : "https:\/\/www.trendforce.com\/news\/2025\/01\/24\/news-tsmc-reportedly-expects-fab-18-recovery-by-jan-23-fab-14-timeline-uncertain-after-6-4-magnitude-earthquake\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.44
   }, 
   {
     "id" : 154,
@@ -192,7 +193,7 @@ const newsData = [
     "title" : "3 Reasons to Buy TSMC Stock Beyond Record Q4 Net Profit - Yahoo Finance",
     "url" : "https:\/\/finance.yahoo.com\/news\/3-reasons-buy-tsmc-stock-200500471.html",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.5
   },
   {
     "id" : 155,
@@ -202,7 +203,7 @@ const newsData = [
     "title" : "TSMC Arizona offers new jobs via Technician Apprentice Program - Arizona Big Media",
     "url" : "https:\/\/azbigmedia.com\/business\/tsmc-arizona-offers-new-jobs-via-technician-apprentice-program\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.3
   },
   
   {
@@ -213,7 +214,7 @@ const newsData = [
     "title" : "[News] TSMC Reportedly Expects Fab 18 Recovery by Jan. 23, Fab 14 Timeline Uncertain After 6.4 Earthquake - TrendForce",
     "url" : "https:\/\/www.trendforce.com\/news\/2025\/01\/24\/news-tsmc-reportedly-expects-fab-18-recovery-by-jan-23-fab-14-timeline-uncertain-after-6-4-magnitude-earthquake\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.9
   }, 
   {
     "id" : 151,
@@ -223,7 +224,7 @@ const newsData = [
     "title" : "3 Reasons to Buy TSMC Stock Beyond Record Q4 Net Profit - Yahoo Finance",
     "url" : "https:\/\/finance.yahoo.com\/news\/3-reasons-buy-tsmc-stock-200500471.html",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.1
   },
   {
     "id" : 152,
@@ -233,7 +234,7 @@ const newsData = [
     "title" : "TSMC Arizona offers new jobs via Technician Apprentice Program - Arizona Big Media",
     "url" : "https:\/\/azbigmedia.com\/business\/tsmc-arizona-offers-new-jobs-via-technician-apprentice-program\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.1
   },
   ,
   {
@@ -244,7 +245,7 @@ const newsData = [
     "title" : "[News] TSMC Reportedly Expects Fab 18 Recovery by Jan. 23, Fab 14 Timeline Uncertain After 6.4 Earthquake - TrendForce",
     "url" : "https:\/\/www.trendforce.com\/news\/2025\/01\/24\/news-tsmc-reportedly-expects-fab-18-recovery-by-jan-23-fab-14-timeline-uncertain-after-6-4-magnitude-earthquake\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.3
   }, 
   {
     "id" : 154,
@@ -254,7 +255,7 @@ const newsData = [
     "title" : "3 Reasons to Buy TSMC Stock Beyond Record Q4 Net Profit - Yahoo Finance",
     "url" : "https:\/\/finance.yahoo.com\/news\/3-reasons-buy-tsmc-stock-200500471.html",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.9
   },
   {
     "id" : 155,
@@ -264,7 +265,7 @@ const newsData = [
     "title" : "TSMC Arizona offers new jobs via Technician Apprentice Program - Arizona Big Media",
     "url" : "https:\/\/azbigmedia.com\/business\/tsmc-arizona-offers-new-jobs-via-technician-apprentice-program\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.33
   },
   {
     "id" : 150,
@@ -274,7 +275,7 @@ const newsData = [
     "title" : "[News] TSMC Reportedly Expects Fab 18 Recovery by Jan. 23, Fab 14 Timeline Uncertain After 6.4 Earthquake - TrendForce",
     "url" : "https:\/\/www.trendforce.com\/news\/2025\/01\/24\/news-tsmc-reportedly-expects-fab-18-recovery-by-jan-23-fab-14-timeline-uncertain-after-6-4-magnitude-earthquake\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.46
   }, 
   {
     "id" : 151,
@@ -284,7 +285,7 @@ const newsData = [
     "title" : "3 Reasons to Buy TSMC Stock Beyond Record Q4 Net Profit - Yahoo Finance",
     "url" : "https:\/\/finance.yahoo.com\/news\/3-reasons-buy-tsmc-stock-200500471.html",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.76
   },
   {
     "id" : 152,
@@ -294,7 +295,7 @@ const newsData = [
     "title" : "TSMC Arizona offers new jobs via Technician Apprentice Program - Arizona Big Media",
     "url" : "https:\/\/azbigmedia.com\/business\/tsmc-arizona-offers-new-jobs-via-technician-apprentice-program\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.68
   },
   ,
   {
@@ -305,7 +306,7 @@ const newsData = [
     "title" : "[News] TSMC Reportedly Expects Fab 18 Recovery by Jan. 23, Fab 14 Timeline Uncertain After 6.4 Earthquake - TrendForce",
     "url" : "https:\/\/www.trendforce.com\/news\/2025\/01\/24\/news-tsmc-reportedly-expects-fab-18-recovery-by-jan-23-fab-14-timeline-uncertain-after-6-4-magnitude-earthquake\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.96
   }, 
   {
     "id" : 154,
@@ -315,7 +316,7 @@ const newsData = [
     "title" : "3 Reasons to Buy TSMC Stock Beyond Record Q4 Net Profit - Yahoo Finance",
     "url" : "https:\/\/finance.yahoo.com\/news\/3-reasons-buy-tsmc-stock-200500471.html",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.54
   },
   {
     "id" : 155,
@@ -325,7 +326,7 @@ const newsData = [
     "title" : "TSMC Arizona offers new jobs via Technician Apprentice Program - Arizona Big Media",
     "url" : "https:\/\/azbigmedia.com\/business\/tsmc-arizona-offers-new-jobs-via-technician-apprentice-program\/",
     "entities" : "{\"entities\": [\"TSMC\"]}",
-    "sentiment" : null
+    "sentiment" : 0.55
   },
 ];
 
@@ -396,8 +397,20 @@ const News = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState("all"); // Store selected filter
+  const [sortOrder, setSortOrder] = useState('asc'); // Default sorting to ascending
   const newsPerPage = 4;
   const now = new Date();
+
+  console.log("Current Page:", currentPage);
+  console.log("Total News Items:", newsData.length);
+  console.log("Sort Order:", sortOrder);
+
+  // Handle sort order change
+  const handleSortChange = (event) => {
+    console.log('Sort Order:', event);
+    const value = event;
+    setSortOrder(value); // Change sort order to ascending or descending
+  };
 
   // Handle search term change
   const handleSearchChange = (term) => {
@@ -424,14 +437,29 @@ const News = () => {
       return true; // "All Time" (default)
     })
     .filter((news) => news.title.toLowerCase().includes(searchTerm.toLowerCase()));
+  
+  // Sort the filtered news based on sentiment score
+  const sortedNews = [...filteredNews].sort((a, b) => {
+    if (sortOrder === 'asc') {
+      return a.sentiment - b.sentiment; // Ascending order
+    } else {
+      return b.sentiment - a.sentiment; // Descending order
+    }
+  });
 
   // Calculate total pages
-  const totalPages = filteredNews.length > 0 ? Math.ceil(filteredNews.length / newsPerPage) : 1;
+  const totalPages = sortedNews.length > 0 ? Math.ceil(sortedNews.length / newsPerPage) : 1;
+
+  console.log("Total Pages:", totalPages);
 
   // Get the news for the current page
   const indexOfLastNews = currentPage * newsPerPage;
   const indexOfFirstNews = indexOfLastNews - newsPerPage;
-  const currentNews = filteredNews.slice(indexOfFirstNews, indexOfLastNews);
+  const currentNews = sortedNews.slice(indexOfFirstNews, indexOfLastNews);
+
+  console.log("Index of First News:", indexOfFirstNews);
+  console.log("Index of Last News:", indexOfLastNews);
+  console.log("Current News Data:", currentNews);
 
   // Handle pagination
   const paginate = (pageNumber) => {
@@ -463,7 +491,10 @@ const News = () => {
 return (
   <Container>
     <h2 className="text-center my-4">Latest News</h2>
-    <Filter onFilterChange={handleFilterChange} />
+    <div style={{ display: 'flex', width: '100%' }}>
+        <Filter onFilterChange={handleFilterChange} style={{ marginRight: '10px' }}/>
+        <Sort onSortChange={handleSortChange} />
+    </div>
     <SearchBar onSearchChange={handleSearchChange} />
 
     {/* Wrap the news content inside a div */}

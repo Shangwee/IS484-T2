@@ -20,10 +20,12 @@ const styles = {
     alignItems: "center",
     gap: "10px",
     marginBottom: "20px",
+    paddingRight: "20px",
   },
   filterLabel: {
     fontSize: "14px",
     fontWeight: "bold",
+    color: "black",
   },
   filterDropdown: {
     padding: "5px",
