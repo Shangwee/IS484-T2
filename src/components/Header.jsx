@@ -1,5 +1,5 @@
 import React from 'react';
-import Searchbar from './ui/SearchBar';
+// import Searchbar from './ui/SearchBar';
 import Backbutton from './ui/BackButton';
 import { useLocation } from 'react-router-dom';
 
@@ -13,7 +13,6 @@ const Header = () => {
   return (
     <header style={styles.header}>
       {!isBackButtonNotVisible && <Backbutton />}
-      {/* <Searchbar /> */}
     </header>
   );
 };
