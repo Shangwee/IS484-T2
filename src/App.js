@@ -4,13 +4,13 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Im
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Entity from './components/entity/Entity';
-import SentimentScore from './components/ui/SentimentScore';
+import SentimentScore from './components/ui/Sentimentscore';
 import EntityNews from './components/entity/Entitynews';
 import NewsPage from './pages/News/NewsPage';
 import IndividualNewsPage from './pages/News/IndividualNewsPage';
 import EntitiesPage from './pages/Entities/EntitiesPage'; 
 import Price from './components/ui/Price';
-import SearchBar from './components/ui/SearchBar';
+import SearchBar from './components/ui/Searchbar';
 import './styles/App.css';
 import EntityVisuals from './components/entity/Entityvisuals';
 

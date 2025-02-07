@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col } from 'react-bootstrap';
-import SentimentScore from '../ui/SentimentScore';
+import SentimentScore from '../ui/Sentimentscore';
 import { Link } from 'react-router-dom'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Pagination from 'react-bootstrap/Pagination';
-import SearchBar from '../ui/SearchBar';
 import Filter from "./Filter";
 import Sort from './Sort'; 
 
