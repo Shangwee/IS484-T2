@@ -86,7 +86,7 @@ def protected():
         "email": current_user.email
     }
 
-    return format_response(user_data, f"Hello {user_data["username"]}", 200)
+    return format_response(user_data, f"Hello {user_data['username']}", 200)
 
 # User Logout (Optional if using client-side token management)
 @auth_bp.route('/logout', methods=['POST'])
