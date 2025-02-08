@@ -3,16 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col } from 'react-bootstrap';
 import SentimentScore from '../ui/Sentimentscore';
 import { Link } from 'react-router-dom'; 
-// Dummy news data
-const entityData = [
-  {
-        "id" : 1,
-		"name" : "TSMC",
-	    "summary" : "TSMC is a Taiwanese multinational semiconductor contract manufacturing and design company. It is the world's most valuable semiconductor company, the world's largest dedicated independent (pure-play) semiconductor foundry, and one of the largest semiconductor companies in the world.",
-		"sentiment" : 0.5,
-	},
-	
-];
+import useFetch from '../../hooks/useFetch';
 
 // Main News Component
 const Entity = () => {
@@ -46,6 +37,16 @@ const Entity = () => {
           marginLeft: 'auto', // Pushes the sentiment score to the far right
         },
       };
+
+    // defind url for fetching data
+    const url = `/entities`;
+
+    // useFetch hook to fetch data
+    const { data, loading, error } = useFetch(url);
+
+    const entityData = data ? data.data : [];
+
+    console.log("here is the data" , entityData);
       
     return ( 
         <Container fluid className="news-container">
@@ -61,7 +62,7 @@ const Entity = () => {
                     <div style={styles.entityHeader} className='entity-header'>
                         <h4 style={styles.entityName}>{entityItem.name}</h4> 
                         <span style={styles.sentiment}>
-                            <SentimentScore  entityId={entityItem.id} />
+                            <SentimentScore  sentiment={entityItem.sentiment_score} />
                         </span>
                     </div>
                   <p style={styles.entitySummary}>{entityItem.summary}</p> 
