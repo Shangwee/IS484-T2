@@ -5,76 +5,10 @@ import SentimentScore from '../ui/Sentimentscore';
 import { Link } from 'react-router-dom'; 
 import { useLocation } from 'react-router-dom';
 import SearchBar from '../ui/Searchbar';
-
-// Dummy news data 
-const newsData = [
-  {
-    id: 1,
-    title: 'Google-related news 1',
-    entity: ['TSMC', 'Google'],
-    publisher : "Yahoo Finance",
-    description : "Taiwan Semiconductor Manufacturing Company Limited TSM, better known as TSMC...",
-    date: '2023-10-15',
-    link: 'https://example.com/news1',
-    summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ',
-  },
-  {
-    id: 2,
-    title: 'Google-related news 2',
-    entity: ['TSMC', 'Google'],
-    publisher : "Google Finance",
-    description : "Taiwan Semiconductor Manufacturing Company Limited TSM, better known as TSMC...",
-    date: '2023-10-15',
-    link: 'https://example.com/news1',
-    summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  },
-  {
-    id: 3,
-    title: 'Google-related news 3',
-    entity: ['TSMC', 'Google'],
-    description : "Taiwan Semiconductor Manufacturing Company Limited TSM, better known as TSMC...",
-    publisher : "Test Finance",
-    date: '2023-10-15',
-    link: 'https://example.com/news1',
-    summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem.',
-  },
-  {
-    id: 4,
-    title: 'Google-related news 4',
-    entity: ['TSMC', 'Google'],
-    description : "Taiwan Semiconductor Manufacturing Company Limited TSM, better known as TSMC...",
-    publisher : "Go Finance",
-    date: '2023-10-15',
-    link: 'https://example.com/news1',
-    summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem.',
-  }
-, 
-{
-  id: 5,
-  title: 'Google-related news 122',
-  entity: ['TSMC', 'Google'],
-  description : "Taiwan Semiconductor Manufacturing Company Limited TSM, better known as TSMC...",
-  publisher : "Go Finance",
-  date: '2023-10-15',
-  link: 'https://example.com/news1',
-  summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem.',
-}
-,
-{
-  id: 6,
-  title: 'Google-related news 123',
-  entity: ['TSMC', 'Google'],
-  description : "Taiwan Semiconductor Manufacturing Company Limited TSM, better known as TSMC...",
-  publisher : "Go Finance",
-  date: '2023-10-15',
-  link: 'https://example.com/news1',
-  summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem.',
-}
-
-]; 
+import useFetch from '../../hooks/useFetch';
 
 // Main News Component
-const News = () => {
+const News = (EntityName) => {
   const styles = {
     newsBox: {
       position: 'relative',
@@ -136,6 +70,14 @@ const News = () => {
   const { entity } = location.state || {entity: null};
   console.log(entity);  
   
+  // Fetch news data
+  const url = `/news/${EntityName.EntityName}`;
+  const { data, loading, error } = useFetch(url);
+
+  // Extract news data from the response
+  const newsData = data ? data.data : [];
+  console.log("News Data:", newsData);
+
 
   // Filter news based on search term
   const filteredNews = newsData.filter((news) =>
@@ -209,13 +151,13 @@ const News = () => {
             <Col key={news.id || index} md={6} className="mb-4">
               <div style={styles.newsBox}>
                 <h4 style={styles.newsHeader}>
-                  <Link to={news.link} target="_blank" rel="noopener noreferrer" style={styles.newsLink}>
+                  <Link to={news.url} target="_blank" rel="noopener noreferrer" style={styles.newsLink}>
                     {news.title}
                   </Link>
                 </h4>
                 <p style={styles.newsSummary}><strong>Publisher:</strong> {news.publisher}</p>
-                <p style={styles.newsDate}><strong>Date:</strong> {new Date(news.date).toDateString()}</p>
-                <p style={styles.newsSummary}>{news.description?.slice(0, 150)}...</p>
+                <p style={styles.newsDate}><strong>Date:</strong> {new Date(news.published_date).toDateString()}</p>
+                <p style={styles.newsSummary}>{news.summary?.slice(0, 150)}...</p>
                 {/* SentimentScore component */}
                 <div style={styles.sentimentScore}>
                   <SentimentScore sentiment={news.sentiment || "N/A"} />
@@ -237,5 +179,3 @@ const News = () => {
 };
 
 export default News;
-
-export { newsData };

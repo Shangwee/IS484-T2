@@ -17,4 +17,5 @@
     <include file="db/changelog/add-ticker-to-entity-4.xml"/>
     <include file="db/changelog/add-seed-news-data-5.xml"/>
     <include file="db/changelog/alter-news-id-sequence-6.xml"/>
+    <include file="db/changelog/update_entity_summary-7.xml"/>
 </databaseChangeLog>

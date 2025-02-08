@@ -13,6 +13,7 @@ import Price from './components/ui/Price';
 import SearchBar from './components/ui/Searchbar';
 import './styles/App.css';
 import EntityVisuals from './components/entity/Entityvisuals';
+import useFetch from './hooks/useFetch';
 
 function App() {
   const location = useLocation();
@@ -35,9 +36,15 @@ function App() {
     justifyContent: 'center',
   };
 
-  const stockID = "1"; // Hardcoded stock ID for now
+
+  const url = `/entities/2`; // hardcode for now
   
-  
+  const { data, loading, error } = useFetch(url); // Fetch the data
+
+  const EntityName = data ? data.data.name : "N/A"; // Extract the entity name from the data
+
+  const stockID = data ? data.data.id : "N/A"; // Extract the stock ID from the data
+
   return (
     
     <div className="App">
@@ -50,14 +57,14 @@ function App() {
         (
           <>
             <div style={containerStyle}>
-              <Entity />
-              <Price id="2"/>
+              <Entity id={stockID}/>
+              <Price id={stockID}/>
               <span style={sentimentStyle}>
               <SentimentScore /> 
               </span>
             </div>
             <EntityVisuals/>
-            <EntityNews/>
+            <EntityNews EntityName={EntityName}/>
           </>
 
         )}

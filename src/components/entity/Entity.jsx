@@ -1,10 +1,19 @@
 import React from 'react';
+import useFetch from '../../hooks/useFetch';
 
-function Entity() {
+function Entity(id) {
+  const number = id.id;
+
+  const url = `/entities/${number}`;
+
+  const { data, loading, error } = useFetch(url);
+
+  const entity = data ? data.data : "N/A";
+
   return (
     <div>
       <h1 style={styles.entityname}>
-        Taiwan Semiconductor Manufacturing Company Limited (TSMC)
+        {entity.name}
       </h1>
     </div>
   );

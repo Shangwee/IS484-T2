@@ -1,9 +1,11 @@
 import React from 'react';
 
-function SentimentScore() {
+function SentimentScore(sentiment) { 
+
+  console.log(sentiment.sentiment);
   return (
          <div style={styles.greenbox}>
-          0.95
+          {sentiment.sentiment? sentiment.sentiment : "N/A"}
          </div>
   );
 }
