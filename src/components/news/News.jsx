@@ -222,7 +222,7 @@ return (
                 </div>
                 <p style={styles.newsSummary}><strong>Publisher:</strong> {news.publisher}</p>
                 <p style={styles.newsDate}><strong>Date:</strong> {new Date(news.published_date).toDateString()}</p>
-                <p style={styles.newsSummary}>{news.summary?.slice(0, 300)}</p>
+                <p style={styles.newsSummary}>{news.description?.slice(0, 300)}</p>
               </div>
               </div>
 
