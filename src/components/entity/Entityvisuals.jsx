@@ -66,19 +66,17 @@ function EntityVisuals(id) {
 
 const styles = {
   entityBox: {
-    position: "fixed",
-    top: "185px",
-    left: "259px",
-    width: "1180px",
-    display: "flex",
-    flexDirection: "column",
+    position: "relative", // ✅ Change from "fixed" to "relative"
+    width: "90%", // Make it responsive
+    maxWidth: "1200px",
     backgroundColor: "white",
     borderRadius: "15px",
     padding: "20px",
     boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
     justifyContent: "center",
     alignItems: "center",
-    height: "50%",
+    height: "auto", // ✅ Allow it to scale dynamically
+    margin: "20px auto", // ✅ Center horizontally and add spacing
   },
   entityText: {
     fontSize: "28px",
@@ -88,6 +86,7 @@ const styles = {
     marginBottom: "20px",
   },
 };
+
 
 export default EntityVisuals;
 
