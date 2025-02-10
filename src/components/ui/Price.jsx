@@ -19,30 +19,32 @@ function Price(id) {
     </div>
   );
 }
-
 const styles = {
   container: {
-    position: 'fixed', // Fixes the position relative to the viewport
-    top: '30px', // Adjust this value to your preference
-    left: '22vw', // Adjust this value to your preference
+    position: 'relative', // Use relative positioning for better flexibility
     display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '50px',    
+    justifyContent: 'center', // Center horizontally
+    alignItems: 'center', // Center vertically
+    height: 'auto', // Dynamic height based on content
+    padding: '10px', // Add padding for spacing
+    boxSizing: 'border-box',
+    maxWidth: '1200px', // Limit maximum width for larger screens
+    margin: '0 auto', // Center the container horizontally
   },
   price: {
     backgroundColor: 'grey',
     borderRadius: '15px',
     color: 'black',
-    fontSize: '20px',
+    fontSize: "calc(1px + 1vw)",  // Adjust font size dynamically based on viewport width
     fontWeight: 'bold',
-    padding: '5px 15px',
-    margin: '0 50px', // Adjusted margin
+    padding: '8px 16px', // Adjusted padding for better spacing
+    margin: '0 10px', // Reduced margin for better responsiveness
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '50px',
-  }
+    height: 'auto', // Dynamic height based on content
+    minWidth: '150px', // Prevent excessive shrinking on small screens
+    boxSizing: 'border-box',
+  },
 };
-
-export default Price;
+export default Price

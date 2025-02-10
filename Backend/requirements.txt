@@ -26,6 +26,7 @@ requests_cache
 nltk==3.9.1
 transformers==4.47.0  # For advanced NLP (e.g., OpenAI GPT models)
 lxml[html_clean]
+lxml_html_clean
 
 # Summarisation and Text Generation
 google-generativeai

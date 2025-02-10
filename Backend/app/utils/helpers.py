@@ -2,6 +2,9 @@ from flask import jsonify
 import requests
 from newspaper import article
 from googlenewsdecoder import new_decoderv1
+import os
+from dotenv import load_dotenv
+import google.generativeai as genai
 
 # ** General-purpose helper functions for common tasks like formatting responses or handling dates.
 
@@ -86,3 +89,20 @@ def get_article_details(url):
     }
     
     return details
+
+def summarise_news(news_text, summary_length):
+    # Load environment variables from .env file
+    load_dotenv()
+
+    api_key = os.getenv("GEMINI_API_KEY")  # Retrieve API key securely
+
+    if not api_key:
+        raise ValueError("API key not found. Please set the GEMINI_API_KEY in the .env file.")
+
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel("gemini-1.5-flash")
+
+    response = model.generate_content(f"summarise this in {summary_length} words or less: {news_text}")
+
+    # Return only the text of the response
+    return response.candidates[0].content.parts[0].text

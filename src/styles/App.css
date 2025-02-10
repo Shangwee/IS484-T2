@@ -44,7 +44,7 @@ body, html, #root {
 .sidebar.collapsed {
   width: 80px; /* Collapsed width */
 }
-
+  
 .sidebar.collapsed .sidebar-content {
   display: none; /* Hide content when collapsed */
 }
@@ -176,17 +176,6 @@ body {
   flex-direction: column;
 }
 
-.news-container {
-  position: fixed;
-  left: 15vw;  /* Adjusted to accommodate sidebar */
-  bottom: 0;  /* Pushes the container to the bottom of the screen */
-  display: flex;  /* Use flex for positioning the content */
-  flex-direction: column;
-  padding: 20px;
-  gap: 30px;
-  
-}
-  
 
 .news-box {
   padding: 20px; /* Reduced padding for responsiveness */
@@ -209,4 +198,35 @@ body {
   font-size: 1.2rem; /* Adjusted font size for summary */
   color: #555;
   margin: 0; /* Remove default margin for a cleaner look */
+}
+
+/* entity */
+
+/* Scrollable Container */
+.news-container {
+  max-height: 600px; /* Set a maximum height for the container */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding: 20px; /* Add padding for spacing */
+  background-color: #f9f9f9; /* Optional: Add a background color */
+  border-radius: 8px; /* Optional: Add rounded corners */
+  position: fixed;
+  left: 15vw;  /* Adjusted to accommodate sidebar */
+  bottom: 0;  /* Pushes the container to the bottom of the screen */
+  display: flex;  /* Use flex for positioning the content */
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Scrollbar Styling (Optional) */
+.news-container::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+.news-container::-webkit-scrollbar-thumb {
+  background-color: #ccc; /* Color of the scrollbar thumb */
+  border-radius: 4px; /* Rounded corners for the thumb */
+}
+
+.news-container::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Color of the scrollbar track */
 }

@@ -63,6 +63,7 @@ function EntityVisuals(id) {
   );
 }
 
+
 const styles = {
   entityBox: {
     position: "fixed",
@@ -89,3 +90,4 @@ const styles = {
 };
 
 export default EntityVisuals;
+

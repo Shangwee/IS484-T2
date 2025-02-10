@@ -36,21 +36,21 @@ const News = () => {
       flexWrap: 'wrap', // Allows wrapping on smaller screens
     },
   newsHeader: {
-    fontSize: 'calc(1rem + 0.5vw)', // Dynamic font size for better responsiveness
+    fontSize: 'calc(0.5vw)', // Dynamic font size for better responsiveness
     fontWeight: 'bold',
     color: 'black',
     margin: 0, // Prevents unnecessary margin causing misalignment
     marginBottom: '10px',
   },
   newsSummary: {
-    fontSize: 'calc(0.8rem + 0.5vw)', // Slightly smaller than the header
+    fontSize: 'calc(0.8rem)', // Slightly smaller than the header
     color: 'black',
     marginBottom: '5px',
   },
   newsDate: {
-    fontSize: 'calc(0.7rem + 0.5vw)', // Smaller font size for the date
+    fontSize: 'calc(0.8rem )', // Smaller font size for the date
     color: 'black',
-    marginBottom: '10px',
+    marginBottom: '5px',
   },
   newsLink: {
     fontSize: 'calc(0.9rem + 0.5vw)', // Slightly smaller than the header
@@ -61,7 +61,7 @@ const News = () => {
     position:'absolute',
     top:'10px',
     right:'10px',
-    fontSize: '0.8rem', // Adjusted for readability
+    fontSize: '0.2rem', // Adjusted for readability
     color: 'black',
     fontWeight: 'bold',
     textAlign: 'right', // Aligns it properly
@@ -201,10 +201,10 @@ return (
       <Row className="mt-4">
         {currentNews.length > 0 ? (
           currentNews.map((news, index) => (
-            <Col key={news.id || index} xs={12} sm={6} md={4} lg={3} className="d-flex justify-content-center mb-4">
+            <Col key={news.id || index} xs={12} sm={6} className="d-flex justify-content-center mb-4">
               <div style={styles.newsBox}>
                 <div style={styles.headerContainer}>
-                <div style={{ marginTop: '50px' }}> {/* Offset to avoid overlapping */}
+                <div style={{ marginTop: '25px' }}> {/* Offset to avoid overlapping */}
 
                   <h4 style={styles.newsHeader} >
                     <Link
@@ -222,7 +222,7 @@ return (
                 </div>
                 <p style={styles.newsSummary}><strong>Publisher:</strong> {news.publisher}</p>
                 <p style={styles.newsDate}><strong>Date:</strong> {new Date(news.published_date).toDateString()}</p>
-                <p style={styles.newsSummary}>{news.summary?.slice(0, 300)}</p>
+                <p style={styles.newsSummary}>{news.description?.slice(0, 300)}</p>
               </div>
               </div>
 
