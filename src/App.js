@@ -63,7 +63,7 @@ function App() {
               <SentimentScore /> 
               </span>
             </div>
-            <EntityVisuals/>
+            <EntityVisuals id={stockID}/>
             <EntityNews EntityName={EntityName}/>
           </>
 
@@ -71,10 +71,9 @@ function App() {
         <Routes> 
           <Route path="/EntitiesPage" element={<EntitiesPage />} /> {/* Entities Page  */}
           <Route path="/NewsPage" element={<NewsPage />} /> {/* News Page */}
-          <Route path="/IndividualNewsPage" element={<IndividualNewsPage />} />
+          <Route path="/IndividualNewsPage" element={<IndividualNewsPage/>} />
         </Routes>
-        
-
+      
       </header>
     </div>
 
