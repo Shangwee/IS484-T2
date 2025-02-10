@@ -1,9 +1,10 @@
 form {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: center; /* Center the form horizontally */
   margin-bottom: 1rem;
-  width: 100%;
+  width: 100%; /* Full width of the container */
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
 }
 
 input[type="text"] {
@@ -12,9 +13,12 @@ input[type="text"] {
   border: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(0, 0, 0, 0.2);
-  width: 100%;
-  max-width: 250px;
+  width: 100%; /* Full width on small screens */
+  max-width: 250px; /* Maximum width for larger screens */
   margin-right: 0.5rem;
+  margin-bottom: 0.5rem; /* Add bottom margin for stacking on small screens */
+  font-size: calc(0.8rem + 0.5vw); /* Scalable font size */
+  box-sizing: border-box; /* Ensure padding and border are included in width */
 }
 
 button[type="submit"] {
@@ -24,4 +28,25 @@ button[type="submit"] {
   border: none;
   border-radius: 0.25rem;
   cursor: pointer;
+  font-size: calc(0.8rem + 0.5vw); /* Scalable font size */
+  min-width: 100px; /* Minimum width for the button */
+  margin-bottom: 0.5rem; /* Add bottom margin for stacking on small screens */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  form {
+    flex-direction: column; /* Stack input and button vertically */
+    align-items: stretch; /* Stretch items to full width */
+  }
+
+  input[type="text"] {
+    margin-right: 0; /* Remove right margin since items are stacked */
+    width: 100%; /* Take up full width */
+  }
+
+  button[type="submit"] {
+    width: 100%; /* Take up full width */
+    margin-top: 0.5rem; /* Add top margin for spacing */
+  }
 }

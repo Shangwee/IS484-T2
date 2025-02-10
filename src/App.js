@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom'; // Import useLocation correctly
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import Router
 import Sidebar from './components/Sidebar';
-import Header from './components/Header';
+// import Header from './components/Header';
 import Entity from './components/entity/Entity';
 import SentimentScore from './components/ui/Sentimentscore';
 import EntityNews from './components/entity/Entitynews';
@@ -49,8 +49,8 @@ function App() {
     
     <div className="App">
       <header className="App-header">
-        <Header/>
-        <SearchBar/>
+        {/* <Header/> */}
+        {/* <SearchBar/> */}
         <Sidebar/>
 
         {location.pathname === '/' && 
