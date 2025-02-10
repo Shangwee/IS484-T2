@@ -23,29 +23,31 @@ body, html, #root {
 
 /* Sidebar styles */
 .sidebar {
-  border-radius: 5px; 
-  position: fixed;  
-  top: 0;          
-  left: 0;         
-  height: 100vh;
-  background: linear-gradient(to right, #1b80a7, #245a75);
-  overflow-y: auto; 
-  color: white;    
-  padding: 10px;  /* Reduced padding for better responsiveness */
-  width: 15vw;  /* Adjusted width for responsive layout */
-  max-width: 500px; /* Max width for larger screens */
-  transition: width 0.3s ease, opacity 0.3s ease;
-  flex-direction: column;
-  overflow: hidden;
+  border-radius: 5px;
+  position: fixed; /* Fixed position for the sidebar */
+  top: 0; /* Align to the top of the viewport */
+  left: 0; /* Align to the left of the viewport */
+  height: 100vh; /* Full height of the viewport */
+  background: linear-gradient(to right, #1b80a7, #245a75); /* Gradient background */
+  overflow-y: auto; /* Enable vertical scrolling if content overflows */
+  color: white; /* Text color */
+  padding: 10px; /* Padding inside the sidebar */
+  width: calc(15vw + 10px); /* Responsive width based on viewport width */
+  max-width: 300px; /* Maximum width for larger screens */
+  min-width: 80px; /* Minimum width for collapsed state */
+  transition: width 0.3s ease, opacity 0.3s ease; /* Smooth transitions for width and opacity */
+  flex-direction: column; /* Stack items vertically */
+  display: flex; /* Use flexbox for layout */
+  justify-content: flex-start; /* Align items to the start */
 }
 
 .sidebar.collapsed {
-  width: 80px;
+  width: 80px; /* Collapsed width */
 }
 
 .sidebar.collapsed .sidebar-content {
-  display: none;
-} 
+  display: none; /* Hide content when collapsed */
+}
 
 .toggle-btn {
   color: white;
@@ -54,6 +56,7 @@ body, html, #root {
   padding: 5px;
   cursor: pointer;
   margin-bottom: 20px;
+  align-self: center; /* Center the toggle button horizontally */
 }
 
 .toggle-btn:hover {
@@ -71,8 +74,8 @@ body, html, #root {
   text-align: left;
   margin: 5px 0;
   white-space: nowrap;
-  font-size: 1.7rem;  /* Scalable font size */
-  margin-bottom: 2px; 
+  font-size: calc(1.2rem + 0.5vw); /* Scalable font size */
+  margin-bottom: 2px;
 }
 
 .sidebar-content ul {
@@ -82,15 +85,15 @@ body, html, #root {
 
 .sidebar-content li {
   margin: 15px 0;
-  text-align: left; 
-  font-size: 1rem;  /* Scalable font size */
+  text-align: left;
+  font-size: calc(0.9rem + 0.3vw); /* Scalable font size */
   font-weight: bold;
 }
 
-.sidebar-content li span{
+.sidebar-content li span {
   margin: 15px 0;
-  text-align: left; 
-  font-size: 1rem;  /* Scalable font size */
+  text-align: left;
+  font-size: calc(0.9rem + 0.3vw); /* Scalable font size */
   font-weight: bold;
 }
 
@@ -113,6 +116,44 @@ body, html, #root {
   font-weight: bold;
 }
 
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%; /* Full width on small screens */
+    max-width: none; /* Remove max-width restriction */
+    height: auto; /* Adjust height dynamically */
+    position: relative; /* Change position to relative */
+    flex-direction: row; /* Switch to horizontal layout */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    padding: 5px; /* Reduce padding */
+  }
+
+  .sidebar.collapsed {
+    width: auto; /* Allow width to adjust automatically */
+  }
+
+  .toggle-btn {
+    display: none; /* Hide toggle button on small screens */
+  }
+
+  .sidebar-content {
+    flex-direction: row; /* Switch to horizontal layout */
+    gap: 10px; /* Add spacing between items */
+  }
+
+  .sidebar-content h1 {
+    font-size: 1.2rem; /* Smaller font size for small screens */
+  }
+
+  .sidebar-content li {
+    font-size: 0.9rem; /* Smaller font size for small screens */
+    margin: 5px 0; /* Reduce margin */
+  }
+
+  .list1, .list2 {
+    margin-left: 10px; /* Reduce margin for lists */
+  }
+}
 
 /* sidebar style end */
 

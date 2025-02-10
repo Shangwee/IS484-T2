@@ -17,63 +17,69 @@ const News = () => {
   const styles = {
     newsBox: {
       position: 'relative',
-      marginLeft: '140px',
-      height: '300px',
-      width: '565px',
+      margin: '20px auto', // Centers the box horizontally and adds vertical spacing
+      maxWidth: '400px', // Fixed maximum width for consistency
+      width: '100%', // Makes it responsive on smaller screens
+      height: 'auto', // Allows the height to adjust based on content
       borderRadius: '8px',
       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-      padding: '10px',
+      padding: '15px', // Increased padding for better spacing
       backgroundColor: '#fff',
-      marginBottom: '1px',
+      marginBottom: '20px', // Adds space between news boxes
+      boxSizing: 'border-box', // Ensures padding and border are included in width
     },
     headerContainer: {
-      display: 'flex',  // Ensures header & sentiment score are in the same row
-      justifyContent: 'space-between',  // Pushes them apart
-      alignItems: 'center',  // Aligns them vertically
-      width: '100%',  // Ensures full width usage
+      display: 'flex', // Ensures header & sentiment score are in the same row
+      justifyContent: 'space-between', // Pushes them apart
+      alignItems: 'center', // Aligns them vertically
+      width: '100%', // Ensures full width usage
+      flexWrap: 'wrap', // Allows wrapping on smaller screens
     },
-    newsHeader: {
-      fontSize: 'calc(9px + 1vw)',
-      fontWeight: 'bold',
-      color: 'black',
-      margin: 0, // Prevents unnecessary margin causing misalignment
-      marginBottom: '10px', 
-    },
-    newsSummary: {
-      fontSize: 'calc(8px + 0.5vw)', // Dynamic font size
-      color: 'black',
-      marginBottom: '5px',
-    },
-    newsDate: {
-      fontSize: 'calc(7px + 0.5vw)', // Dynamic font size
-      color: 'black',
-      marginBottom: '10px', 
-    },
-    newsLink: {
-      fontSize: 'calc(12px + 0.5vw)',
-      color: 'black',
-      textDecoration: 'none',
-    },
-    sentimentScore: {
-      fontSize: '8px',
-      color: 'black',
-      fontWeight: 'bold',
-      top: '20px',
-      right: '15px',
-      textAlign: 'right', // Aligns it properly
-    },
-    paginationWrapper: {
-      marginTop: '20px',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    noNewsMessageContainer: {
-      height: '500px', // Same height as your news box
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
+  newsHeader: {
+    fontSize: 'calc(0.5vw)', // Dynamic font size for better responsiveness
+    fontWeight: 'bold',
+    color: 'black',
+    margin: 0, // Prevents unnecessary margin causing misalignment
+    marginBottom: '10px',
+  },
+  newsSummary: {
+    fontSize: 'calc(0.8rem)', // Slightly smaller than the header
+    color: 'black',
+    marginBottom: '5px',
+  },
+  newsDate: {
+    fontSize: 'calc(0.8rem )', // Smaller font size for the date
+    color: 'black',
+    marginBottom: '5px',
+  },
+  newsLink: {
+    fontSize: 'calc(0.9rem + 0.5vw)', // Slightly smaller than the header
+    color: 'blue', // Changed to blue for better link visibility
+    textDecoration: 'none',
+  },
+  sentimentScore: {
+    position:'absolute',
+    top:'10px',
+    right:'10px',
+    fontSize: '0.2rem', // Adjusted for readability
+    color: 'black',
+    fontWeight: 'bold',
+    textAlign: 'right', // Aligns it properly
+    zIndex: 1
+  },
+  paginationWrapper: {
+    marginTop: '20px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexWrap: 'wrap', // Allows pagination buttons to wrap on smaller screens
+  },
+  noNewsMessageContainer: {
+    height: '500px', // Same height as your news box
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   };
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -177,27 +183,34 @@ const News = () => {
   }
 
 return (
-  <Container>
-    <h2 className="text-center my-4">Latest News</h2>
-    <div style={{ display: 'flex', width: '100%' }}>
-        <Filter onFilterChange={handleFilterChange} style={{ marginRight: '10px' }}/>
-        <Sort onSortChange={handleSortChange} />
-    </div>
-    <SearchBar onSearchChange={handleSearchChange} />
+  <Container fluid>
+    {/* <h2 className="text-center my-4">Latest News</h2> */}
+    <Row className="justify-content-center mt-3">
+        <Col xs={12} md={4} lg={3} className="mb-3 mb-md-0">
+          <SearchBar onSearchChange={handleSearchChange} />
+        </Col>
+        <Col xs={12} md={4} lg={3} className="mb-3 mb-md-0">
+          <Filter onFilterChange={handleFilterChange} />
+        </Col>
+        <Col xs={12} md={4} lg={3}>
+          <Sort onSortChange={handleSortChange} />
+        </Col>
+      </Row>
 
-    {/* Wrap the news content inside a div */}
-    <div>
-      {currentNews.length > 0 ? (
-        <Row>
-          {currentNews.map((news, index) => (
-            <Col key={news.id || index} md={6} className="mb-4">
+      {/* News Content */}
+      <Row className="mt-4">
+        {currentNews.length > 0 ? (
+          currentNews.map((news, index) => (
+            <Col key={news.id || index} xs={12} sm={6} className="d-flex justify-content-center mb-4">
               <div style={styles.newsBox}>
                 <div style={styles.headerContainer}>
-                  <h4 style={styles.newsHeader}>
-                    <Link 
+                <div style={{ marginTop: '25px' }}> {/* Offset to avoid overlapping */}
+
+                  <h4 style={styles.newsHeader} >
+                    <Link
                       to='/Individualnewspage'
                       state={{ id: news.id }}
-                      rel="noopener noreferrer" 
+                      rel="noopener noreferrer"
                       style={styles.newsLink}
                     >
                       {news.title}
@@ -211,23 +224,28 @@ return (
                 <p style={styles.newsDate}><strong>Date:</strong> {new Date(news.published_date).toDateString()}</p>
                 <p style={styles.newsSummary}>{news.summary?.slice(0, 300)}</p>
               </div>
+              </div>
+
             </Col>
-          ))}
-        </Row>
-      ) : (
-        // Show the "No news available" message in the same space as the Row
-        <div style={styles.noNewsMessageContainer}>
-          <p className="text-center" style={{ fontSize: '16px', fontWeight: 'bold', color: 'black' }}>No news available.</p>
-        </div>
-      )}
-    </div>
+          ))
+        ) : (
+          <div style={styles.noNewsMessageContainer}>
+            <p className="text-center" style={{ fontSize: '16px', fontWeight: 'bold', color: 'black' }}>
+              No news available.
+            </p>
+          </div>
+        )}
+      </Row>
 
-    {/* Pagination Controls */}
-    <div style={styles.paginationWrapper}>
-      <Pagination>{paginationItems}</Pagination>
-    </div>
-  </Container>
-);
-}
-
+      {/* Pagination Controls */}
+      <Row className="justify-content-center ">
+        <Col xs={12} md={8} lg={6}>
+          <div style={styles.paginationWrapper}>
+            <Pagination>{paginationItems}</Pagination>
+          </div>
+        </Col>
+      </Row>
+    </Container>
+  );
+};
 export default News;

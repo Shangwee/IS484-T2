@@ -4,7 +4,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 
 import Entity from '../../components/entity/Entity';
 import Price from '../../components/ui/Price';
-import SentimentScore from '../../components/ui/SentimentScore';
+// import SentimentScore from '../../components/ui/SentimentScore';
 
 function IndividualEntityPage() {
 

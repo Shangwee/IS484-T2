@@ -19,7 +19,7 @@ greenbox:
   justifyContent: "center",
   alignItems: "center",
   color: "black",
-  fontSize: "calc(12px + 1vw)",  // Adjust font size dynamically based on viewport width
+  fontSize: "calc(1px + 1vw)",  // Adjust font size dynamically based on viewport width
   fontWeight: "bold",
   padding: "5px 15px",
   // height: '50px',
