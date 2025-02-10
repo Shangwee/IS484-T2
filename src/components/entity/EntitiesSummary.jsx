@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col } from 'react-bootstrap';
 import SentimentScore from '../ui/Sentimentscore';
@@ -7,6 +7,30 @@ import useFetch from '../../hooks/useFetch';
 
 // Main News Component
 const Entity = () => {
+  const [lineClamp, setLineClamp] = useState(5); // Default line clamp value
+
+  // Dynamically adjust line clamp based on screen width
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 600) {
+        setLineClamp(3); // Fewer lines for smaller screens
+      } else if (window.innerWidth < 900) {
+        setLineClamp(4); // Medium screens
+      } else {
+        setLineClamp(5); // Default for larger screens
+      }
+    };
+
+    // Set initial line clamp value
+    handleResize();
+
+    // Add event listener for window resize
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup event listener on unmount
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
     const styles = {
       entityBox: {
         padding: '20px',
@@ -41,7 +65,7 @@ const Entity = () => {
         overflow: 'hidden', // Prevent content overflow
         textOverflow: 'ellipsis', // Add ellipsis for long text
         display: '-webkit-box', // Enable multi-line ellipsis
-        WebkitLineClamp: 5, // Limit to 3 lines
+        WebkitLineClamp: lineClamp, // Limit to 3 lines
         WebkitBoxOrient: 'vertical', // Vertical orientation for text
         margin: 0, // Remove default margin for p
         marginTop: '15px', // Constant margin between entityName and entitySummary
