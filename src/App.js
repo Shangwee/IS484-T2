@@ -67,13 +67,17 @@ function App() {
 
 // Styles
 const styles = {
+/* The `topRow` style object in the code snippet you provided is defining the styling properties for a
+row that contains multiple components. Here's a breakdown of what each property is doing: */
   topRow: {
+    marginTop: '70px', // Add margin to separate from the top
     display: 'flex', // Align components horizontally
     alignItems: 'center', // Vertically center the components
     boxSizing: 'border-box',
     maxWidth: '600px', // Limit maximum width for larger screens
-    margin: '0 auto', // Center the container horizontally
-    flexWrap: 'wrap', // Allow wrapping on smaller screens
+    marginLeft: 'auto', // Centers horizontally
+    marginRight: 'auto', // Centers horizontally
+      flexWrap: 'wrap', // Allow wrapping on smaller screens
   },
   entityWrapper: {
     flex: 1, // Allow Entity to take up available space
