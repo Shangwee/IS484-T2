@@ -12,10 +12,10 @@ function Entity(id) {
 
   return (
     <div style={styles.container}>
-    <h1 style={styles.entityname}>
-      {loading ? "Loading..." : error ? "Error fetching data" : entity.name || "N/A"}
-    </h1>
-  </div>
+      <h1 style={styles.entityname}>
+        {loading ? "Loading..." : error ? "Error fetching data" : entity.name || "N/A"}
+      </h1>
+    </div>
   );
 }
 const styles = {
