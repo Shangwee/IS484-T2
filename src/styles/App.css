@@ -44,7 +44,7 @@ body, html, #root {
 .sidebar.collapsed {
   width: 80px; /* Collapsed width */
 }
-
+  
 .sidebar.collapsed .sidebar-content {
   display: none; /* Hide content when collapsed */
 }

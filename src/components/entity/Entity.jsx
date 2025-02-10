@@ -18,20 +18,21 @@ function Entity(id) {
     </div>
   );
 }
-
 const styles = {
   container: {
     display: "flex",
-    justifyContent: "center", // Center horizontally
-    alignItems: "center", // Center vertically
-    minHeight: "100vh", // Full viewport height for vertical centering
-    padding: "20px", // Add padding for smaller screens
+    flexDirection: "column", // Stack content vertically
+    justifyContent: "center", // Center content vertically
+    alignItems: "center", // Center content horizontally
+    padding: "20px", // Add padding for spacing
     boxSizing: "border-box", // Include padding in width/height calculations
+    maxWidth: "1200px", // Limit maximum width for larger screens
+    margin: "0 auto", // Center the container horizontally
   },
   entityname: {
     color: "black",
     fontWeight: "700",
-    fontSize: "calc(2rem + 2vw)", // Dynamic font size based on viewport width
+    fontSize: "clamp(1.5rem, 4vw, 3rem)", // Dynamic font size (min: 1.5rem, max: 3rem)
     textAlign: "center", // Center text alignment
     margin: "0 auto", // Center horizontally
     maxWidth: "90vw", // Ensure it doesn't overflow on small screens
