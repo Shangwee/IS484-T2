@@ -1,40 +1,92 @@
-import React from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import React from "react";
+import { Container, Row, Col } from "react-bootstrap";
+import { Line } from "react-chartjs-2";
+import { Chart, LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend } from "chart.js";
+import useFetch from "../../hooks/useFetch"; // Adjust path if needed
 
-function EntityVisuals() {
-    return (
-      <Container fluid className="entity-container">
-        <Row className="justify-content-center align-items-center">
-          <Col  xs={12} md={10} lg={7} className="entity-col">
-          {/* xs={12} md={10} lg={8} xl={10}  */}
-            <div style={styles.entityBox}>
-              <h1 style={styles.entityText}>Visuals here</h1>
+// Register chart elements
+Chart.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend);
+
+function EntityVisuals(id) {
+
+  const number = id.id;
+
+  const url = `/entities/${number}/chart`;
+
+  const { data, loading, error } = useFetch(url);
+
+  if (loading) return <p>Loading stock data...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!data || !data.data || !data.data.stock_chart) return <p>No data available</p>;
+
+  const stockData = {
+    labels: data.data.stock_chart.dates, // X-axis (dates)
+    datasets: [
+      {
+        label: `${data.data.name} Stock Price`,
+        data: data.data.stock_chart.prices, // Y-axis (prices)
+        borderColor: "#8884d8",
+        backgroundColor: "rgba(136, 132, 216, 0.2)",
+        pointRadius: 3,
+        borderWidth: 2,
+        fill: true,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: { ticks: { font: { size: 12 } } },
+      y: { ticks: { font: { size: 12 } }, beginAtZero: false },
+    },
+    plugins: {
+      legend: { display: true, position: "top" },
+      tooltip: { enabled: true },
+    },
+  };
+
+  return (
+    <Container fluid className="entity-container">
+      <Row className="justify-content-center">
+        <Col md={8} className="entity-col">
+          <div style={styles.entityBox}>
+            <h2 style={styles.entityText}>{data.data.name} Stock Chart</h2>
+            <div style={{ width: "100%", height: "300px" }}>
+              <Line data={stockData} options={options} />
             </div>
-          </Col>
-        </Row>
-      </Container>
-    );
+          </div>
+        </Col>
+      </Row>
+    </Container>
+  );
 }
 
 
 const styles = {
   entityBox: {
-display: "flex",
-flexDirection: "column", // Ensures content stacks vertically if needed
-justifyContent: "center",
-alignItems: "center",
-maxWidth: '1400px', // Matches EntityNews width for uniformity
-
-backgroundColor: 'lightgrey',
-borderRadius: '15px',
-boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
-margin: '0 auto', // Centers the box horizontally
-boxSizing: 'border-box', // Ensures padding and border are included in width/height
-height:'250px'
-
+    position: "relative", // ✅ Change from "fixed" to "relative"
+    width: "90%", // Make it responsive
+    maxWidth: "1200px",
+    backgroundColor: "white",
+    borderRadius: "15px",
+    padding: "20px",
+    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "auto", // ✅ Allow it to scale dynamically
+    margin: "20px auto", // ✅ Center horizontally and add spacing
   },
-
+  entityText: {
+    fontSize: "28px",
+    fontWeight: "bold",
+    color: "#333",
+    textAlign: "center",
+    marginBottom: "20px",
+  },
 };
+
 
 export default EntityVisuals;
 

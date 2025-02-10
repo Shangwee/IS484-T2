@@ -16,6 +16,21 @@ def get_stock_price(ticker):
     stock_price = stock_info['currentPrice']
     return stock_price
 
+def get_stock_history(ticker):
+    stock = yf.Ticker(ticker, session=session)
+    df = stock.history(period='1mo')
+
+    if df.empty:
+        return None
+
+    # Convert DataFrame to JSON format
+    data = {
+        "dates": df.index.strftime('%Y-%m-%d').tolist(),
+        "prices": df['Close'].tolist()
+    }
+    return data
+
+
 def get_stock_news(ticker):
     stock = yf.Search(ticker, session=session, enable_fuzzy_query = True, include_cb=False)
     news = stock.news

@@ -44,7 +44,7 @@ function App() {
 
             {/* Entity Visuals */}
             <div style={styles.visualsWrapper}>
-              <EntityVisuals />
+              <EntityVisuals id={stockID}/>
             </div>
 
             {/* Entity News */}
@@ -92,6 +92,11 @@ row that contains multiple components. Here's a breakdown of what each property 
 
   },
 
+  visualsWrapper: {
+    padding: "10px",
+    display: "flex",
+    justifyContent: "center",
+  },
   
   sentimentWrapper: {
     textAlign: 'right', // Align text to the right
@@ -101,7 +106,6 @@ row that contains multiple components. Here's a breakdown of what each property 
   },
   
   newsWrapper: {
-    marginTop: '20px', // Add spacing below the visuals
     maxWidth: '1200px', // Limit maximum width for larger screens
     margin: '0 auto', // Center the container horizontally
   },
