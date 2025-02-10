@@ -88,6 +88,24 @@ const News = (EntityName) => {
   const newsData = data ? data.data : [];
   console.log("News Data:", newsData);
 
+  const [sentiments, setSentiments] = useState({});
+
+  // Add sentiment analysis function
+  const analyzeSentiment = async (newsId, title, description) => {
+    try {
+      const response = await fetch('/sentiment/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          text: `${title} ${description || ''}`
+        })
+      });
+      const result = await response.json();
+      setSentiments(prev => ({ ...prev, [newsId]: result }));
+    } catch (error) {
+      console.error('Sentiment analysis failed:', error);
+    }
+  };
 
   // Filter news based on search term
   const filteredNews = newsData.filter((news) =>
@@ -166,25 +184,59 @@ const News = (EntityName) => {
           }
 
           return (
-            <Col key={news.id || index} xs={12} sm={6} md={4} lg={3} className="mb-4 d-flex justify-content-center">
-              <div style={styles.newsBox}>
-              <div style={styles.sentimentScore}>
-                    <SentimentScore sentiment={news.sentiment || "N/A"} />
+            <Container fluid>
+              {/* Search Bar */}
+              <Row className="justify-content-center mt-4">
+                <Col xs={12} md={6}>
+                  {/* <div style={styles.searchBarContainer}>
+                    <SearchBar onSearchChange={handleSearchChange} />
+                  </div> */}
+                </Col>
+              </Row>
+         
+              {/* News Content */}
+              <Row className="justify-content-center mt-4">
+                {currentNews.map((news, index) => {
+                  if (!news) {
+                    console.warn(`News item at index ${index} is missing or undefined`);
+                    return null;
+                  }
+         
+                  return (
+                    <Col key={news.id || index} xs={12} sm={6} md={4} lg={3} className="mb-4 d-flex justify-content-center">
+                      <div style={styles.newsBox}>
+                        <div style={styles.sentimentScore}>
+                          <SentimentScore 
+                            sentiment={sentiments[news.id || index]} 
+                            onAnalyze={() => analyzeSentiment(news.id || index, news.title, news.description)}
+                          />
+                        </div>
+                        <h4 style={styles.newsHeader}>
+                          <Link to={news.url} target="_blank" rel="noopener noreferrer" style={styles.newsLink}>
+                            {news.title}
+                          </Link>
+                        </h4>
+                        
+                        <p style={styles.newsSummary}><strong>Publisher:</strong> {news.publisher}</p>
+                        <p style={styles.newsDate}><strong>Date:</strong> {new Date(news.published_date).toDateString()}</p>
+                        <p style={styles.newsSummary}>{news.description?.slice(0, 150)}...</p>
+                      </div>
+                    </Col>
+                  );
+                })}
+              </Row>
+         
+              {/* Pagination Controls */}
+              <Row className="justify-content-center">
+                <Col xs={12} md={8} lg={6}>
+                  <div style={styles.paginationWrapper}>
+                    <Pagination>{paginationItems}</Pagination>
                   </div>
-                <h4 style={styles.newsHeader}>
-                  <Link to={news.url} target="_blank" rel="noopener noreferrer" style={styles.newsLink}>
-                    {news.title}
-                  </Link>
-                </h4>
-                
-                <p style={styles.newsSummary}><strong>Publisher:</strong> {news.publisher}</p>
-                <p style={styles.newsDate}><strong>Date:</strong> {new Date(news.published_date).toDateString()}</p>
-                <p style={styles.newsSummary}>{news.description?.slice(0, 150)}...</p>
-                {/* SentimentScore component */}
-            
-              </div>
-            </Col>
+                </Col>
+              </Row>
+            </Container>
           );
+          
         })}
       </Row>
 

@@ -1,30 +1,46 @@
 import React from 'react';
 
-function SentimentScore(sentiment) { 
+const SentimentScore = ({ sentiment, onAnalyze }) => {
+  const getBackgroundColor = (classification) => {
+    switch (classification?.toLowerCase()) {
+      case 'positive': return '#00CB14';
+      case 'negative': return '#FF4D4D';
+      case 'neutral': return '#FFA500';
+      default: return '#808080';
+    }
+  };
 
-  console.log(sentiment.sentiment);
+  if (!sentiment) {
+    return (
+      <button 
+        onClick={onAnalyze}
+        style={{
+          padding: '5px 10px',
+          borderRadius: '15px',
+          border: 'none',
+          backgroundColor: '#808080',
+          color: 'white',
+          fontSize: 'calc(1px + 1vw)',
+          cursor: 'pointer'
+        }}
+      >
+        Analyze
+      </button>
+    );
+  }
+
   return (
-         <div style={styles.greenbox}>
-          {sentiment.sentiment? sentiment.sentiment : "N/A"}
-         </div>
+    <div style={{
+      backgroundColor: getBackgroundColor(sentiment.classification),
+      borderRadius: '15px',
+      padding: '5px 15px',
+      color: 'white',
+      fontSize: 'calc(1px + 1vw)',
+      fontWeight: 'bold'
+    }}>
+      {sentiment.numerical_score?.toFixed(2)} ({sentiment.classification})
+    </div>
   );
-}
-
-const styles = {
-greenbox:
-{
-  display: "flex",
-  backgroundColor: "#00CB14",
-  borderRadius: "15px",
-  justifyContent: "center",
-  alignItems: "center",
-  color: "black",
-  fontSize: "calc(1px + 1vw)",  // Adjust font size dynamically based on viewport width
-  fontWeight: "bold",
-  padding: "5px 15px",
-  // height: '50px',
-}
 };
 
 export default SentimentScore;
-
