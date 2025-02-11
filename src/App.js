@@ -2,20 +2,19 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
-import Entity from './components/entity/Entity';
-import SentimentScore from './components/ui/Sentimentscore';
-import EntityNews from './components/entity/Entitynews';
 import NewsPage from './pages/News/NewsPage';
 import IndividualNewsPage from './pages/News/IndividualNewsPage';
 import EntitiesPage from './pages/Entities/EntitiesPage';
-import Price from './components/ui/Price';
-import EntityVisuals from './components/entity/Entityvisuals';
 import useFetch from './hooks/useFetch';
 import './styles/App.css';
+import { useParams } from 'react-router-dom';
+import EntityPage from './pages/Entities/EntityPage';
 
 function App() {
   const location = useLocation();
-  const url = `/entities/2`; // Hardcoded for now
+  const { id } = useParams(); // Get entity ID from URL
+
+  const url = `/entities/${id}`;
   const { data, loading, error } = useFetch(url);
   const EntityName = data ? data.data.name : "N/A"; // Extract entity name
   const stockID = data ? data.data.id : "N/A"; // Extract stock ID
@@ -27,40 +26,14 @@ function App() {
 
       {/* Main Content */}
       <main className="App-content">
-        {location.pathname === '/' && (
-          <>
-            {/* Row for Entity, Price, and SentimentScore */}
-            <div style={styles.topRow}>
-              <div style={styles.entityWrapper}>
-                <Entity id={stockID} />
-              </div>
-              <div style={styles.priceWrapper}>
-                <Price id={stockID} />
-              </div>
-              <div style={styles.sentimentWrapper}>
-                <SentimentScore />
-              </div>
-            </div>
-
-            {/* Entity Visuals */}
-            <div style={styles.visualsWrapper}>
-              <EntityVisuals id={stockID}/>
-            </div>
-
-            {/* Entity News */}
-            <div style={styles.newsWrapper}>
-              <EntityNews EntityName={EntityName} />
-            </div>
-          </>
-        )}
-
         {/* Routes */}
         <Routes>
           <Route path="/EntitiesPage" element={<EntitiesPage />} />
           <Route path="/NewsPage" element={<NewsPage />} />
           <Route path="/IndividualNewsPage" element={<IndividualNewsPage />} />
+          <Route path="/entity/:id" element={<EntityPage />} />
         </Routes>
-      </main>
+      </main>'
     </div>
   );
 }

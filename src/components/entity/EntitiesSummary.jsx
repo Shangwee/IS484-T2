@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch';
 
 // Main News Component
-const Entity = () => {
+const Entities = () => {
   const [lineClamp, setLineClamp] = useState(5); // Default line clamp value
 
   // Dynamically adjust line clamp based on screen width
@@ -103,8 +103,7 @@ const Entity = () => {
           {entityData.map((entityItem) => (
             <Col key={entityItem.id} md={5} className="mb-4 ml-4">
               <Link
-                to="/"
-                state={{ entity: entityItem.name }}
+                to={`/entity/${entityItem.id}`}
                 key={entityItem.id}
                 style={{ textDecoration: 'none' }}
               >
@@ -125,5 +124,5 @@ const Entity = () => {
       );
     };
     
-    export default Entity;
+    export default Entities;
     

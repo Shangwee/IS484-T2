@@ -1,11 +1,11 @@
 import React from 'react';
-import Entity from '../../components/entity/EntitiesSummary';
+import Entities from '../../components/entity/EntitiesSummary';
 
 function EntitiesPage() {
   console.log('Rendering Entities Page');
   return (
     <div style={{ color:'black', padding: '20px' }}>
-        <Entity/>
+        <Entities/>
     </div>
   );
 }
