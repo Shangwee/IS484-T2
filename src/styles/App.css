@@ -204,29 +204,17 @@ body {
 
 /* Scrollable Container */
 .news-container {
-  max-height: 600px; /* Set a maximum height for the container */
-  overflow-y: auto; /* Enable vertical scrolling */
-  padding: 20px; /* Add padding for spacing */
-  background-color: #f9f9f9; /* Optional: Add a background color */
+  overflow-y: auto; /* Enable vertical scrolling if content exceeds available space */
+  padding: 10px; /* Add padding for spacing */
   border-radius: 8px; /* Optional: Add rounded corners */
   position: fixed;
-  left: 15vw;  /* Adjusted to accommodate sidebar */
-  bottom: 0;  /* Pushes the container to the bottom of the screen */
+  left: 17vw;  /* Adjusted to accommodate sidebar */
   display: flex;  /* Use flex for positioning the content */
   flex-direction: column;
   gap: 30px;
+  top: 60px; /* Adjust based on your layout */
+  bottom: 20px; /* Ensure the container doesn't extend off the bottom of the screen */
 }
 
-/* Scrollbar Styling (Optional) */
-.news-container::-webkit-scrollbar {
-  width: 8px; /* Width of the scrollbar */
-}
 
-.news-container::-webkit-scrollbar-thumb {
-  background-color: #ccc; /* Color of the scrollbar thumb */
-  border-radius: 4px; /* Rounded corners for the thumb */
-}
 
-.news-container::-webkit-scrollbar-track {
-  background-color: #f1f1f1; /* Color of the scrollbar track */
-}

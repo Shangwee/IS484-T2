@@ -36,13 +36,13 @@ const NewsSources = () => {
         overflow: 'hidden', // Handle overflow gracefully
     },
     newsHeader: {
-      fontSize: 'calc(10px + 1vw)', // Dynamic font size
+      fontSize: 'calc(7px + 1vw)', // Dynamic font size
       fontWeight: 'bold',
       color: '#555555',
 
     },
     newsSummary: {
-        fontSize: 'calc(12px + 0.5vw)',
+        fontSize: 'calc(10px + 0.5vw)',
         color: '#555555',
         overflow: 'hidden', // Hide overflowing content
         textOverflow: 'ellipsis', // Add ellipsis for truncated text
@@ -51,7 +51,7 @@ const NewsSources = () => {
         WebkitBoxOrient: 'vertical',
     },
     newsDate: {
-      fontSize: 'calc(12px + 0.5vw)', // Dynamic font size
+      fontSize: 'calc(8px + 0.5vw)', // Dynamic font size
       color: '#555555',
     },
     

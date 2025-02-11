@@ -9,6 +9,7 @@ import useFetch from './hooks/useFetch';
 import './styles/App.css';
 import { useParams } from 'react-router-dom';
 import EntityPage from './pages/Entities/EntityPage';
+import Header from './components/Header';
 
 function App() {
   const location = useLocation();
@@ -23,6 +24,7 @@ function App() {
     <div className="App">
       {/* Sidebar */}
       <Sidebar />
+      <Header />
 
       {/* Main Content */}
       <main className="App-content">
