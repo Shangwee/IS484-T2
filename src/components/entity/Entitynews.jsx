@@ -169,7 +169,7 @@ const News = (EntityName) => {
             <Col key={news.id || index} xs={12} sm={6} md={4} lg={3} className="mb-4 d-flex justify-content-center">
               <div style={styles.newsBox}>
               <div style={styles.sentimentScore}>
-                    <SentimentScore sentiment={news.sentiment || "N/A"} />
+                    <SentimentScore text={news.title + news.summary} />
                   </div>
                 <h4 style={styles.newsHeader}>
                   <Link to={news.url} target="_blank" rel="noopener noreferrer" style={styles.newsLink}>

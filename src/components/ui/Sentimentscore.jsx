@@ -1,6 +1,25 @@
 import React from 'react';
+import SentimentAnalysis from '../../utils/sentimentAnalysis';
 
-const SentimentScore = ({ sentiment, onAnalyze }) => {
+const SentimentScore = (text) => {
+  const [sentiment, setSentiment] = React.useState(null);
+
+  if (!text) {
+    return <div style={{
+      backgroundColor: '#808080',
+      borderRadius: '15px',
+      padding: '5px 15px',
+      color: 'white',
+      fontSize: 'calc(1px + 1vw)',
+      fontWeight: 'bold'
+      }}>No text provided</div>;
+  }
+  const onAnalyze = async () => {
+    const sentiment = await SentimentAnalysis(text);
+    console.log(sentiment);
+    setSentiment(sentiment);
+  };
+
   const getBackgroundColor = (classification) => {
     switch (classification?.toLowerCase()) {
       case 'positive': return '#00CB14';

@@ -89,7 +89,7 @@ const NewsSources = () => {
                 <h4 style={styles.newsHeader}>{newsItem.title}</h4>  
               </Link> 
               <div style={styles.sentiment}>
-                <SentimentScore  newsId={newsItem.id} />
+                <SentimentScore text={newsItem.title + newsItem.summary} />
               </div>
               <h4 style={styles.newsDate}>{new Date(newsItem.published_date).toLocaleDateString()}</h4> 
               {/* <h4 style={styles.newsLink}>{newsItem.link}</h4>  */}
