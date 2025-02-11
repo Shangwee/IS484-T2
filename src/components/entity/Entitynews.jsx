@@ -10,7 +10,7 @@ import useFetch from '../../hooks/useFetch';
 // Main News Component
 const News = (EntityName) => {
   const styles = {
-    
+
     newsBox: {
       position: 'relative',
 
@@ -66,7 +66,7 @@ const News = (EntityName) => {
       display: 'flex',
       justifyContent: 'center', // Center the pagination items
       marginTop: '20px',
-    
+
   }}
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -79,7 +79,7 @@ const News = (EntityName) => {
   // Retrieve the entity from the location state
   const { entity } = location.state || {entity: null};
   console.log(entity);  
-  
+
   // Fetch news data
   const url = `/news/${EntityName.EntityName}`;
   const { data, loading, error } = useFetch(url);
@@ -88,24 +88,6 @@ const News = (EntityName) => {
   const newsData = data ? data.data : [];
   console.log("News Data:", newsData);
 
-  const [sentiments, setSentiments] = useState({});
-
-  // Add sentiment analysis function
-  const analyzeSentiment = async (newsId, title, description) => {
-    try {
-      const response = await fetch('/sentiment/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          text: `${title} ${description || ''}`
-        })
-      });
-      const result = await response.json();
-      setSentiments(prev => ({ ...prev, [newsId]: result }));
-    } catch (error) {
-      console.error('Sentiment analysis failed:', error);
-    }
-  };
 
   // Filter news based on search term
   const filteredNews = newsData.filter((news) =>
@@ -118,7 +100,7 @@ const News = (EntityName) => {
     console.log('Search Term:', term);  // Check the updated search term
     setSearchTerm(term); // Update search term in the parent component
   };
-  
+
   // Calculate total pages only if filteredNews has data
   const totalPages = filteredNews.length > 0 ? Math.ceil(filteredNews.length / newsPerPage) : 1;
 
@@ -126,7 +108,7 @@ const News = (EntityName) => {
   const indexOfLastNews = currentPage * newsPerPage;
   console.log(indexOfLastNews);
   const indexOfFirstNews = indexOfLastNews - newsPerPage;
-  
+
   // const cleanedNewsData = newsData.filter(Boolean);
   const currentNews = filteredNews.length > 0 ? filteredNews.slice(indexOfFirstNews, indexOfLastNews) : [];
 
@@ -184,59 +166,25 @@ const News = (EntityName) => {
           }
 
           return (
-            <Container fluid>
-              {/* Search Bar */}
-              <Row className="justify-content-center mt-4">
-                <Col xs={12} md={6}>
-                  {/* <div style={styles.searchBarContainer}>
-                    <SearchBar onSearchChange={handleSearchChange} />
-                  </div> */}
-                </Col>
-              </Row>
-         
-              {/* News Content */}
-              <Row className="justify-content-center mt-4">
-                {currentNews.map((news, index) => {
-                  if (!news) {
-                    console.warn(`News item at index ${index} is missing or undefined`);
-                    return null;
-                  }
-         
-                  return (
-                    <Col key={news.id || index} xs={12} sm={6} md={4} lg={3} className="mb-4 d-flex justify-content-center">
-                      <div style={styles.newsBox}>
-                        <div style={styles.sentimentScore}>
-                          <SentimentScore 
-                            sentiment={sentiments[news.id || index]} 
-                            onAnalyze={() => analyzeSentiment(news.id || index, news.title, news.description)}
-                          />
-                        </div>
-                        <h4 style={styles.newsHeader}>
-                          <Link to={news.url} target="_blank" rel="noopener noreferrer" style={styles.newsLink}>
-                            {news.title}
-                          </Link>
-                        </h4>
-                        
-                        <p style={styles.newsSummary}><strong>Publisher:</strong> {news.publisher}</p>
-                        <p style={styles.newsDate}><strong>Date:</strong> {new Date(news.published_date).toDateString()}</p>
-                        <p style={styles.newsSummary}>{news.description?.slice(0, 150)}...</p>
-                      </div>
-                    </Col>
-                  );
-                })}
-              </Row>
-         
-              {/* Pagination Controls */}
-              <Row className="justify-content-center">
-                <Col xs={12} md={8} lg={6}>
-                  <div style={styles.paginationWrapper}>
-                    <Pagination>{paginationItems}</Pagination>
+            <Col key={news.id || index} xs={12} sm={6} md={4} lg={3} className="mb-4 d-flex justify-content-center">
+              <div style={styles.newsBox}>
+              <div style={styles.sentimentScore}>
+                    <SentimentScore sentiment={news.sentiment || "N/A"} />
                   </div>
-                </Col>
-              </Row>
-            </Container>
+                <h4 style={styles.newsHeader}>
+                  <Link to={news.url} target="_blank" rel="noopener noreferrer" style={styles.newsLink}>
+                    {news.title}
+                  </Link>
+                </h4>
+                
+                <p style={styles.newsSummary}><strong>Publisher:</strong> {news.publisher}</p>
+                <p style={styles.newsDate}><strong>Date:</strong> {new Date(news.published_date).toDateString()}</p>
+                <p style={styles.newsSummary}>{news.description?.slice(0, 150)}...</p>
+                {/* SentimentScore component */}
+            
+              </div>
+            </Col>
           );
-          
         })}
       </Row>
 
@@ -251,6 +199,5 @@ const News = (EntityName) => {
     </Container>
   );
 };
-
 
 export default News;

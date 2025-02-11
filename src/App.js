@@ -106,6 +106,7 @@ row that contains multiple components. Here's a breakdown of what each property 
   },
   
   newsWrapper: {
+    padding: '20px',
     maxWidth: '1200px', // Limit maximum width for larger screens
     margin: '0 auto', // Center the container horizontally
   },

@@ -1,10 +1,14 @@
 from transformers import pipeline, AutoModelForSequenceClassification, AutoTokenizer
 
-# Initialize model once
-model_name = "yiyanghkust/finbert-tone"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForSequenceClassification.from_pretrained(model_name)
-sentiment_pipeline = pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
+# Initialize model function
+def load_finbert():
+    model_name = "yiyanghkust/finbert-tone"
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForSequenceClassification.from_pretrained(model_name)
+    return pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
+
+# Load the model pipeline
+sentiment_pipeline = load_finbert()
 
 def get_sentiment(text):
     results = sentiment_pipeline(text)
