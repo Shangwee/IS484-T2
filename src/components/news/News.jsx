@@ -217,7 +217,7 @@ return (
                     </Link>
                   </h4>
                   <div style={styles.sentimentScore}>
-                    <SentimentScore sentiment={news.sentiment || "N/A"} />
+                    <SentimentScore text={news.title + news.summary} />
                   </div>
                 </div>
                 <p style={styles.newsSummary}><strong>Publisher:</strong> {news.publisher}</p>

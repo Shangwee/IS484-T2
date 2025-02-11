@@ -16,3 +16,13 @@ export const getData = async (endpoint) => {
     return null;
   }
 };
+
+export const postData = async (endpoint, data) => {
+  try {
+    const response = await apiClient.post(`${endpoint}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("API error:", error);
+    return null;
+  }
+};
