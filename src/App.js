@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Sidebar from './components/Sidebar';
+import Navbar from './components/Navbar';
 import NewsPage from './pages/News/NewsPage';
 import IndividualNewsPage from './pages/News/IndividualNewsPage';
 import EntitiesPage from './pages/Entities/EntitiesPage';
@@ -23,8 +23,7 @@ function App() {
   return (
     <div className="App">
       {/* Sidebar */}
-      <Sidebar />
-      <Header />
+      <Navbar />
 
       {/* Main Content */}
       <main className="App-content">

@@ -17,16 +17,27 @@ const News = () => {
   const styles = {
     newsBox: {
       position: 'relative',
-      margin: '20px auto', // Centers the box horizontally and adds vertical spacing
-      maxWidth: '400px', // Fixed maximum width for consistency
-      width: '100%', // Makes it responsive on smaller screens
-      height: 'auto', // Allows the height to adjust based on content
+      margin: '20px auto', // Centers the box horizontally
+      maxWidth: '800px', // Increased width for a wider box
+      width: '100%', // Ensures responsiveness on smaller screens
+      height: 'auto', // Adjust height based on content
       borderRadius: '8px',
       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-      padding: '15px', // Increased padding for better spacing
+      padding: '20px', // Increased padding for better spacing
       backgroundColor: '#fff',
-      marginBottom: '20px', // Adds space between news boxes
-      boxSizing: 'border-box', // Ensures padding and border are included in width
+      marginBottom: '20px',
+      boxSizing: 'border-box',
+    },
+    newsHeader: {
+      fontSize: 'calc(0.5rem + 0.2vw)', // Dynamic font size for better responsiveness
+      fontWeight: 'bold',
+      color: 'black',
+      marginBottom: '10px',
+    },
+    newsLink: {
+      fontSize: 'calc(0.8rem + 0.2vw)', // Increase readability
+      color: 'blue',
+      textDecoration: 'none',
     },
     headerContainer: {
       display: 'flex', // Ensures header & sentiment score are in the same row
@@ -35,52 +46,45 @@ const News = () => {
       width: '100%', // Ensures full width usage
       flexWrap: 'wrap', // Allows wrapping on smaller screens
     },
-  newsHeader: {
-    fontSize: 'calc(0.5vw)', // Dynamic font size for better responsiveness
-    fontWeight: 'bold',
-    color: 'black',
-    margin: 0, // Prevents unnecessary margin causing misalignment
-    marginBottom: '10px',
-  },
-  newsSummary: {
-    fontSize: 'calc(0.8rem)', // Slightly smaller than the header
-    color: 'black',
-    marginBottom: '5px',
-  },
-  newsDate: {
-    fontSize: 'calc(0.8rem )', // Smaller font size for the date
-    color: 'black',
-    marginBottom: '5px',
-  },
-  newsLink: {
-    fontSize: 'calc(0.9rem + 0.5vw)', // Slightly smaller than the header
-    color: 'blue', // Changed to blue for better link visibility
-    textDecoration: 'none',
-  },
-  sentimentScore: {
-    position:'absolute',
-    top:'10px',
-    right:'10px',
-    fontSize: '0.2rem', // Adjusted for readability
-    color: 'black',
-    fontWeight: 'bold',
-    textAlign: 'right', // Aligns it properly
-    zIndex: 1
-  },
-  paginationWrapper: {
-    marginTop: '20px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexWrap: 'wrap', // Allows pagination buttons to wrap on smaller screens
-  },
-  noNewsMessageContainer: {
-    height: '500px', // Same height as your news box
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  };
+    newsSummary: {
+      fontSize: 'calc(0.9rem)', // Slightly smaller than the header
+      color: 'black',
+      marginBottom: '5px',
+      display: '-webkit-box',   // Enables truncation
+      WebkitBoxOrient: 'vertical',  // Required for multi-line ellipsis
+      WebkitLineClamp: 6,  // Limits to 3 lines (adjust as needed)
+      overflow: 'hidden',  // Hides overflowing text
+      textOverflow: 'ellipsis',  // Adds ellipsis for truncated text
+    },
+    newsDate: {
+      fontSize: 'calc(0.8rem )', // Smaller font size for the date
+      color: 'black',
+      marginBottom: '5px',
+    },
+    sentimentScore: {
+      position:'absolute',
+      top:'10px',
+      right:'10px',
+      fontSize: '0.2rem', // Adjusted for readability
+      color: 'black',
+      fontWeight: 'bold',
+      textAlign: 'right', // Aligns it properly
+      zIndex: 1
+    },
+    paginationWrapper: {
+      marginTop: '20px',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexWrap: 'wrap', // Allows pagination buttons to wrap on smaller screens
+    },
+    noNewsMessageContainer: {
+      height: '500px', // Same height as your news box
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  };  
 
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
