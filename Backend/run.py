@@ -1,6 +1,13 @@
-from app import create_app
-from app.config import Config
+from flask import Flask
 
-if __name__ == '__main__':
-    app = create_app()
-    app.run(debug=Config.APP_DEBUG, host='0.0.0.0', port=Config.PORT)
+def create_app():
+    app = Flask(__name__)
+    
+    @app.route('/health')
+    def health_check():
+        return {"status": "ok"}, 200
+    
+    return app
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5001)
