@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5001";
+const API_BASE_URL = "https://backend-v1.greenbay-df0bd36f.southeastasia.azurecontainerapps.io";
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -11,7 +11,7 @@ export const getData = async (endpoint) => {
   try {
     const response = await apiClient.get(`${endpoint}`);
     return response.data;
-  } catch (error) {
+} catch (error) {
     console.error("API error:", error);
     return null;
   }
