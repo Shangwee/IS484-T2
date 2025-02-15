@@ -88,7 +88,7 @@ const Entities = () => {
       };
 
     // defind url for fetching data
-    const url = `/entities`;
+    const url = `/entities/`;
 
     // useFetch hook to fetch data
     const { data, loading, error } = useFetch(url);
