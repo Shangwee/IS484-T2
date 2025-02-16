@@ -32,7 +32,7 @@ function App() {
           <Route path="/EntitiesPage" element={<EntitiesPage />} />
           <Route path="/NewsPage" element={<NewsPage />} />
           <Route path="/IndividualNewsPage" element={<IndividualNewsPage />} />
-          <Route path="/entity/:id" element={<EntityPage />} />
+          <Route path="/entity/:id/:name" element={<EntityPage />} />
         </Routes>
       </main>'
     </div>

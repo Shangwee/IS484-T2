@@ -103,8 +103,8 @@ const Entities = () => {
           {entityData.map((entityItem) => (
             <Col key={entityItem.id} md={5} className="mb-4 ml-4">
               <Link
-                to={`/entity/${entityItem.id}`}
-                key={entityItem.id}
+                to={`/entity/${entityItem.id}/${entityItem.name}`}
+                key={entityItem.name}
                 style={{ textDecoration: 'none' }}
               >
                 <div style={styles.entityBox} className="news-box">
