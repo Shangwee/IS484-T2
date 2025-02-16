@@ -75,16 +75,18 @@ body, html, #root {
 
 /* Scrollable Container */
 .news-container {
-  overflow-y: auto; /* Enable vertical scrolling if content exceeds available space */
-  padding: 10px; /* Add padding for spacing */
-  border-radius: 8px; /* Optional: Add rounded corners */
-  position: fixed;
-  display: flex;  /* Use flex for positioning the content */
-  flex-direction: column;
-  gap: 30px;
-  top: 60px; /* Adjust based on your layout */
-  bottom: 20px; /* Ensure the container doesn't extend off the bottom of the screen */
+  max-width: 1200px; /* Prevents it from stretching too wide */
+  width: 90%; /* Responsive width */
+  margin: 0 auto; /* Center the container */
+  overflow-y: auto; /* Enable vertical scrolling if content overflows */
+  padding: 10px;
+  border-radius: 8px; /* Optional: Rounded corners */
+  position: relative; /* Keeps it within normal flow */
+  display: block; /* Let Bootstrap handle row layout */
+  max-height: calc(100vh - 80px); /* Prevents it from overflowing the viewport */
+  scrollbar-width: none; /* Firefox */
 }
+
 
 
 
