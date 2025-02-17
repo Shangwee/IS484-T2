@@ -1,6 +1,6 @@
 import os
 import unittest
-from utils.helpers import summarise_news
+from app.utils.helpers import summarise_news
 from dotenv import load_dotenv
 
 class TestSummariseNews(unittest.TestCase):
