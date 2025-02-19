@@ -13,7 +13,7 @@ def generate_pdf(entity_name, key_metrics, news_items, output_filename="report.p
     
     # Page 1: Entity Overview
     pdf.add_page()
-    pdf.set_font("Arial", "B", 16)
+    pdf.set_font("Arial", "B", 18)
     pdf.cell(200, 10, f"Entity Report: {entity_name}", ln=True, align='C')
     pdf.ln(10)
 
