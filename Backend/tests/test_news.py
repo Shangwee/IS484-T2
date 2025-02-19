@@ -16,20 +16,23 @@ class NewsTestCase(unittest.TestCase):
         db.create_all()
 
     def test_create_news(self):
-        news = News(title="Google News", description="Google LLC is an American multinational technology company that specializes in Internet-related services and products.", url="https://www.google.com", sentiment="Good", publisher="google",published_date="2021-09-01", entities=["Google", "Alphabet"], summary="Google is a technology company.")
+        news = News(title="Google News", description="Google LLC is an American multinational technology company that specializes in Internet-related services and products.", url="https://www.google.com", sentiment="Positive", publisher="google",published_date="2021-09-01", entities=["Google", "Alphabet"], summary="Google is a technology company.", score=0.5)
         db.session.add(news)
         db.session.commit()
 
         self.assertEqual(news.title, "Google News")
         self.assertEqual(news.description, "Google LLC is an American multinational technology company that specializes in Internet-related services and products.")
         self.assertEqual(news.url, "https://www.google.com")
-        self.assertEqual(news.sentiment, "Good")
+        self.assertEqual(news.sentiment, "Positive")
         self.assertEqual(news.publisher, "google")
+        self.assertEqual(news.published_date, "2021-09-01")
         self.assertEqual(news.entities, ["Google", "Alphabet"])
         self.assertEqual(news.summary, "Google is a technology company.")
+        self.assertEqual(news.score, 0.5)
+        self.assertEqual(news.sentiment, "Positive")
 
     def test_read_news(self):
-        news = News(title="Google News", description="Google LLC is an American multinational technology company that specializes in Internet-related services and products.", url="https://www.google.com", sentiment="Good", publisher="google",published_date="2021-09-01", entities=["Google", "Alphabet"], summary="Google is a technology company.")
+        news = News(title="Google News", description="Google LLC is an American multinational technology company that specializes in Internet-related services and products.", url="https://www.google.com", sentiment="Positive", publisher="google",published_date="2021-09-01", entities=["Google", "Alphabet"], summary="Google is a technology company.", score=0.5)
         db.session.add(news)
         db.session.commit()
 
@@ -38,14 +41,16 @@ class NewsTestCase(unittest.TestCase):
         self.assertEqual(result.title, "Google News")
         self.assertEqual(result.description, "Google LLC is an American multinational technology company that specializes in Internet-related services and products.")
         self.assertEqual(result.url, "https://www.google.com")
-        self.assertEqual(result.sentiment, "Good")
+        self.assertEqual(result.sentiment, "Positive")
         self.assertEqual(result.publisher, "google")
+        self.assertEqual(result.published_date, "2021-09-01")
         self.assertEqual(result.entities, ["Google", "Alphabet"])
         self.assertEqual(result.summary, "Google is a technology company.")
+        self.assertEqual(result.score, 0.5)
 
 
     def test_update_news(self):
-        news = News(title="Google News", description="Google LLC is an American multinational technology company that specializes in Internet-related services and products.", url="https://www.google.com", sentiment="Good", publisher="google",published_date="2021-09-01", entities=["Google", "Alphabet"], summary="Google is a technology company.")
+        news = News(title="Google News", description="Google LLC is an American multinational technology company that specializes in Internet-related services and products.", url="https://www.google.com", sentiment="Positive", publisher="google",published_date="2021-09-01", entities=["Google", "Alphabet"], summary="Google is a technology company.")
         db.session.add(news)
         db.session.commit()
 
@@ -57,14 +62,15 @@ class NewsTestCase(unittest.TestCase):
         self.assertEqual(result.title, "Google News")
         self.assertEqual(result.description, "Google LLC is an American multinational technology company that specializes in Internet-related services and products.")
         self.assertEqual(result.url, "https://www.google.com")
-        self.assertEqual(result.sentiment, "bad")
+        self.assertEqual(result.sentiment, "Positive")
         self.assertEqual(result.publisher, "google")
+        self.assertEqual(result.published_date, "2021-09-01")
         self.assertEqual(result.entities, ["Google", "Alphabet"])
         self.assertEqual(result.summary, "Google is a technology company.")
 
 
     def test_delete_news(self):
-        news = News(title="Google News", description="Google LLC is an American multinational technology company that specializes in Internet-related services and products.", url="https://www.google.com", sentiment="Good", publisher="google",published_date="2021-09-01", entities=["Google", "Alphabet"], summary="Google is a technology company.")
+        news = News(title="Google News", description="Google LLC is an American multinational technology company that specializes in Internet-related services and products.", url="https://www.google.com", sentiment="Positive", publisher="google",published_date="2021-09-01", entities=["Google", "Alphabet"], summary="Google is a technology company.", score=0.5)
         db.session.add(news)
         db.session.commit()
 

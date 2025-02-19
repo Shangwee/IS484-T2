@@ -104,7 +104,9 @@ def get_news(entity):
             "published_date": n.published_date,
             "title": n.title,
             "url": n.url,
-            "entities": n.entities
+            "entities": n.entities,
+            "score": n.score,
+            "sentiment": n.sentiment
         }) 
     return format_response(news_list, "News fetched successfully", 200)
 
@@ -121,7 +123,9 @@ def get_news_by_id(id):
             "published_date": news.published_date,
             "title": news.title,
             "url": news.url,
-            "entities": news.entities
+            "entities": news.entities,
+            "score": news.score,
+            "sentiment": news.sentiment
         }, "News fetched successfully", 200)
     return format_response([], "News not found", 404)   
 
@@ -139,6 +143,8 @@ def get_all_news():
             "published_date": n.published_date,
             "title": n.title,
             "url": n.url,
-            "entities": n.entities
+            "entities": n.entities,
+            "score": n.score,
+            "sentiment": n.sentiment
         })
     return format_response(news_list, "News fetched successfully", 200)
