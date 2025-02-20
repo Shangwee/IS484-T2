@@ -54,12 +54,12 @@ def URL_decoder(url):
     except Exception as e:
         print(f"Error occurred: {e}")
 
-def get_article_details(url):
+def get_article_details(url, article_html):
     from app.services.sentiment_analysis import get_sentiment  # Move import here to avoid circular import
     try:
         time.sleep(10)
         # Fetch the article details
-        article_result = article(url)
+        article_result = article(url, input_html=article_html)
         article_result.nlp()
 
         # Summarise the article text
@@ -68,11 +68,15 @@ def get_article_details(url):
         # get the sentiment of the article
         sentiment = get_sentiment(article_result.title + summary)
 
+        keyword = article_result.keywords
+        keyword_str = ', '.join(keyword)
+
         return {
             "text": article_result.text,
             "summary": summary,
             'numerical_score': sentiment['numerical_score'],
-            'classification': sentiment['classification']
+            'classification': sentiment['classification'],
+            'keywords': keyword_str
         }
 
     except Exception as e:

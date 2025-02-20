@@ -76,8 +76,14 @@ pip install -r requirements.txt
     ```
     liquibase update
     ```
+5. setup crawl4ai:
+```
+    pip install crawl4ai
+    crawl4ai-setup
+    crawl4ai-doctor
+```
 
-5. Run application:
+6. Run application:
     - In the `Backend` directory:
     ```
     python .\run.py

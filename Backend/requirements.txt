@@ -19,6 +19,7 @@ finvizfinance==1.1.0
 yfinance[nospam]
 newspaper4k
 lxml
+crawl4ai
 
 requests==2.32.3
 requests_cache

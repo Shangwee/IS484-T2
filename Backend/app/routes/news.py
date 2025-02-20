@@ -5,7 +5,6 @@ from app.models.news import News
 from app.models.entity import Entity
 from app.utils.decorators import jwt_required
 from app.services.data_ingestion_gnews import get_gnews_news_by_entity, get_all_top_gnews
-from app.services.data_ingestion_finviz import get_finviz_news_by_entity, get_all_finviz
 from app.services.data_ingestion_yfinance import get_stock_news
 from app.utils.helpers import format_response, format_date_into_tuple_for_gnews
 from datetime import date, timedelta
@@ -35,20 +34,6 @@ def ingest_news_gnews_entity():
     
     return format_response([], "No news data found", 404)
 
-# ** generate news data based on entity using finviz
-@news_bp.route('/finviz', methods=['POST'])
-def ingest_news_finviz_entity():
-    # Get the entity, period, start_date, and end_date from the request
-    entity = request.json.get('entity')
-
-    # Get the news using finviz and save it to the database
-    news = get_finviz_news_by_entity(entity)
-
-    if len(news) > 0:
-        return format_response(news, "News data generated and saved successfully", 201)
-    
-    return format_response([], "No news data found", 404)
-
 # ** generate news data based on entity using yfinance
 @news_bp.route('/yfinance', methods=['POST'])
 def ingest_news_yfinance_entity():
@@ -70,15 +55,8 @@ def ingest_all_news():
     gnews_result = get_all_top_gnews()
     print("gnews done")
 
-    # Get the news using finviz and save it to the database
-    finviz_result = get_all_finviz()
-    print("finviz done")
-
-    # Combine the results from both sources
-    result = gnews_result + finviz_result
-
-    if result:
-        return format_response(result, "News data generated and saved successfully", 201)
+    if gnews_result:
+        return format_response(gnews_result, "News data generated and saved successfully", 201)
     
     return format_response([], "No news data found", 404)
 
