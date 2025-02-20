@@ -11,7 +11,7 @@ export const getData = async (endpoint) => {
   try {
     const response = await apiClient.get(`${endpoint}`);
     return response.data;
-  } catch (error) {
+} catch (error) {
     console.error("API error:", error);
     return null;
   }

@@ -31,6 +31,10 @@ def get_finviz_news_by_entity(query):
             article_details = get_article_details(row['Link'])
             description = article_details['text']
             summary = article_details['summary']
+            score = article_details['numerical_score']
+            sentiment = article_details['classification']
+
+            print("here", description)
         except Exception as e:
             print(f"An error occurred: {e}")
             
@@ -41,7 +45,9 @@ def get_finviz_news_by_entity(query):
             "url": row['Link'],
             "publisher": row['Source'],
             "entity": query,
-            "summary": summary
+            "summary": summary,
+            "score": score,
+            "sentiment": sentiment
         })
 
     # Insert the data into the database
@@ -61,7 +67,9 @@ def get_finviz_news_by_entity(query):
             title=news['title'],
             url=news['url'],
             entities=entities_list,
-            summary=news['summary']
+            summary=news['summary'],
+            score=news['score'],
+            sentiment=news['sentiment']
         )
 
         db.session.add(news_db)
@@ -89,6 +97,10 @@ def get_all_finviz():
             article_details = get_article_details(row['Link'])
             description = article_details['text']
             summary = article_details['summary']
+            score = article_details['numerical_score']
+            sentiment = article_details['classification']
+
+            print("here", description)
         except Exception as e:
             print(f"An error occurred: {e}")
             continue
@@ -101,7 +113,9 @@ def get_all_finviz():
             "description": description,
             "url": row['Link'],
             "publisher": row['Source'],
-            "summary": summary
+            "summary": summary,
+            "score": score,
+            "sentiment": sentiment
         })
 
     # Insert the data into the database
@@ -120,7 +134,9 @@ def get_all_finviz():
             title=news['title'],
             url=news['url'],
             entities=entities_list,
-            summary=news['summary']
+            summary=news['summary'],
+            score=news['score'],
+            sentiment=news['sentiment']
         )
 
         db.session.add(news_db)
