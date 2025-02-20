@@ -1,5 +1,5 @@
 from flask import jsonify
-import requests
+import time
 from newspaper import article
 from googlenewsdecoder import new_decoderv1
 import os
@@ -55,40 +55,34 @@ def URL_decoder(url):
         print(f"Error occurred: {e}")
 
 def get_article_details(url):
-    # user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
-    # headers = {
-    #     'User-Agent': user_agent,
-    #     'Accept-Language': 'en-US,en;q=0.9',
-    #     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-    #     'Referer': 'https://www.google.com/',  # Mimics coming from Google search
-    # }
-
-    # # Use `requests` to get the page content
-    # response = requests.get(url, headers=headers)
-
-    # # Check if the request was successful
-    # if response.status_code != 200:
-    #     print(f"Error: HTTP {response.status_code}")
-    #     return None
-
+    from app.services.sentiment_analysis import get_sentiment  # Move import here to avoid circular import
     try:
+        time.sleep(10)
+        # Fetch the article details
         article_result = article(url)
         article_result.nlp()
+
+        # Summarise the article text
+        summary = summarise_news(article_result.text, 100)
+
+        # get the sentiment of the article
+        sentiment = get_sentiment(article_result.title + summary)
+
+        return {
+            "text": article_result.text,
+            "summary": summary,
+            'numerical_score': sentiment['numerical_score'],
+            'classification': sentiment['classification']
+        }
+
     except Exception as e:
         print(f"An error occurred: {e}")
         return {
             "text": "An error occurred while fetching the article details",
-            "summary": "An error occurred while fetching the article details"}
+            "summary": "An error occurred while fetching the article details",
+            'numerical_score': 0,
+            'classification': "Neutral"}
 
-
-    details = {
-        "title": article_result.title,
-        "authors": article_result.authors,
-        "text": article_result.text,
-        "summary": article_result.summary
-    }
-    
-    return details
 
 def summarise_news(news_text, summary_length):
     # Load environment variables from .env file
