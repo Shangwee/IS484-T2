@@ -59,22 +59,16 @@ const Entities = () => {
         whiteSpace: 'nowrap', // Prevent text wrapping
       },
       entitySummary: {
-        fontSize: 'calc(11px + 0.5vw)', // Dynamic font size
+        fontSize: 'calc(12px + 0.5vw)', // Dynamic font size
         color: '#555555',
         flexGrow: 1, // Allow summary to grow and fill available space
         overflow: 'hidden', // Prevent content overflow
         textOverflow: 'ellipsis', // Add ellipsis for long text
-        
-        // Enable multi-line ellipsis
-        display: '-webkit-box',
-        WebkitLineClamp: 7, // Limit to 3 lines (adjust this value as needed)
+        display: '-webkit-box', // Enable multi-line ellipsis
+        WebkitLineClamp: lineClamp, // Limit to 3 lines
         WebkitBoxOrient: 'vertical', // Vertical orientation for text
-        
         margin: 0, // Remove default margin for p
-        padding: 0, // Remove default padding for p
-        
-        // Ensure proper height for the truncation to take effect
-        maxHeight: '10.8em', // This depends on your font-size and line-height
+        marginTop: '15px', // Constant margin between entityName and entitySummary
       },
       sentimentScore: {
         fontSize: '14px',
@@ -83,22 +77,18 @@ const Entities = () => {
         marginLeft: 'auto', // Pushes the sentiment score to the far right
       },
       scrollableContainer: {
-        maxWidth: '1200px', // Prevents stretching too wide
-        width: '90%', // Responsive width
-        margin: '0 auto', // Centers the whole container
-        maxHeight: '600px', // Set max height for scrolling
+        maxHeight: '600px', // Set a maximum height for the container
         overflowY: 'auto', // Enable vertical scrolling
-        paddingTop: '10px',
-        paddingBottom: '20px',
-        borderRadius: '8px',
-        boxSizing: 'border-box', // Prevents unwanted overflow
-      }
-      
-      
+        paddingTop: '50px', // Add top padding to the container
+        paddingBottom: '20px', // Optional: Add bottom padding for symmetry
+        paddingRight: '20px', // Optional: Add right padding
+        paddingLeft: '20px', // Optional: Add left padding
+        borderRadius: '8px', // Optional: Add rounded corners
+      },
       };
 
     // defind url for fetching data
-    const url = `/entities/`;
+    const url = `/entities`;
 
     // useFetch hook to fetch data
     const { data, loading, error } = useFetch(url);
@@ -109,15 +99,19 @@ const Entities = () => {
       
     return ( 
       <Container fluid className="news-container" style={styles.scrollableContainer}>
-        <Row className="d-flex justify-content-center">
+        <Row>
           {entityData.map((entityItem) => (
-            <Col key={entityItem.id} md={5} className="mb-4 d-flex justify-content-center">
-              <Link to={`/entity/${entityItem.id}/${entityItem.name}`} style={{ textDecoration: 'none' }}>
-                <div style={styles.entityBox}>
-                  <div style={styles.entityHeader}>
+            <Col key={entityItem.id} md={5} className="mb-4 ml-4">
+              <Link
+                to={`/entity/${entityItem.id}`}
+                key={entityItem.id}
+                style={{ textDecoration: 'none' }}
+              >
+                <div style={styles.entityBox} className="news-box">
+                  <div style={styles.entityHeader} className="entity-header">
                     <h4 style={styles.entityName}>{entityItem.name}</h4>
                     <span style={styles.sentimentScore}>
-                      <SentimentScore />
+                      <SentimentScore/>
                     </span>
                   </div>
                   <p style={styles.entitySummary}>{entityItem.summary}</p>

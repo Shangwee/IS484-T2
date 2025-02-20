@@ -47,10 +47,7 @@ def get_stock_news(ticker):
             published_date = news_item["providerPublishTime"]
             published_date = datetime.datetime.fromtimestamp(news_item["providerPublishTime"])
             title = news_item["title"]
-            score = article_details['numerical_score']
-            sentiment = article_details['classification']
 
-            print("title: ", title)
 
             # Check if the URL already exists in the database
             existing_news = NewsModel.query.filter_by(url=link).first()
@@ -64,9 +61,7 @@ def get_stock_news(ticker):
                 title=title,
                 url=link,
                 entities=[ticker],
-                summary=summary,
-                score=score,
-                sentiment=sentiment
+                summary=summary
             )
 
             newslist.append({
@@ -76,9 +71,7 @@ def get_stock_news(ticker):
                 "title": title,
                 "url": link,
                 "entities": [ticker],
-                "summary": summary,
-                "score": score,
-                "sentiment": sentiment
+                "summary": summary
             })
 
             db.session.add(news_db)

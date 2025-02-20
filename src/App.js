@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import NewsPage from './pages/News/NewsPage';
 import IndividualNewsPage from './pages/News/IndividualNewsPage';
@@ -10,7 +10,6 @@ import './styles/App.css';
 import { useParams } from 'react-router-dom';
 import EntityPage from './pages/Entities/EntityPage';
 import Header from './components/Header';
-import DashboardPage from './pages/DashboardPage';
 
 function App() {
   const location = useLocation();
@@ -30,12 +29,10 @@ function App() {
       <main className="App-content">
         {/* Routes */}
         <Routes>
-          <Route path="/" element={<Navigate to="/Newspage" />} /> {/* Default route */}
           <Route path="/EntitiesPage" element={<EntitiesPage />} />
           <Route path="/NewsPage" element={<NewsPage />} />
           <Route path="/IndividualNewsPage" element={<IndividualNewsPage />} />
-          <Route path="/entity/:id/:name" element={<EntityPage />} />
-          <Route path="/DashboardPage" element={<DashboardPage />} />
+          <Route path="/entity/:id" element={<EntityPage />} />
         </Routes>
       </main>'
     </div>

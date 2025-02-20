@@ -14,8 +14,6 @@ def insert_data_to_db(data, query):
         # change entities to this format e.g., ["Tesla", "Apple", "Microsoft"]
         entities_list = [query]
 
-        print("inserting data to db")
-
         n = News(
         publisher=news['publisher']['title'],
         description=news['description'],
@@ -23,9 +21,7 @@ def insert_data_to_db(data, query):
         title=news['title'],
         url=news['url'],
         entities=entities_list,
-        summary=news['summary'],
-        score=news['score'],
-        sentiment=news['sentiment']
+        summary=news['summary']
         )
         db.session.add(n)
     db.session.commit()
@@ -63,19 +59,14 @@ def get_gnews_news_by_entity(query, start_date, end_date):
                 # get article details
                 article_details = get_article_details(decoded_url["decoded_url"])
 
-                print("article details: ", article_details)
-
                 # place the article details in the news object
                 news["description"] = article_details["text"]
 
                 #add summary to the news object
                 news["summary"] = article_details["summary"]
-
-                # add score and sentiment to the news object
-                news["score"] = article_details["numerical_score"]
-                news["sentiment"] = article_details["classification"]
             except Exception as e:
                 print(f"An error occurred: {e}")
+
 
         # insert the data into the database
         check_if_data_inserted = insert_data_to_db(data, query)
@@ -86,7 +77,8 @@ def get_gnews_news_by_entity(query, start_date, end_date):
 
 def get_all_top_gnews():
     gn = GNews(
-        max_results=1 # this is use for testing 
+        # max_results=1 # this is use for testing 
+
     )
     data = gn.get_top_news()
 
@@ -113,17 +105,11 @@ def get_all_top_gnews():
             # get article details
             article_details = get_article_details(decoded_url["decoded_url"])
 
-            print("article details", article_details)
-
             # place the article details in the news object
             news["description"] = article_details["text"]
 
             #add summary to the news object
             news["summary"] = article_details["summary"]
-
-            # add score and sentiment to the news object
-            news["score"] = article_details["numerical_score"]
-            news["sentiment"] = article_details["classification"]
         except Exception as e:
             print(f"An error occurred: {e}")
 

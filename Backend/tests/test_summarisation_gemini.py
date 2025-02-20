@@ -6,7 +6,7 @@ import os
 # Add the directory containing summarisation_gemini.py to the Python path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../app')))
 
-from app.utils.helpers import summarise_news
+from summarisation_gemini import summarise_news
 
 class TestSummariseNews(unittest.TestCase):
 

@@ -7,7 +7,6 @@ import EntityVisuals from '../../components/entity/Entityvisuals';
 import EntityNews from '../../components/entity/Entitynews';
 import useFetch from '../../hooks/useFetch';
 import '../../styles/App.css';
-import ReportButton from '../../services/export';
 
 const EntityPage = () => {
   const { id } = useParams();
@@ -31,9 +30,6 @@ const EntityPage = () => {
           </div>
           <div style={styles.sentimentWrapper}>
             <SentimentScore />
-          </div>
-          <div >
-            <ReportButton companyId="tsmc" />
           </div>
         </div>
 
@@ -81,7 +77,6 @@ const styles = {
     maxWidth: '400px',
     fontSize: 'clamp(0.8rem, 1vw, 1.2rem)',
   },
-  
   newsWrapper: {
     padding: '20px',
     maxWidth: '1200px',
