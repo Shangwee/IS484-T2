@@ -1,6 +1,6 @@
 import React from 'react';
 // import SearchBar from './ui/Searchbar';
-import Backbutton from './ui/Backbutton';
+import BackButton from './ui/BackButton';
 import { useLocation } from 'react-router-dom';
 
 const routePaths = ['/Entitiespage', '/Newspage'];

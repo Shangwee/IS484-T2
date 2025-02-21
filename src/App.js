@@ -10,6 +10,7 @@ import './styles/App.css';
 import { useParams } from 'react-router-dom';
 import EntityPage from './pages/Entities/EntityPage';
 import Header from './components/Header';
+import DashboardPage from './pages/DashboardPage';
 
 function App() {
   const location = useLocation();
@@ -29,11 +30,12 @@ function App() {
       <main className="App-content">
         {/* Routes */}
         <Routes>
-          <Route path="/" element={<Navigate to="/EntitiesPage" />} /> {/* Default route */}
+          <Route path="/" element={<Navigate to="/Newspage" />} /> {/* Default route */}
           <Route path="/EntitiesPage" element={<EntitiesPage />} />
           <Route path="/NewsPage" element={<NewsPage />} />
           <Route path="/IndividualNewsPage" element={<IndividualNewsPage />} />
           <Route path="/entity/:id/:name" element={<EntityPage />} />
+          <Route path="/DashboardPage" element={<DashboardPage />} />
         </Routes>
       </main>'
     </div>
