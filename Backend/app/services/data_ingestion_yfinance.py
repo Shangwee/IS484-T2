@@ -1,9 +1,11 @@
 import yfinance as yf
 import requests_cache
 import datetime
+import time
 from app import db
 from app.models.news import News as NewsModel
 from app.utils.helpers import get_article_details
+from app.services.article_scraper import scrape_article
 session = requests_cache.CachedSession('yfinance.cache')
 session.headers['User-agent'] = 'my-program/1.0'
 
@@ -37,11 +39,19 @@ def get_stock_news(ticker):
 
     newslist = []
 
+    rate_limit_interval = 60 / 15  # 15 requests per minute
+
     for news_item in news:
+        time.sleep(rate_limit_interval)  # Sleep to respect rate limit
+
         link = news_item['link']
 
         try:
-            article_details = get_article_details(link)
+            # Scrape the article details
+            article = scrape_article(link)
+
+            # Get the article details
+            article_details = get_article_details(link, article)
             description = article_details['text']
             summary = article_details['summary']
             published_date = news_item["providerPublishTime"]
