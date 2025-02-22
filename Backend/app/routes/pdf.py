@@ -2,6 +2,7 @@ from flask import request, send_file, Blueprint
 from datetime import datetime
 from app.utils.helpers import format_response
 from app.services.export_pdf import generate_pdf
+from app.services.news_services import news_by_entity
 import traceback
 import logging
 import os
@@ -21,12 +22,19 @@ if not os.path.exists(UPLOAD_FOLDER):
 def export_pdf():
     data = request.get_json()
 
-    if not data:
-        return format_response(None, "No data provided",400)
+    entity_name = data.get("entity_name")
 
-    entity_name = data.get("entity_name", "Unknown Entity")
-    key_metrics = data.get("key_metrics", {})
-    news_items = data.get("news_items", [])
+    if not entity_name:
+        return format_response(None, "Entity name is required", 400)
+    
+    # Get news and key metrics for the entity
+    news_items = news_by_entity(entity_name)
+    key_metrics = {
+        "Revenue": 1000000,
+        "Net Income": 500000,
+        "EPS": 2.5,
+        "Market Cap": 1000000000
+    }
 
     output_filename = f"{entity_name}_report_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
 

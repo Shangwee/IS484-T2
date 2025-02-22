@@ -1,9 +1,6 @@
-from flask import Blueprint, request, jsonify
-import json
-from sqlalchemy import any_, func
-from app.models.news import News
-from app.models.entity import Entity
+from flask import Blueprint, request
 from app.utils.decorators import jwt_required
+from app.services.news_services import news_by_entity, news_by_id, all_news
 from app.services.data_ingestion_gnews import get_gnews_news_by_entity, get_all_top_gnews
 from app.services.data_ingestion_yfinance import get_stock_news
 from app.utils.helpers import format_response, format_date_into_tuple_for_gnews
@@ -63,66 +60,23 @@ def ingest_all_news():
 # ** get news based on entity
 @news_bp.route("/<string:entity>", methods=['GET'])
 def get_news(entity):
-
-    # Query using PostgreSQL ANY operator for array type
-    news = News.query.filter(
-        entity == any_(News.entities)
-    ).all()
-
-    if not news:
-        return format_response([], "No news found for this entity", 404)
-
-    news_list = []
-    for n in news:
-        news_list.append({
-            "id": n.id,
-            "publisher": n.publisher,
-            "description": n.description,
-            "summary": n.summary,
-            "published_date": n.published_date,
-            "title": n.title,
-            "url": n.url,
-            "entities": n.entities,
-            "score": n.score,
-            "sentiment": n.sentiment
-        }) 
+    news_list = news_by_entity(entity)
+    if not news_list:
+        return format_response([], "News not found", 404)
     return format_response(news_list, "News fetched successfully", 200)
 
 # ** get news based on id
 @news_bp.route("/<int:id>", methods=['GET'])
 def get_news_by_id(id):
-    news = News.query.get(id)
+    news = news_by_id(id)
     if news:
-        return format_response({
-            "id": news.id,
-            "publisher": news.publisher,
-            "description": news.description,
-            "summary": news.summary,
-            "published_date": news.published_date,
-            "title": news.title,
-            "url": news.url,
-            "entities": news.entities,
-            "score": news.score,
-            "sentiment": news.sentiment
-        }, "News fetched successfully", 200)
+        return format_response(news, "News fetched successfully", 200)
     return format_response([], "News not found", 404)   
 
 # ** get all news
 @news_bp.route("/", methods=['GET'])
 def get_all_news():
-    news = News.query.all()
-    news_list = []
-    for n in news:
-        news_list.append({
-            "id": n.id,
-            "publisher": n.publisher,
-            "description": n.description,
-            "summary": n.summary,
-            "published_date": n.published_date,
-            "title": n.title,
-            "url": n.url,
-            "entities": n.entities,
-            "score": n.score,
-            "sentiment": n.sentiment
-        })
+    news_list = all_news()
+    if not news_list:
+        return format_response([], "News not found", 404)
     return format_response(news_list, "News fetched successfully", 200)
