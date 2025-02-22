@@ -41,7 +41,7 @@ def get_gnews_news_by_entity(query, start_date, end_date):
     gn = GNews(
         start_date=start_date, 
         end_date=end_date, 
-        max_results=3  # Fetch multiple articles
+        # max_results=1  # For testing purposes
     )
     data = gn.get_news(query)
 
@@ -99,7 +99,7 @@ def get_gnews_news_by_entity(query, start_date, end_date):
 ## ingest data by top news
 def get_all_top_gnews():
     gn = GNews(
-        max_results=1 # this is use for testing 
+        # max_results=1 # For testing purposes
     )
     data = gn.get_top_news()
 
