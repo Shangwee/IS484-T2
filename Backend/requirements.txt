@@ -46,3 +46,6 @@ coverage==7.6.9
 torch
 torchvision
 torchaudio
+
+#pdf
+fpdf
