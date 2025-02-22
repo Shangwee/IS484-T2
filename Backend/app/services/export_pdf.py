@@ -50,6 +50,10 @@ def generate_pdf(entity_name, key_metrics, news_items, output_filename="report.p
             # News title with gray background
             pdf.set_fill_color(245, 245, 245)
             pdf.cell(0, 10, f"{i}. {news['title']}", 1, 1, 'L', 1)
+            # new summary
+            pdf.set_font("Arial", size=12)
+            pdf.multi_cell(0, 10, news['summary'])
+            pdf.ln(2)
             # URL in italic
             pdf.set_font("Arial", "I", 10)
             pdf.cell(0, 8, news['url'], 0, 1, 'L')
