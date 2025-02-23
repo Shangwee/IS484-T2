@@ -7,7 +7,7 @@ import EntityVisuals from '../../components/entity/Entityvisuals';
 import EntityNews from '../../components/entity/Entitynews';
 import useFetch from '../../hooks/useFetch';
 import '../../styles/App.css';
-import ReportButton from '../../services/export';
+import ReportButton from '../../components/ui/export';
 
 const EntityPage = () => {
   const { id } = useParams();

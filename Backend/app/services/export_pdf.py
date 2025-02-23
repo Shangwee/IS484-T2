@@ -50,9 +50,11 @@ def generate_pdf(entity_name, key_metrics, news_items, output_filename="report.p
             # News title with gray background
             pdf.set_fill_color(245, 245, 245)
             pdf.cell(0, 10, f"{i}. {news['title']}", 1, 1, 'L', 1)
-            # URL in italic
+            pdf.ln(5)
+            # URL in italic with word wrap
             pdf.set_font("Arial", "I", 10)
-            pdf.cell(0, 8, news['url'], 0, 1, 'L')
+            url = news['url']
+            pdf.multi_cell(0, 8, url, 0, 'L')
             pdf.set_font("Arial", size=12)
             pdf.ln(2)
 
@@ -63,6 +65,11 @@ def generate_pdf(entity_name, key_metrics, news_items, output_filename="report.p
         pdf.cell(0, 10, f"Report generated on: {timestamp}", 0, 1, 'C')
         # Save PDF
         pdf.output(output_path)
+        logging.info(f"PDF successfully created: {output_path}")
+
+        if not os.path.exists(output_path):
+            raise FileNotFoundError(f"PDF file was not created at: {output_path}")
+
         return output_path
     except Exception as e:
         logger.error(f"PDF generation error: {str(e)}\n{traceback.format_exc()}")

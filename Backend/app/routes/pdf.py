@@ -1,33 +1,29 @@
 from flask import request, send_file, Blueprint
+import os
+import time
 from datetime import datetime
-from app.utils.helpers import format_response
+import logging
+import traceback
 from app.services.export_pdf import generate_pdf
 from app.services.news_services import news_by_entity
-import traceback
-import logging
-import os
+from app.utils.helpers import format_response
+import threading
 
 pdf_bp = Blueprint('pdf', __name__)
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# Configure upload folder for temporary PDF files
-UPLOAD_FOLDER = 'temp_pdfs'
+UPLOAD_FOLDER = "temp_pdfs"
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-@pdf_bp.route('/generate_pdf', methods=['POST'])
+@pdf_bp.route('/generate-pdf', methods=['POST'])
 def export_pdf():
     data = request.get_json()
-
     entity_name = data.get("entity_name")
 
     if not entity_name:
         return format_response(None, "Entity name is required", 400)
-    
-    # Get news and key metrics for the entity
+
+    # Fetch data for the report
     news_items = news_by_entity(entity_name)
     key_metrics = {
         "Revenue": 1000000,
@@ -36,30 +32,39 @@ def export_pdf():
         "Market Cap": 1000000000
     }
 
+    # Generate PDF
     output_filename = f"{entity_name}_report_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+    pdf_filepath = generate_pdf(entity_name, key_metrics, news_items, output_filename)
+    
+    base_path = os.getcwd()  # Get the current working directory
+    pdf_filepath = os.path.join(base_path, "temp_pdfs", output_filename)
+
+    logging.info(f"Generated PDF path: {pdf_filepath}")
+
+    # Ensure the file exists before sending
+    if not os.path.exists(pdf_filepath):
+        logging.error(f"File not found: {pdf_filepath}")
+        return format_response(None, "Failed to generate report", 500)
+
+    def cleanup():
+        time.sleep(5)  # Give time for the file to be fully sent
+        try:
+            if os.path.exists(pdf_filepath):
+                os.remove(pdf_filepath)
+                logging.info(f"Deleted file: {pdf_filepath}")
+        except Exception as e:
+            logging.error(f"Error deleting file: {traceback.format_exc()}")
 
     try:
-        pdf_filename = generate_pdf(entity_name, key_metrics, news_items, output_filename)
-        return send_file(
-            pdf_filename,
+        response = send_file(
+            pdf_filepath,
             as_attachment=True,
-            download_name=output_filename,
-            mimetype='application/pdf'
+            mimetype="application/pdf"
         )
+        
+        # Run cleanup in a background thread
+        threading.Thread(target=cleanup, daemon=True).start()
+        return response
     except Exception as e:
-        logger.error(f"Error generating PDF: {traceback.format_exc()}")
+        logging.error(f"Error sending PDF: {traceback.format_exc()}")
         return format_response(None, "Error generating PDF", 500)
-    finally:
-        # Clean up the file after sending
-        if os.path.exists(pdf_filename):
-            os.remove(pdf_filename)
-
-@pdf_bp.errorhandler(500)
-def handle_500_error(e):
-    logger.error(f"Internal server error: {str(e)}\n{traceback.format_exc()}")
-    return format_response(None, "Internal server error", 500)
-
-@pdf_bp.errorhandler(404)
-def handle_404_error(e):
-    return format_response(None, "Resource not found", 404)
-
