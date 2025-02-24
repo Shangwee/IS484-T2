@@ -26,3 +26,13 @@ export const postData = async (endpoint, data) => {
     return null;
   }
 };
+
+export const postDataBlob = async (endpoint, data) => {
+  try {
+    const response = await apiClient.post(`${endpoint}`, data, { responseType: 'blob' });
+    return response.data;
+  } catch (error) {
+    console.error("API error:", error);
+    return null;
+  }
+};

@@ -33,7 +33,7 @@ const EntityPage = () => {
             <SentimentScore />
           </div>
           <div >
-            <ReportButton companyId="tsmc" />
+            <ReportButton EntityName={EntityName} />
           </div>
         </div>
 

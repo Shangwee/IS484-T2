@@ -24,6 +24,7 @@ def export_pdf():
         return format_response(None, "Entity name is required", 400)
 
     # Fetch data for the report
+    #TODO: Replace with actual data fetch. Maybe can create a new function in services folder
     news_items = news_by_entity(entity_name)
     key_metrics = {
         "Revenue": 1000000,
