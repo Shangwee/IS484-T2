@@ -33,10 +33,9 @@ const EntityPage = () => {
           <div style={styles.sentimentWrapper}>
             <SentimentScore />
           </div>
-          <div >
+          {/* Buttons in the same row as entity, price, and sentiment score */}
+          <div style={styles.buttonWrapper}>
             <ReportButton EntityName={EntityName} />
-          </div>
-          <div >
             <SendPDF EntityName={EntityName} />
           </div>
         </div>
@@ -68,24 +67,33 @@ const styles = {
     flex: 1,
     textAlign: 'left',
     minWidth: '200px',
+    marginRight: '0px',  
   },
   priceWrapper: {
     flex: 1,
     textAlign: 'center',
     minWidth: '200px',
     fontSize: 'clamp(0.8rem, 1vw, 1.2rem)',
+    marginRight: '5px', 
+  },
+  sentimentWrapper: {
+    textAlign: 'right',
+    maxWidth: '400px',
+    fontSize: 'clamp(0.8rem, 1vw, 1.2rem)',
+    marginRight: '20px',  // Increased gap between sentiment score and buttons
+  },
+  buttonWrapper: {
+    display: 'flex',
+    gap: '10px', // Reduced gap between buttons
+    marginLeft: 'auto', // Align buttons to the right
+    marginRight: '0', // Align buttons to the right
+    flexShrink: 0, // Prevent button wrapper from shrinking
   },
   visualsWrapper: {
     padding: '10px',
     display: 'flex',
     justifyContent: 'center',
   },
-  sentimentWrapper: {
-    textAlign: 'right',
-    maxWidth: '400px',
-    fontSize: 'clamp(0.8rem, 1vw, 1.2rem)',
-  },
-  
   newsWrapper: {
     padding: '20px',
     maxWidth: '1200px',
