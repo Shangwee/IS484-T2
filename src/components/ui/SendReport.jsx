@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { postDataBlob } from '../../services/api'
+import { postData } from '../../services/api'
 
 const SendPDF = (EntityName) => {
   const [loading, setLoading] = useState(false);
@@ -8,7 +8,7 @@ const SendPDF = (EntityName) => {
   const sendEmail = async () => {
     setLoading(true);
     try {
-      const response = await postDataBlob(`/send_pdf/send_pdf_email`, JSON.stringify({ entity_name: EntityName.EntityName }));
+      const response = await postData(`/send_pdf/send_pdf_email`, JSON.stringify({ entity_name: EntityName.EntityName }));
 
       if (response.data.success) {
         setStatus('Email sent successfully!');
