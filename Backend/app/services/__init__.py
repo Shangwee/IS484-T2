@@ -5,3 +5,4 @@ from .article_scraper import scrape_article
 from .export_pdf import generate_pdf
 from .news_services import news_by_entity, news_by_id, all_news
 from .entities_service import get_ticker_by_entity, get_stock_key_metrics, get_stock_history, get_stock_price
+from .email_pdf import send_email_with_attachment

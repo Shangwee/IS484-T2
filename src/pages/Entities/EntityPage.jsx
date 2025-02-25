@@ -8,6 +8,7 @@ import EntityNews from '../../components/entity/Entitynews';
 import useFetch from '../../hooks/useFetch';
 import '../../styles/App.css';
 import ReportButton from '../../components/ui/export';
+import SendPDF from '../../components/ui/SendReport';
 
 const EntityPage = () => {
   const { id } = useParams();
@@ -34,6 +35,9 @@ const EntityPage = () => {
           </div>
           <div >
             <ReportButton EntityName={EntityName} />
+          </div>
+          <div >
+            <SendPDF EntityName={EntityName} />
           </div>
         </div>
 

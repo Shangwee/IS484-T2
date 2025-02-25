@@ -78,7 +78,7 @@ const News = (EntityName) => {
 
   // Retrieve the entity from the location state
   const { entity } = location.state || {entity: null};
-  console.log(entity);  
+  console.log(`entity is ${EntityName.EntityName}`);  
 
   // Fetch news data
   const url = `/news/${EntityName.EntityName}`;
