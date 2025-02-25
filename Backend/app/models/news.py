@@ -12,6 +12,7 @@ class News(db.Model):
     score = db.Column(db.Float, nullable=True)
     sentiment = db.Column(db.String(50), nullable=True)  # e.g., Positive, Neutral, Negative
     summary = db.Column(db.Text, nullable=True)
+    tags = db.Column(ARRAY(db.String), nullable=True)  # e.g., ["Technology", "Business"]
 
     
     def __repr__(self):

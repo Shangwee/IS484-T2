@@ -19,4 +19,5 @@
     <include file="db/changelog/alter-news-id-sequence-6.xml"/>
     <include file="db/changelog/update_entity_summary-7.xml"/>
     <include file="db/changelog/add-score-to-news-8.xml"/>
+    <include file="db/changelog/add-tags-to-news-9.xml"/>
 </databaseChangeLog>
