@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://api.example.com/auth";
+const API_URL = "https://backend-v1-bxgyfnaubsfgg3f4.southeastasia-01.azurewebsites.net";
 
 export const login = async (email, password) => {
   try {
