@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "https://backend-v1-bxgyfnaubsfgg3f4.southeastasia-01.azurewebsites.net";
+const API_BASE_URL = "http://localhost:5001";
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -20,6 +20,16 @@ export const getData = async (endpoint) => {
 export const postData = async (endpoint, data) => {
   try {
     const response = await apiClient.post(`${endpoint}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("API error:", error);
+    return null;
+  }
+};
+
+export const postDataBlob = async (endpoint, data) => {
+  try {
+    const response = await apiClient.post(`${endpoint}`, data, { responseType: 'blob' });
     return response.data;
   } catch (error) {
     console.error("API error:", error);

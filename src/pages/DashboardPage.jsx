@@ -1,5 +1,5 @@
 import React from 'react';
-import ReportButton from '../services/export'; // Import the ReportButton component
+import ReportButton from '../components/ui/export'; // Import the ReportButton component
 
 
 function DashboardPage() {
