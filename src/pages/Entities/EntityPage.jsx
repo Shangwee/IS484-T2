@@ -30,9 +30,9 @@ const EntityPage = () => {
           <div style={styles.priceWrapper}>
             <Price id={stockID} />
           </div>
-          <div style={styles.sentimentWrapper}>
-            <SentimentScore />
-          </div>
+          <span style={styles.sentimentScore}>
+                    <SentimentScore />
+          </span>
           {/* Buttons in the same row as entity, price, and sentiment score */}
           <div style={styles.buttonWrapper}>
             <ReportButton EntityName={EntityName} />
@@ -76,11 +76,11 @@ const styles = {
     fontSize: 'clamp(0.8rem, 1vw, 1.2rem)',
     marginRight: '5px', 
   },
-  sentimentWrapper: {
-    textAlign: 'right',
-    maxWidth: '400px',
-    fontSize: 'clamp(0.8rem, 1vw, 1.2rem)',
-    marginRight: '20px',  // Increased gap between sentiment score and buttons
+  sentimentScore: {
+    fontSize: '0.875rem',
+      color: '#4CAF50',
+      fontWeight: 'bold',
+      marginLeft: 'auto',
   },
   buttonWrapper: {
     display: 'flex',

@@ -13,27 +13,17 @@ const News = (EntityName) => {
 
     newsBox: {
       position: 'relative',
-
       borderRadius: '8px',
       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
       padding: '20px',
+      paddingTop: '60px', // Increased to make room for sentiment score
       backgroundColor: '#fff',
       marginBottom: '20px',
-      height: 'auto', // Allow height to adjust dynamically
-      width: '100%', // Full width of the column
-      maxWidth: '600px', // Limit maximum width for larger screens
-      margin: '0 auto', // Center the box horizontally
+      height: 'auto',
+      width: '100%',
+      maxWidth: '600px',
+      margin: '0 auto',
       boxSizing: 'border-box',
-    },
-    sentimentScore: {
-      position:'absolute',
-      top:'10px',
-      right:'10px',
-      fontSize: '0.2rem', // Adjusted for readability
-      color: 'black',
-      fontWeight: 'bold',
-      textAlign: 'right', // Aligns it properly
-      zIndex: 1
     },
     newsHeader: {
       fontSize: 'clamp(1rem, 1.5vw, 1.5rem)', // Dynamic font size
@@ -57,10 +47,20 @@ const News = (EntityName) => {
       textDecoration: 'none',
     },
     sentimentScore: {
-      fontSize: 'clamp(0.8rem, 1vw, 1rem)', // Dynamic font size
+      position: 'absolute',
+      top: '10px',
+      right: '10px',
+      fontSize: 'clamp(0.8rem, 1vw, 1rem)',
       color: 'black',
       fontWeight: 'bold',
-      textAlign: 'right', // Align it properly
+      textAlign: 'right',
+      zIndex: 1,
+      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+      padding: '5px 10px',
+      borderRadius: '5px',
+      maxWidth: '80%', // Increased to allow for longer text
+      whiteSpace: 'normal', // Allow text to wrap
+      wordWrap: 'break-word', // Break long words if necessary
     },
     paginationWrapper: {
       display: 'flex',
