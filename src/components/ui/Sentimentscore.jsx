@@ -14,11 +14,6 @@ const SentimentScore = (text) => {
       fontWeight: 'bold'
       }}>No text provided</div>;
   }
-  const onAnalyze = async () => {
-    const sentiment = await SentimentAnalysis(text);
-    console.log(sentiment);
-    setSentiment(sentiment);
-  };
 
   const getBackgroundColor = (classification) => {
     switch (classification?.toLowerCase()) {
@@ -30,22 +25,19 @@ const SentimentScore = (text) => {
   };
 
   if (!sentiment) {
-    return (
-      <button 
-        onClick={onAnalyze}
-        style={{
-          padding: '5px 10px',
-          borderRadius: '15px',
-          border: 'none',
-          backgroundColor: '#808080',
-          color: 'white',
-          fontSize: 'calc(1px + 1vw)',
-          cursor: 'pointer'
-        }}
-      >
-        Analyze
-      </button>
-    );
+    SentimentAnalysis(text).then(result => {
+      console.log(result);
+      setSentiment(result);
+    });
+
+    return <div style={{
+      backgroundColor: '#808080',
+      borderRadius: '15px',
+      padding: '5px 15px',
+      color: 'white',
+      fontSize: 'calc(1px + 1vw)',
+      fontWeight: 'bold'
+    }}>Analyzing...</div>;
   }
 
   return (
