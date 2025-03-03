@@ -59,15 +59,12 @@ const NewsSources = () => {
       fontSize: 'calc(12px + 0.5vw)', // Dynamic font size
       color: '#555555',
     }, 
-    sentimentScore: {
-      fontSize: '14px',
-      color: '#4CAF50', // Example color for sentiment score
-      fontWeight: 'bold',
-      position: 'absolute', // Position sentiment score absolutely inside the news box
-      top: '20px',  // Adjust this value for vertical positioning
-      right: '10px', // Adjust this value for horizontal positioning
+    
+    sentimentContainer:{
+      display: 'flex',
+      justifyContent: 'flex-end',
+      marginTop: '10px',
     }
-
   };
 
   if (!id) {
@@ -80,6 +77,10 @@ const NewsSources = () => {
           <Col key={newsItem.id} md={5} className="mb-4 ml-4" style={{ display: 'flex' }}>
              
             <div style={styles.newsBox} className="news-box">
+              
+            <div style={styles.sentimentContainer}>
+                                <SentimentScore text={newsItem.title + newsItem.summary} />
+              </div>
               <Link 
               to={newsItem.url} 
               target="_blank" 
@@ -88,14 +89,10 @@ const NewsSources = () => {
               >  
                 <h4 style={styles.newsHeader}>{newsItem.title}</h4>  
               </Link> 
-              <div style={styles.sentiment}>
-                <SentimentScore text={newsItem.title + newsItem.summary} />
-              </div>
               <h4 style={styles.newsDate}>{new Date(newsItem.published_date).toLocaleDateString()}</h4> 
               {/* <h4 style={styles.newsLink}>{newsItem.link}</h4>  */}
               <p style={styles.newsSummary}>{newsItem.description}</p> 
-              <div style={styles.sentiment}>
-              </div>
+            
               
 
             </div>
