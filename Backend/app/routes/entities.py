@@ -1,6 +1,7 @@
 from flask import Blueprint, request
 from app.models.entity import Entity
 from app.services.data_ingestion_finviz import get_stock_price
+from app.services.data_ingestion_yfinance import get_stock_history
 from app import db
 from app.utils.decorators import jwt_required
 from app.utils.helpers import format_response
@@ -98,7 +99,7 @@ def get_entity_stock_chart(id):
         return format_response(None, "Entity not found", 404)
     
     # call the stock price service
-    stock_chart = "Stock chart data"
+    stock_chart = get_stock_history(entity.ticker)
 
     return format_response({
         "name": entity.name,
