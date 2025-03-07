@@ -5,7 +5,7 @@ from finvizfinance.news import News
 from app.utils.helpers import get_article_details
 from app.services.article_scraper import scrape_article
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Foe this service we will be using finviz to get the news
 def get_finviz_news_by_entity(query):
@@ -19,6 +19,10 @@ def get_finviz_news_by_entity(query):
     # Get the news for the stock
     news = stock.ticker_news()
 
+    # get date as range of 24 hours
+    today = datetime.today().strftime('%Y-%m-%d')
+    yesterday = (datetime.today() - timedelta(days=1)).strftime('%Y-%m-%d')
+
     # Convert the news into a DataFrame
     news_df = pd.DataFrame(news, columns=['Date', 'Title', 'Link', 'Source'])
 
@@ -26,7 +30,13 @@ def get_finviz_news_by_entity(query):
 
     # Convert the DataFrame into a list of dictionaries
     for index, row in news_df.iterrows():
-        description = ""
+        description = "" 
+
+        news_date = str(row['Date']).split(' ')[0]
+
+        if news_date != today and news_date != yesterday:
+            continue
+
         try :
              # Get article scraped
             article = scrape_article(row['Link'])
@@ -155,3 +165,10 @@ def get_stock_price(ticker):
     quote = Quote()
     price = quote.get_current(ticker)
     return price
+
+
+def get_stock_fundamentals(ticker):
+    stock = finvizfinance(ticker)
+    fundamentals = stock.ticker_fundament()
+    return fundamentals
+    
