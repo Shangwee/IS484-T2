@@ -5,7 +5,8 @@ from datetime import datetime
 import logging
 import traceback
 from app.services.export_pdf import generate_pdf
-from app.services.news_services import news_by_entity
+from app.services.news_services import news_by_ticker
+from app.services.entities_service import get_ticker_by_entity
 from app.utils.helpers import format_response
 import threading
 
@@ -19,13 +20,14 @@ if not os.path.exists(UPLOAD_FOLDER):
 def export_pdf():
     data = request.get_json()
     entity_name = data.get("entity_name")
+    ticker = get_ticker_by_entity(entity_name)
 
-    if not entity_name:
-        return format_response(None, "Entity name is required", 400)
+    if not entity_name or not ticker:
+        return format_response(None, "Missing required fields", 400)
 
     # Fetch data for the report
     #TODO: Replace with actual data fetch. Maybe can create a new function in services folder
-    news_items = news_by_entity(entity_name)
+    news_items = news_by_ticker(ticker)
     key_metrics = {
         "Revenue": 1000000,
         "Net Income": 500000,

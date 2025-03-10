@@ -8,14 +8,14 @@ import pandas as pd
 from datetime import datetime, timedelta
 
 # Foe this service we will be using finviz to get the news
-def get_finviz_news_by_entity(query):
+def get_finviz_news_by_ticker(query):
 
     try:
         stock = finvizfinance(query)
     except Exception as e:
         print(f"An error occurred: {e}")
         return []
-   
+
     # Get the news for the stock
     news = stock.ticker_news()
 
@@ -58,7 +58,7 @@ def get_finviz_news_by_entity(query):
             "description": description,
             "url": row['Link'],
             "publisher": row['Source'],
-            "entity": query,
+            "ticker": query,
             "summary": summary,
             "score": score,
             "sentiment": sentiment
@@ -72,7 +72,7 @@ def get_finviz_news_by_entity(query):
         if existing_news:
             continue
         # change entities to this format e.g., ["Tesla", "Apple", "Microsoft"]
-        entities_list = [news['entity']]
+        entities_list = [news['ticker']]
         
         news_db = NewsModel(
             publisher=news['publisher'],
