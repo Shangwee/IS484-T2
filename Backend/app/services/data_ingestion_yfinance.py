@@ -39,7 +39,7 @@ def get_stock_news(ticker):
 
     newslist = []
 
-    rate_limit_interval = 60 / 15  # 15 requests per minute
+    rate_limit_interval = 60 / 4  # 15 requests per minute
 
     for news_item in news:
         time.sleep(rate_limit_interval)  # Sleep to respect rate limit

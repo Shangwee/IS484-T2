@@ -2,7 +2,7 @@ import time
 from gnews import GNews
 from app import db
 from app.models.news import News
-from app.utils.helpers import URL_decoder, summarise_news, get_article_details
+from app.utils.helpers import URL_decoder, get_article_details
 from app.services.sentiment_analysis import get_sentiment
 from app.services.article_scraper import scrape_article
 
@@ -34,8 +34,8 @@ def insert_data_to_db(data, query):
     db.session.commit()
     return True
 
-## ingest data by entity
-def get_gnews_news_by_entity(query, start_date, end_date):
+## ingest data by ticker
+def get_gnews_news_by_ticker(query, start_date, end_date):
     """ Fetches news articles from GNews, scrapes details, and stores new articles. """
     
     gn = GNews(

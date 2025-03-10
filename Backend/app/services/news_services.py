@@ -1,11 +1,11 @@
 from app.models.news import News
 from sqlalchemy import any_, func
 
-def news_by_entity(entity):
-    """Get news by entity"""
+def news_by_ticker(ticker):
+    """Get news by ticker"""
     # Query using PostgreSQL ANY operator for array type
     news = News.query.filter(
-        entity == any_(News.entities)
+        ticker == any_(News.entities)
     ).all()
 
     if not news:

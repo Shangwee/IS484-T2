@@ -1,19 +1,24 @@
 from flask import Blueprint, request
 from app.utils.decorators import jwt_required
-from app.services.news_services import news_by_entity, news_by_id, all_news
-from app.services.data_ingestion_gnews import get_gnews_news_by_entity, get_all_top_gnews
+from app.services.news_services import news_by_ticker, news_by_id, all_news
+from app.services.data_ingestion_finviz import get_finviz_news_by_ticker, get_all_finviz
+from app.services.data_ingestion_gnews import get_gnews_news_by_ticker, get_all_top_gnews
 from app.services.data_ingestion_yfinance import get_stock_news
+from app.services.entities_service import get_ticker_by_entity
 from app.utils.helpers import format_response, format_date_into_tuple_for_gnews
 from datetime import date, timedelta
 
 news_bp = Blueprint('news', __name__)    
 
 
-# ** generate news data based on entity
+# ** generate news data based on ticker
 @news_bp.route('/gnews', methods=['POST'])
 def ingest_news_gnews_entity():
     # Get the entity, period, start_date, and end_date from the request
     entity = request.json.get('entity')
+
+    # Get the ticker from the entity
+    ticker = get_ticker_by_entity(entity)
 
     # Get the start_date from 24hr before today and end_date as today
     start_date = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d")
@@ -24,21 +29,41 @@ def ingest_news_gnews_entity():
     format_end_date = format_date_into_tuple_for_gnews(end_date)
 
     # Get the news using gnews and save it to the database
-    result = get_gnews_news_by_entity(entity, format_start_date, format_end_date)
+    result = get_gnews_news_by_ticker(ticker, format_start_date, format_end_date)
 
     if result:
         return format_response(result, "News data generated and saved successfully", 201)
     
     return format_response([], "No news data found", 404)
 
-# ** generate news data based on entity using yfinance
+# ** generate news data based on ticker using finviz
+@news_bp.route('/finviz', methods=['POST'])
+def ingest_news_finviz_entity():
+    # Get the entity, period, start_date, and end_date from the request
+    entity = request.json.get('entity')
+
+    # Get the ticker from the entity
+    ticker = get_ticker_by_entity(entity)
+
+    # Get the news using finviz and save it to the database
+    news = get_finviz_news_by_ticker(ticker)
+
+    if len(news) > 0:
+        return format_response(news, "News data generated and saved successfully", 201)
+    
+    return format_response([], "No news data found", 404)
+
+# ** generate news data based on ticker using yfinance
 @news_bp.route('/yfinance', methods=['POST'])
 def ingest_news_yfinance_entity():
     # Get the entity, period, start_date, and end_date from the request
     name = request.json.get('entity')
 
+    # Get the ticker from the entity
+    ticker = get_ticker_by_entity(name)
+
     # Get the news using yfinance and save it to the database
-    news = get_stock_news(name)
+    news = get_stock_news(ticker)
 
     if len(news) > 0:
         return format_response(news, "News data generated and saved successfully", 201)
@@ -52,15 +77,24 @@ def ingest_all_news():
     gnews_result = get_all_top_gnews()
     print("gnews done")
 
-    if gnews_result:
-        return format_response(gnews_result, "News data generated and saved successfully", 201)
+    # Get the news using finviz and save it to the database
+    finviz_result = get_all_finviz()
+    print("finviz done")
+
+    total_news = gnews_result + finviz_result
+
+    if len(total_news) > 0:
+        return format_response(total_news, "News data generated and saved successfully", 201)
     
     return format_response([], "No news data found", 404)
 
 # ** get news based on entity
 @news_bp.route("/<string:entity>", methods=['GET'])
 def get_news(entity):
-    news_list = news_by_entity(entity)
+    # get news by ticker 
+    ticker = get_ticker_by_entity(entity)
+
+    news_list = news_by_ticker(ticker)
     if not news_list:
         return format_response([], "News not found", 404)
     return format_response(news_list, "News fetched successfully", 200)
