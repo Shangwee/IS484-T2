@@ -59,6 +59,7 @@ def get_stock_news(ticker):
             title = news_item["title"]
             score = article_details['numerical_score']
             sentiment = article_details['classification']
+            tags = article_details['tags']
 
             print("title: ", title)
 
@@ -76,7 +77,8 @@ def get_stock_news(ticker):
                 entities=[ticker],
                 summary=summary,
                 score=score,
-                sentiment=sentiment
+                sentiment=sentiment,
+                tags=tags
             )
 
             newslist.append({
@@ -88,7 +90,8 @@ def get_stock_news(ticker):
                 "entities": [ticker],
                 "summary": summary,
                 "score": score,
-                "sentiment": sentiment
+                "sentiment": sentiment,
+                "tags": tags
             })
 
             db.session.add(news_db)

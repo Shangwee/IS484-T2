@@ -23,7 +23,8 @@ def insert_data_to_db(news, query):
         entities=entities_list,
         summary=news['summary'],
         score=news['score'],
-        sentiment=news['sentiment']
+        sentiment=news['sentiment'],
+        tags=news['tags']
     )
 
     db.session.add(n)
@@ -44,7 +45,7 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
         start_date=start_date, 
         end_date=end_date, 
         exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com'],
-        max_results=4  # For testing purposes
+        # max_results=1  # For testing purposes
     )
     data = gn.get_news(query)
 
@@ -85,6 +86,8 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
                 # Add score and sentiment to the news object
                 news["score"] = article_details["numerical_score"]
                 news["sentiment"] = article_details["classification"]
+
+                news["tags"] = article_details["keywords"]
 
                 # check if the data exists in the database
                 check_data = check_if_data_exists(news['url'])
@@ -155,6 +158,8 @@ def get_all_top_gnews():
             # add score and sentiment to the news object
             news["score"] = article_details["numerical_score"]
             news["sentiment"] = article_details["classification"]
+
+            news["tags"] = article_details["keywords"]
 
             # check if the data exists in the database
             check_if_data_exists = check_if_data_exists(news['url'])

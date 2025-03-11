@@ -47,6 +47,7 @@ def get_finviz_news_by_ticker(query):
             summary = article_details['summary']
             score = article_details['numerical_score']
             sentiment = article_details['classification']
+            tags = article_details['keywords']
 
             news_list.append({
                 "published_date": row['Date'],
@@ -57,7 +58,8 @@ def get_finviz_news_by_ticker(query):
                 "ticker": query,
                 "summary": summary,
                 "score": score,
-                "sentiment": sentiment
+                "sentiment": sentiment,
+                "tags": tags
             })
 
             # check if the news already exists in the database
@@ -75,7 +77,8 @@ def get_finviz_news_by_ticker(query):
                 entities=[query],
                 summary=summary,
                 score=score,
-                sentiment=sentiment
+                sentiment=sentiment,
+                tags=tags
             )
 
             db.session.add(news_db)
@@ -122,6 +125,7 @@ def get_all_finviz():
             summary = article_details['summary']
             score = article_details['numerical_score']
             sentiment = article_details['classification']
+            tags = article_details['keywords']
 
             all_news_list.append({
                 "published_date": news_date,
@@ -131,7 +135,8 @@ def get_all_finviz():
                 "publisher": row['Source'],
                 "summary": summary,
                 "score": score,
-                "sentiment": sentiment
+                "sentiment": sentiment,
+                "tags": tags
             })
 
             # check if the news already exists in the database
@@ -149,7 +154,8 @@ def get_all_finviz():
                 entities=["Top News"],
                 summary=summary,
                 score=score,
-                sentiment=sentiment
+                sentiment=sentiment,
+                tags=tags
             )
 
             db.session.add(news_db)
@@ -162,7 +168,6 @@ def get_stock_price(ticker):
     quote = Quote()
     price = quote.get_current(ticker)
     return price
-
 
 def get_stock_fundamentals(ticker):
     stock = finvizfinance(ticker)
