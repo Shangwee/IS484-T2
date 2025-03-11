@@ -7,19 +7,14 @@ from app.services.sentiment_analysis import get_sentiment
 from app.services.article_scraper import scrape_article
 
 
-def insert_data_to_db(data, query):
-    for news in data:
-        # Check if the URL already exists in the database
-        existing_news = News.query.filter_by(url=news['url']).first()
-        if existing_news:
-            continue
+def insert_data_to_db(news, query):
 
-        # change entities to this format e.g., ["Tesla", "Apple", "Microsoft"]
-        entities_list = [query]
+    # change entities to this format e.g., ["Tesla", "Apple", "Microsoft"]
+    entities_list = [query]
 
-        print("inserting data to db")
+    print("inserting data to db")
 
-        n = News(
+    n = News(
         publisher=news['publisher']['title'],
         description=news['description'],
         published_date=news['published date'],
@@ -28,11 +23,19 @@ def insert_data_to_db(data, query):
         entities=entities_list,
         summary=news['summary'],
         score=news['score'],
-        sentiment=news['sentiment']
-        )
-        db.session.add(n)
+        sentiment=news['sentiment'],
+        tags=news['tags']
+    )
+
+    db.session.add(n)
     db.session.commit()
     return True
+
+def check_if_data_exists(url):
+    existing_news = News.query.filter_by(url=url).first()
+    if existing_news:
+        return True
+    return False
 
 ## ingest data by ticker
 def get_gnews_news_by_ticker(query, start_date, end_date):
@@ -41,6 +44,7 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
     gn = GNews(
         start_date=start_date, 
         end_date=end_date, 
+        exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com'],
         # max_results=1  # For testing purposes
     )
     data = gn.get_news(query)
@@ -83,23 +87,33 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
                 news["score"] = article_details["numerical_score"]
                 news["sentiment"] = article_details["classification"]
 
-                final_data.append(news)
+                news["tags"] = article_details["keywords"]
+
+                # check if the data exists in the database
+                check_data = check_if_data_exists(news['url'])
+                
+                if check_data:
+                    continue
+
+                # Insert the data into the database
+                check_if_data_inserted = insert_data_to_db(news, query)
+
+                if check_if_data_inserted:
+                    final_data.append(news)
+                else:
+                    print("Data not inserted")
     
         except Exception as e:
             print(f"Error: {e}")
             continue
-
-    # Insert the data into the database
-    check_if_data_inserted = insert_data_to_db(final_data, query)
     
-    if check_if_data_inserted:
-        return final_data
-    return False
+    return final_data
 
 ## ingest data by top news
 def get_all_top_gnews():
     gn = GNews(
         # max_results=1 # For testing purposes
+        exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com'],
     )
     data = gn.get_top_news()
 
@@ -144,12 +158,24 @@ def get_all_top_gnews():
             # add score and sentiment to the news object
             news["score"] = article_details["numerical_score"]
             news["sentiment"] = article_details["classification"]
+
+            news["tags"] = article_details["keywords"]
+
+            # check if the data exists in the database
+            check_if_data_exists = check_if_data_exists(news['url'])
+
+            if check_if_data_exists:
+                continue
+
+            # insert the data into the database
+            check_data = insert_data_to_db(news, "Top News")
+            if check_data:
+                continue
+            else:
+                print("Data not inserted")
+                data.remove(news)
+
         except Exception as e:
             print(f"An error occurred: {e}")
 
-    # insert the data into the database
-    check_if_data_inserted = insert_data_to_db(data, "Top News")
-
-    if check_if_data_inserted:
-        return data
-    return False
+    return data

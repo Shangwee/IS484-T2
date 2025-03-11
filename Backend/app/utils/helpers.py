@@ -69,14 +69,15 @@ def get_article_details(url, article_html):
         sentiment = get_sentiment(article_result.title + summary)
 
         keyword = article_result.keywords
-        keyword_str = ', '.join(keyword)
 
+        print("Keywords:", keyword)
+    
         return {
             "text": article_result.text,
             "summary": summary,
             'numerical_score': sentiment['numerical_score'],
             'classification': sentiment['classification'],
-            'keywords': keyword_str
+            'keywords': keyword
         }
 
     except Exception as e:
