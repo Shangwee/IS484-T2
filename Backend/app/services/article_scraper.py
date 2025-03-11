@@ -24,6 +24,8 @@ async def scrape_article_async(url_parameter):
     ) 
 
     run_config = CrawlerRunConfig(
+        user_agent=user_agent,
+
         # Content filtering
         word_count_threshold=10,
         excluded_tags=['form', 'header', 'footer', 'aside'],
