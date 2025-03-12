@@ -62,9 +62,9 @@ def update_entity(id):
     }, "Entity updated successfully", 200)
 
 # ** Get Entity Details
-@entities_bp.route('/<string:name>', methods=['GET'])
-def get_entity_details(name):
-    entity = Entity.query.filter_by(name=name).first()
+@entities_bp.route('/<string:ticker>', methods=['GET'])
+def get_entity_details(ticker):
+    entity = Entity.query.filter_by(ticker=ticker).first()
     if entity is None:
         return format_response(None, "Entity not found", 404)
    
