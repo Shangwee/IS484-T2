@@ -34,12 +34,9 @@ def get_stock_key_metrics(ticker):
         return response.json()
     return None 
 
-def get_ticker_by_entity(entity):
-    """Get ticker by entity"""
-    # Query using PostgreSQL ANY operator for array type
-    entity = Entity.query.filter(
-        entity == any_(Entity.entities)
-    ).first()
+def get_ticker_by_entity(entity_name):
+    """Get ticker by entity name"""
+    entity = Entity.query.filter(Entity.name == entity_name).first()
     if entity:
         return entity.ticker
     return None

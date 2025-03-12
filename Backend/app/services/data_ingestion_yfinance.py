@@ -39,7 +39,7 @@ def get_stock_news(ticker):
 
     newslist = []
 
-    rate_limit_interval = 60 / 15  # 15 requests per minute
+    rate_limit_interval = 60 / 4  # 15 requests per minute
 
     for news_item in news:
         time.sleep(rate_limit_interval)  # Sleep to respect rate limit
@@ -59,6 +59,7 @@ def get_stock_news(ticker):
             title = news_item["title"]
             score = article_details['numerical_score']
             sentiment = article_details['classification']
+            tags = article_details['tags']
 
             print("title: ", title)
 
@@ -76,7 +77,8 @@ def get_stock_news(ticker):
                 entities=[ticker],
                 summary=summary,
                 score=score,
-                sentiment=sentiment
+                sentiment=sentiment,
+                tags=tags
             )
 
             newslist.append({
@@ -88,7 +90,8 @@ def get_stock_news(ticker):
                 "entities": [ticker],
                 "summary": summary,
                 "score": score,
-                "sentiment": sentiment
+                "sentiment": sentiment,
+                "tags": tags
             })
 
             db.session.add(news_db)
