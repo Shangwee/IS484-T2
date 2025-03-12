@@ -23,7 +23,8 @@ def news_by_ticker(ticker):
             "url": n.url,
             "entities": n.entities,
             "score": n.score,
-            "sentiment": n.sentiment
+            "sentiment": n.sentiment,
+            "tags":n.tags
         })
     return news_list
 
@@ -41,7 +42,8 @@ def news_by_id(news_id):
             "url": news.url,
             "entities": news.entities,
             "score": news.score,
-            "sentiment": news.sentiment
+            "sentiment": news.sentiment,
+            "tags":news.tags
         }
     return None
 
@@ -60,6 +62,7 @@ def all_news():
             "url": n.url,
             "entities": n.entities,
             "score": n.score,
-            "sentiment": n.sentiment
+            "sentiment": n.sentiment,
+            "tags":n.tags
         })
     return news_list
