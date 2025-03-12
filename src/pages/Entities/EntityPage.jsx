@@ -11,21 +11,22 @@ import ReportButton from '../../components/ui/export';
 import SendPDF from '../../components/ui/SendReport';
 
 const EntityPage = () => {
-  const { id } = useParams();
-  const url = `/entities/${id}`;
+  const { entity } = useParams();
+  console.log(entity)
+  const url = `/entities/${entity}`;
   const { data, loading, error } = useFetch(url);
   const EntityName = data ? data.data.name : "N/A";
   const stockID = data ? data.data.id : "N/A";
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error fetching entity data.</p>;
+  if (loading) return <div style={styles.loading}>Loading...</div>;
+  if (error) return <div style={styles.error}>Error fetching entity data.</div>;
 
   return (
     <div className="App">
       <main className="App-content">
         <div style={styles.topRow}>
           <div style={styles.entityWrapper}>
-            <Entity id={stockID} />
+            <Entity EntityName={EntityName} />
           </div>
           <div style={styles.priceWrapper}>
             <Price id={stockID} />

@@ -1,10 +1,8 @@
 import React from 'react';
 import useFetch from '../../hooks/useFetch';
 
-function Entity(id) {
-  const number = id.id;
-
-  const url = `/entities/${number}`;
+function Entity( {EntityName} ) {
+  const url = `/entities/${EntityName}`;
 
   const { data, loading, error } = useFetch(url);
 
