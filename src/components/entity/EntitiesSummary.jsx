@@ -73,7 +73,7 @@ const Entities = () => {
       <Row className="g-4">
         {entityData.map((entityItem) => (
           <Col key={entityItem.id} xs={12} sm={6} lg={4} xl={3}>
-            <Link to={`/entity/${entityItem.id}/${entityItem.name}`} style={{ textDecoration: 'none' }}>
+            <Link to={`/entity/${entityItem.ticker}`} style={{ textDecoration: 'none' }}>
               <div style={styles.entityBox}>
                 <div style={styles.entityHeader}>
                   <h4 style={styles.entityName}>{entityItem.name}</h4>

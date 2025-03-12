@@ -3,12 +3,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col, Pagination } from 'react-bootstrap';
 import SentimentScore from '../ui/Sentimentscore';
 import { Link } from 'react-router-dom'; 
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 // import SearchBar from '../ui/Searchbar';
 import useFetch from '../../hooks/useFetch';
 
 // Main News Component
-const News = (EntityName) => {
+const News = ( {EntityName} ) => {
   const styles = {
 
     newsBox: {
@@ -73,15 +73,10 @@ const News = (EntityName) => {
   const [currentPage, setCurrentPage] = useState(1);
   const newsPerPage = 3;
 
-  const location = useLocation();
-  console.log("Location object:", location);
-
-  // Retrieve the entity from the location state
-  const { entity } = location.state || {entity: null};
-  console.log(`entity is ${EntityName.EntityName}`);  
 
   // Fetch news data
-  const url = `/news/${EntityName.EntityName}`;
+  console.log(EntityName)
+  const url = `/news/${EntityName}`;
   const { data, loading, error } = useFetch(url);
 
   // Extract news data from the response

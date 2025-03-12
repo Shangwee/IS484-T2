@@ -66,6 +66,7 @@ def get_finviz_news_by_ticker(query):
             existing_news = NewsModel.query.filter_by(url=row['Link']).first()
 
             if existing_news:
+                print("News already exists")
                 continue
 
             news_db = NewsModel(
@@ -83,6 +84,8 @@ def get_finviz_news_by_ticker(query):
 
             db.session.add(news_db)
             db.session.commit()
+
+            print("News added to database")
 
         except Exception as e:
             print(f"An error occurred: {e}")
