@@ -44,8 +44,8 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
     gn = GNews(
         start_date=start_date, 
         end_date=end_date, 
-        exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com'],
-        # max_results=1  # For testing purposes
+        exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com', "marketbeat.com", "benzinga.com", "streetinsider.com", "msn.com", "reuters.com", "uk.finance.yahoo.com", "seekingalpha.com", "fool.com", "GuruFocus.com", "mix941kmxj.com", "wibx950.com", "insidermonkey.com", "marketwatch.com", "cheap-sound.com", "retro1025.com", "wrrv.com", "apnnews.com"],
+        max_results=100  # For testing purposes
     )
     data = gn.get_news(query)
 
@@ -95,6 +95,9 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
                 if check_data:
                     continue
 
+                if news["description"] == "" or news["tags"] == []:
+                    continue
+
                 # Insert the data into the database
                 check_if_data_inserted = insert_data_to_db(news, query)
 
@@ -113,7 +116,7 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
 def get_all_top_gnews():
     gn = GNews(
         # max_results=1 # For testing purposes
-        exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com'],
+        exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com', "marketbeat.com", "benzinga.com", "streetinsider.com", "msn.com", "reuters.com"],
     )
     data = gn.get_top_news()
 
@@ -165,6 +168,9 @@ def get_all_top_gnews():
             check_if_data_exists = check_if_data_exists(news['url'])
 
             if check_if_data_exists:
+                continue
+
+            if news["description"] == "" or news["tags"] == []:
                 continue
 
             # insert the data into the database
