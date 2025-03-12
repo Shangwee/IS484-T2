@@ -73,17 +73,8 @@ def ingest_news_yfinance_entity():
 # ** generate all news from latest news
 @news_bp.route('/all', methods=['POST'])
 def ingest_all_news():
-     # Get the start_date from 24hr before today and end_date as today
-    start_date = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d")
-    end_date = date.today().strftime("%Y-%m-%d")
-
-    # Format the date into a tuple for gnews
-    format_start_date = format_date_into_tuple_for_gnews(start_date)
-    format_end_date = format_date_into_tuple_for_gnews(end_date)
-
-
     # Get the news using gnews and save it to the database
-    gnews_result = get_all_top_gnews(format_start_date, format_end_date)
+    gnews_result = get_all_top_gnews()
     print("gnews done")
 
     # Get the news using finviz and save it to the database
@@ -126,7 +117,7 @@ def automate_news_of_entity_and_all():
         print("finviz done for ", ticker)
 
     # get all news from gnews and finviz
-    gnews_result = get_all_top_gnews(format_start_date, format_end_date)
+    gnews_result = get_all_top_gnews()
     print("gnews done")
 
     finviz_result = get_all_finviz()
