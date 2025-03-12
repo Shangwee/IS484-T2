@@ -5,6 +5,7 @@ from app.models.news import News
 from app.utils.helpers import URL_decoder, get_article_details
 from app.services.sentiment_analysis import get_sentiment
 from app.services.article_scraper import scrape_article
+from datetime import datetime, timedelta
 
 
 def insert_data_to_db(news, query):
@@ -115,10 +116,14 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
 ## ingest data by top news
 def get_all_top_gnews():
     gn = GNews(
-        # max_results=1 # For testing purposes
+        max_results=5, # For testing purposes
         exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com', "marketbeat.com", "benzinga.com", "streetinsider.com", "msn.com", "reuters.com"],
     )
     data = gn.get_top_news()
+
+    # get date as range of 24 hours
+    today = datetime.today().strftime('%Y-%m-%d')
+    yesterday = (datetime.today() - timedelta(days=1)).strftime('%Y-%m-%d')
 
     if len(data) == 0:
         return False
@@ -138,6 +143,19 @@ def get_all_top_gnews():
             data.remove(news)
             continue
 
+        timestamp = news["published date"]
+
+        # Define the format
+        dt = datetime.strptime(timestamp, "%a, %d %b %Y %H:%M:%S %Z")
+
+        # Convert to 'yyyy-mm-dd' format
+        formatted_date = dt.strftime("%Y-%m-%d")
+
+        if formatted_date != today and formatted_date != yesterday:
+            print("Date is not within the range")
+            continue
+
+
         # decode the url
         decoded_url = URL_decoder(url)
 
@@ -149,8 +167,6 @@ def get_all_top_gnews():
 
             # get article details
             article_details = get_article_details(decoded_url["decoded_url"], article)
-
-            print("article details", article_details)
 
             # place the article details in the news object
             news["description"] = article_details["text"]
@@ -165,17 +181,18 @@ def get_all_top_gnews():
             news["tags"] = article_details["keywords"]
 
             # check if the data exists in the database
-            check_if_data_exists = check_if_data_exists(news['url'])
+            check_data = check_if_data_exists(news['url'])
 
-            if check_if_data_exists:
+            if check_data:
+                print("Data already exists")
                 continue
 
             if news["description"] == "" or news["tags"] == []:
                 continue
 
             # insert the data into the database
-            check_data = insert_data_to_db(news, "Top News")
-            if check_data:
+            check_if_data_inserted = insert_data_to_db(news, "Top News")
+            if check_if_data_inserted:
                 continue
             else:
                 print("Data not inserted")
