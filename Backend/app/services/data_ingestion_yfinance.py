@@ -59,7 +59,7 @@ def get_stock_news(ticker):
             title = news_item["title"]
             score = article_details['numerical_score']
             sentiment = article_details['classification']
-            tags = article_details['tags']
+            tags = article_details['keywords']
 
             print("title: ", title)
 
