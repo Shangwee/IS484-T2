@@ -40,3 +40,14 @@ def get_ticker_by_entity(entity_name):
     if entity:
         return entity.ticker
     return None
+
+def get_all_ticker_entities():
+    """Get all entities with tickers"""
+    ticker_list = []
+    entities = Entity.query.all()
+    if not entities:
+        return []
+    for entity in entities:
+        ticker_list.append(entity.ticker)
+
+    return ticker_list

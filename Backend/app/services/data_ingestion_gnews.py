@@ -113,9 +113,11 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
     return final_data
 
 ## ingest data by top news
-def get_all_top_gnews():
+def get_all_top_gnews(start_date, end_date):
     gn = GNews(
         # max_results=1 # For testing purposes
+        start_date=start_date,
+        end_date=end_date,
         exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com', "marketbeat.com", "benzinga.com", "streetinsider.com", "msn.com", "reuters.com"],
     )
     data = gn.get_top_news()

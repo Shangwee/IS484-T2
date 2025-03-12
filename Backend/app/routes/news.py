@@ -4,7 +4,7 @@ from app.services.news_services import news_by_ticker, news_by_id, all_news
 from app.services.data_ingestion_finviz import get_finviz_news_by_ticker, get_all_finviz
 from app.services.data_ingestion_gnews import get_gnews_news_by_ticker, get_all_top_gnews
 from app.services.data_ingestion_yfinance import get_stock_news
-from app.services.entities_service import get_ticker_by_entity
+from app.services.entities_service import get_ticker_by_entity, get_all_ticker_entities
 from app.utils.helpers import format_response, format_date_into_tuple_for_gnews
 from datetime import date, timedelta
 
@@ -73,11 +73,62 @@ def ingest_news_yfinance_entity():
 # ** generate all news from latest news
 @news_bp.route('/all', methods=['POST'])
 def ingest_all_news():
+     # Get the start_date from 24hr before today and end_date as today
+    start_date = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d")
+    end_date = date.today().strftime("%Y-%m-%d")
+
+    # Format the date into a tuple for gnews
+    format_start_date = format_date_into_tuple_for_gnews(start_date)
+    format_end_date = format_date_into_tuple_for_gnews(end_date)
+
+
     # Get the news using gnews and save it to the database
-    gnews_result = get_all_top_gnews()
+    gnews_result = get_all_top_gnews(format_start_date, format_end_date)
     print("gnews done")
 
     # Get the news using finviz and save it to the database
+    finviz_result = get_all_finviz()
+    print("finviz done")
+
+    total_news = gnews_result + finviz_result
+
+    if len(total_news) > 0:
+        return format_response(total_news, "News data generated and saved successfully", 201)
+    
+    return format_response([], "No news data found", 404)
+
+# ** automate news of entity and all
+@news_bp.route('/IngestNewsOfEntityAndAll', methods=['POST'])
+def automate_news_of_entity_and_all():
+    # get all ticker from entities table
+    tickers_list = get_all_ticker_entities()
+
+    # Get the start_date from 24hr before today and end_date as today
+    start_date = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d")
+    end_date = date.today().strftime("%Y-%m-%d")
+
+    # Format the date into a tuple for gnews
+    format_start_date = format_date_into_tuple_for_gnews(start_date)
+    format_end_date = format_date_into_tuple_for_gnews(end_date)
+
+    gnews_result = []
+
+    finviz_result = []
+
+    # get news of each ticker from gnews and finviz
+    for ticker in tickers_list:
+        # get news of ticker from gnews
+        gnews_result += get_gnews_news_by_ticker(ticker, format_start_date, format_end_date)
+        print("gnews done for ", ticker)
+
+        # get news of ticker from finviz
+        finviz_result += get_finviz_news_by_ticker(ticker)
+        print("finviz done for ", ticker)
+
+    # get all news from gnews and finviz
+    gnews_result = get_all_top_gnews(format_start_date, format_end_date)
+    print("gnews done")
+
     finviz_result = get_all_finviz()
     print("finviz done")
 
