@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 // import SearchBar from '../ui/Searchbar';
 import useFetch from '../../hooks/useFetch';
+import Filter from "../news/Filter";
+import Sort from '../news/Sort';
 
 // Main News Component
 const News = ( {EntityName} ) => {
@@ -71,6 +73,8 @@ const News = ( {EntityName} ) => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [filter, setFilter] = useState("all"); // Store selected filter
+  const [sortOrder, setSortOrder] = useState('asc'); // Default sorting to ascending
   const newsPerPage = 3;
 
 
@@ -82,19 +86,61 @@ const News = ( {EntityName} ) => {
   // Extract news data from the response
   const newsData = data ? data.data : [];
   console.log("News Data:", newsData);
+  const now = new Date();
+
+  console.log("Current Page:", currentPage);
+  console.log("Total News Items:", newsData.length);
+  console.log("Sort Order:", sortOrder);
 
 
-  // Filter news based on search term
-  const filteredNews = newsData.filter((news) =>
-    news.title.toLowerCase().includes(searchTerm.toLowerCase()) 
-    || news.summary.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // // Filter news based on search term
+  // const filteredNews = newsData.filter((news) =>
+  //   news.title.toLowerCase().includes(searchTerm.toLowerCase()) 
+  //   || news.summary.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
+
+    // Handle sort order change
+    const handleSortChange = (event) => {
+      console.log('Sort Order:', event);
+      const value = event;
+      setSortOrder(value); // Change sort order to ascending or descending
+    };
 
     // Handle search term change
     const handleSearchChange = (term) => {
     console.log('Search Term:', term);  // Check the updated search term
     setSearchTerm(term); // Update search term in the parent component
   };
+
+    // Handle filter change
+    const handleFilterChange = (selectedFilter) => {
+      console.log('Selected Filter:', selectedFilter);
+      setFilter(selectedFilter);
+      setCurrentPage(1); // Reset to first page when filtering
+    };
+
+    // Filter news based on date range
+    const filteredNews = newsData
+    .filter((news) => {
+      const newsDate = new Date(news.published_date);
+      const hoursAgo = (now - newsDate) / (1000 * 60 * 60); // Convert to hours
+
+      if (filter === "24") return hoursAgo <= 24;
+      if (filter === "48") return hoursAgo <= 48;
+      if (filter === "7d") return hoursAgo <= 168; // 7 days * 24 hours
+      return true; // "All Time" (default)
+    })
+    .filter((news) => news.title.toLowerCase().includes(searchTerm.toLowerCase()));
+  
+  // Sort the filtered news based on sentiment score
+  const sortedNews = [...filteredNews].sort((a, b) => {
+    if (sortOrder === 'asc') {
+      return a.sentiment - b.sentiment; // Ascending order
+    } else {
+      return b.sentiment - a.sentiment; // Descending order
+    }
+  });
+  
 
   // Calculate total pages only if filteredNews has data
   const totalPages = filteredNews.length > 0 ? Math.ceil(filteredNews.length / newsPerPage) : 1;
@@ -144,13 +190,15 @@ const News = ( {EntityName} ) => {
   return (
     <Container fluid>
       {/* Search Bar */}
-      <Row className="justify-content-center mt-4">
-  <Col xs={12} md={6}> {/* Reduced column width from md={8} to md={6} */}
-    {/* <div style={styles.searchBarContainer}>
-      <SearchBar onSearchChange={handleSearchChange} />
-    </div> */}
-  </Col>
-</Row>
+      
+      <Row className="justify-content-center g-0">
+        <Col xs={12} md={4} lg={3} className="p-0">
+          <Filter onFilterChange={handleFilterChange} />
+        </Col>
+        <Col xs={12} md={4} lg={3} className="p-0">
+          <Sort onSortChange={handleSortChange} />
+        </Col>
+      </Row>
 
       {/* News Content */}
       <Row className=" justify-content-center mt-4">
