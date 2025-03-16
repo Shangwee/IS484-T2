@@ -71,18 +71,18 @@ const News = ( {EntityName} ) => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const newsPerPage = 3;
-
-
-  // Fetch news data
-  console.log(EntityName)
-  const url = `/news/${EntityName}`;
+  const newsPerPage = 3; // Matches backend
+  
+  // Construct API URL with pagination parameters
+  const url = `/news/${EntityName}?page=${currentPage}&per_page=${newsPerPage}`;
+  
   const { data, loading, error } = useFetch(url);
+  
+  // Extract news data
+  const newsData = data?.data.news ?? [];
+  const totalPages = data?.data.pages ?? 1; // Ensure valid number
 
-  // Extract news data from the response
-  const newsData = data ? data.data : [];
-  console.log("News Data:", newsData);
-
+  const currentNews = newsData; // Directly use API response
 
   // Filter news based on search term
   const filteredNews = newsData.filter((news) =>
@@ -96,40 +96,28 @@ const News = ( {EntityName} ) => {
     setSearchTerm(term); // Update search term in the parent component
   };
 
-  // Calculate total pages only if filteredNews has data
-  const totalPages = filteredNews.length > 0 ? Math.ceil(filteredNews.length / newsPerPage) : 1;
-
-  // Get the news for the current page
-  const indexOfLastNews = currentPage * newsPerPage;
-  console.log(indexOfLastNews);
-  const indexOfFirstNews = indexOfLastNews - newsPerPage;
-
-  // const cleanedNewsData = newsData.filter(Boolean);
-  const currentNews = filteredNews.length > 0 ? filteredNews.slice(indexOfFirstNews, indexOfLastNews) : [];
 
   console.log("Current Page:", currentPage);
   console.log("Total Pages:", totalPages);
-  console.log("Index of First News:", indexOfFirstNews);
-  console.log("Index of Last News:", indexOfLastNews);
-  console.log("Current News Length:", currentNews.length);
-  console.log("Total News Items:", newsData.length);
   console.log("Current News Data:", currentNews);
 
   // Handle pagination
   const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
   };
 
   // Pagination items (Show only a range of pages for better UX)
   const paginationItems = [];
-  const pageRange = 5; // Maximum number of visible page buttons
+  const pageRange = 5; // Show only 5 page buttons at a time
   let startPage = Math.max(1, currentPage - Math.floor(pageRange / 2));
   let endPage = Math.min(totalPages, startPage + pageRange - 1);
-
+  
   if (endPage - startPage < pageRange) {
     startPage = Math.max(1, endPage - pageRange + 1);
   }
-
+  
   for (let number = startPage; number <= endPage; number++) {
     paginationItems.push(
       <Pagination.Item 
@@ -176,7 +164,6 @@ const News = ( {EntityName} ) => {
                 <p style={styles.newsDate}><strong>Date:</strong> {new Date(news.published_date).toDateString()}</p>
                 <p style={styles.newsSummary}>{news.summary?.length > 300 ? `${news.summary.slice(0, 300)}...` : news.summary}</p>
                 {/* SentimentScore component */}
-            
               </div>
             </Col>
           );
@@ -187,7 +174,17 @@ const News = ( {EntityName} ) => {
       <Row className="justify-content-center">
         <Col xs={12} md={8} lg={6}>
           <div style={styles.paginationWrapper}>
-            <Pagination>{paginationItems}</Pagination>
+            <Pagination>
+              <Pagination.Prev 
+                onClick={() => paginate(currentPage - 1)} 
+                disabled={currentPage === 1} 
+              />
+              {paginationItems}
+              <Pagination.Next 
+                onClick={() => paginate(currentPage + 1)} 
+                disabled={currentPage === totalPages} 
+              />
+            </Pagination>
           </div>
         </Col>
       </Row>
