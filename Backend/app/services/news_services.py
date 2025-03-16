@@ -1,5 +1,5 @@
 from app.models.news import News
-from sqlalchemy import any_, func
+from sqlalchemy import any_, func, or_
 from datetime import datetime, timedelta
 
 def news_by_ticker(ticker, page=1, per_page=3):
@@ -55,10 +55,19 @@ def news_by_id(news_id):
         }
     return None
 
-def all_news(page=1, per_page=4, filter_time="all", sort_order="desc"):
+def all_news(page=1, per_page=4, filter_time="all", sort_order="desc", search_term=None):
     """Get all news"""
     # Query the news
     query = News.query
+
+    # Apply search filter (if search_term exists)
+    if search_term:
+        query = query.filter(
+            or_(
+                News.title.ilike(f"%{search_term}%"),
+                News.summary.ilike(f"%{search_term}%")
+            )
+        )
 
     # Filtering based on date
     if filter_time != "all":
