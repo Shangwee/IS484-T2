@@ -78,7 +78,7 @@ const Entities = () => {
                 <div style={styles.entityHeader}>
                   <h4 style={styles.entityName}>{entityItem.name}</h4>
                   <span style={styles.sentimentScore}>
-                    <SentimentScore />
+                    <SentimentScore score={news.score} sentiment = {news.sentiment}  />
                   </span>
                 </div>
                 <p style={styles.entitySummary}>{entityItem.summary}</p>

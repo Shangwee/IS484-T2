@@ -75,11 +75,9 @@ const NewsSources = () => {
       <Row style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
         {filteredNewsData.map((newsItem) => (
           <Col key={newsItem.id} md={5} className="mb-4 ml-4" style={{ display: 'flex' }}>
-             
             <div style={styles.newsBox} className="news-box">
-              
-            <div style={styles.sentimentContainer}>
-                                <SentimentScore text={newsItem.title + newsItem.summary} />
+              <div style={styles.sentimentContainer}>
+                <SentimentScore score={newsItem.score} sentiment = {newsItem.sentiment}  />
               </div>
               <Link 
               to={newsItem.url} 
@@ -87,14 +85,11 @@ const NewsSources = () => {
               rel="noopener noreferrer" 
               style={styles.newsLink}
               >  
-                <h4 style={styles.newsHeader}>{newsItem.title}</h4>  
+              <h4 style={styles.newsHeader}>{newsItem.title}</h4>  
               </Link> 
               <h4 style={styles.newsDate}>{new Date(newsItem.published_date).toLocaleDateString()}</h4> 
               {/* <h4 style={styles.newsLink}>{newsItem.link}</h4>  */}
-              <p style={styles.newsSummary}>{newsItem.description}</p> 
-            
-              
-
+              <p style={styles.newsSummary}>{newsItem.summary?.slice(0, 300)}</p> 
             </div>
           </Col>
         ))}

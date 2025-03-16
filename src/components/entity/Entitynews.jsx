@@ -164,7 +164,7 @@ const News = ( {EntityName} ) => {
             <Col key={news.id || index} xs={12} sm={6} md={4} lg={3} className="mb-4 d-flex justify-content-center">
               <div style={styles.newsBox}>
               <div style={styles.sentimentScore}>
-                    <SentimentScore text={news.title + news.summary} />
+                    <SentimentScore score={news.score} sentiment = {news.sentiment} />
                   </div>
                 <h4 style={styles.newsHeader}>
                   <Link to={news.url} target="_blank" rel="noopener noreferrer" style={styles.newsLink}>
@@ -174,7 +174,7 @@ const News = ( {EntityName} ) => {
                 
                 <p style={styles.newsSummary}><strong>Publisher:</strong> {news.publisher}</p>
                 <p style={styles.newsDate}><strong>Date:</strong> {new Date(news.published_date).toDateString()}</p>
-                <p style={styles.newsSummary}>{news.description?.slice(0, 150)}...</p>
+                <p style={styles.newsSummary}>{news.summary?.length > 300 ? `${news.summary.slice(0, 300)}...` : news.summary}</p>
                 {/* SentimentScore component */}
             
               </div>
