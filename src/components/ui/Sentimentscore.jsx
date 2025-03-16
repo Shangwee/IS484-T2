@@ -1,10 +1,7 @@
 import React from 'react';
-import SentimentAnalysis from '../../utils/sentimentAnalysis';
 
-const SentimentScore = (text) => {
-  const [sentiment, setSentiment] = React.useState(null);
-
-  if (!text) {
+const SentimentScore = ({score, sentiment}) => {
+  if (!score | !sentiment) {
     return <div style={{
       backgroundColor: '#808080',
       borderRadius: '15px',
@@ -12,44 +9,28 @@ const SentimentScore = (text) => {
       color: 'white',
       fontSize: 'calc(1px + 1vw)',
       fontWeight: 'bold'
-      }}>No text provided</div>;
+      }}>No score found</div>;
   }
 
-  const getBackgroundColor = (classification) => {
-    switch (classification?.toLowerCase()) {
-      case 'positive': return '#00CB14';
-      case 'negative': return '#FF4D4D';
-      case 'neutral': return '#FFA500';
+  const getBackgroundColor = (sentiment) => {
+    switch (sentiment) {
+      case 'Positive': return '#00CB14';
+      case 'Negative': return '#FF4D4D';
+      case 'Neutral': return '#FFA500';
       default: return '#808080';
     }
   };
 
-  if (!sentiment) {
-    SentimentAnalysis(text).then(result => {
-      console.log(result);
-      setSentiment(result);
-    });
-
-    return <div style={{
-      backgroundColor: '#808080',
-      borderRadius: '15px',
-      padding: '5px 15px',
-      color: 'white',
-      fontSize: 'calc(1px + 1vw)',
-      fontWeight: 'bold'
-    }}>Analyzing...</div>;
-  }
-
   return (
     <div style={{
-      backgroundColor: getBackgroundColor(sentiment.classification),
+      backgroundColor: getBackgroundColor(sentiment),
       borderRadius: '15px',
       padding: '5px 15px',
       color: 'white',
       fontSize: 'calc(1px + 1vw)',
       fontWeight: 'bold'
     }}>
-      {sentiment.numerical_score?.toFixed(2)} ({sentiment.classification})
+      {score?.toFixed(2)} ({sentiment})
     </div>
   );
 };

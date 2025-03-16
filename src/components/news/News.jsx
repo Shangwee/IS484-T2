@@ -139,9 +139,9 @@ const News = () => {
   // Sort the filtered news based on sentiment score
   const sortedNews = [...filteredNews].sort((a, b) => {
     if (sortOrder === 'asc') {
-      return a.sentiment - b.sentiment; // Ascending order
+      return a.score - b.score; // Ascending order
     } else {
-      return b.sentiment - a.sentiment; // Descending order
+      return b.score - a.score; // Descending order
     }
   });
 
@@ -221,12 +221,12 @@ return (
                     </Link>
                   </h4>
                   <div style={styles.sentimentScore}>
-                    <SentimentScore text={news.title + news.summary} />
+                    <SentimentScore score={news.score} sentiment = {news.sentiment} />
                   </div>
                 </div>
                 <p style={styles.newsSummary}><strong>Publisher:</strong> {news.publisher}</p>
                 <p style={styles.newsDate}><strong>Date:</strong> {new Date(news.published_date).toDateString()}</p>
-                <p style={styles.newsSummary}>{news.description?.slice(0, 300)}</p>
+                <p style={styles.newsSummary}>{news.summary?.length > 300 ? `${news.summary.slice(0, 300)}...` : news.summary}</p>
               </div>
               </div>
 
