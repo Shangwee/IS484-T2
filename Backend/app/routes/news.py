@@ -134,16 +134,20 @@ def automate_news_of_entity_and_all():
     
     return format_response([], "No news data found", 404)
 
-# ** get news based on entity
 @news_bp.route("/<string:entity>", methods=['GET'])
 def get_news(entity):
-    # get news by ticker 
-    ticker = get_ticker_by_entity(entity)
+    """Get paginated news based on entity"""
+    page = request.args.get('page', 1, type=int)  # Default to page 1
+    per_page = request.args.get('per_page', 3, type=int)  # Default to 3 per page
 
-    news_list = news_by_ticker(ticker)
+    ticker = get_ticker_by_entity(entity)
+    news_list = news_by_ticker(ticker, page, per_page)
+
     if not news_list:
         return format_response([], "News not found", 404)
+
     return format_response(news_list, "News fetched successfully", 200)
+
 
 # ** get news based on id
 @news_bp.route("/<int:id>", methods=['GET'])
