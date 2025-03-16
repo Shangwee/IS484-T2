@@ -109,11 +109,15 @@ def automate_news_of_entity_and_all():
     # get news of each ticker from gnews and finviz
     for ticker in tickers_list:
         # get news of ticker from gnews
-        gnews_result += get_gnews_news_by_ticker(ticker, format_start_date, format_end_date)
+        result = get_gnews_news_by_ticker(ticker, format_start_date, format_end_date)
+        if isinstance(result, list):
+            gnews_result += result
         print("gnews done for ", ticker)
 
         # get news of ticker from finviz
-        finviz_result += get_finviz_news_by_ticker(ticker)
+        result = get_finviz_news_by_ticker(ticker)
+        if isinstance(result, list):
+            finviz_result += result
         print("finviz done for ", ticker)
 
     # get all news from gnews and finviz
