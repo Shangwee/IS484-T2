@@ -164,11 +164,13 @@ def get_all_news():
     page = request.args.get('page', 1, type=int)  # Get the 'page' parameter from the request, default is 1
     per_page = request.args.get('per_page', 4, type=int)  # Get 'per_page' parameter, default is 10
 
+    search_term = request.args.get('search', None)  # Get search term
+
      # Get sorting and filtering parameters
     sort_order = request.args.get('sort_order', 'desc')  # Default to ascending
     filter_time = request.args.get('filter', 'all')  # Default to all-time
 
-    news_list = all_news(page, per_page, filter_time, sort_order)
+    news_list = all_news(page, per_page, filter_time, sort_order, search_term)
 
     if not news_list:
         return format_response([], "News not found", 404)

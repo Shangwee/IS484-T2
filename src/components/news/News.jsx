@@ -92,10 +92,10 @@ const News = () => {
   const [sortOrder, setSortOrder] = useState('desc'); // Default: descending order
   const newsPerPage = 4; // Items per page
   
-  // Fetch news from API with filtering, sorting, and pagination
-  const { data, loading, error } = useFetch(
-    `/news/?page=${currentPage}&per_page=${newsPerPage}&sort_order=${sortOrder}&filter=${filter}`
-  );
+// Construct API URL with search parameter
+const url = `/news/?page=${currentPage}&per_page=${newsPerPage}&sort_order=${sortOrder}&filter=${filter}&search=${encodeURIComponent(searchTerm)}`;
+
+const { data, loading, error } = useFetch(url);
   
   const newsData = data ? data.data.news : [];
 
@@ -118,7 +118,7 @@ const News = () => {
   const handleSearchChange = (term) => {
     console.log('Search Term:', term);
     setSearchTerm(term);
-
+    setCurrentPage(1); // Reset to first page when searching
   };
 
   // Handle filter change
@@ -175,7 +175,7 @@ return (
     {/* <h2 className="text-center my-4">Latest News</h2> */}
     <Row className="justify-content-center mt-3">
       <Col xs={12} md={4} lg={3} className="mb-3 mb-md-0">
-        <SearchBar onSearchChange={setSearchTerm} />
+        <SearchBar onSearchChange={handleSearchChange} />
       </Col>
       <Col xs={12} md={4} lg={3} className="mb-3 mb-md-0">
         <Filter onFilterChange={handleFilterChange} />
