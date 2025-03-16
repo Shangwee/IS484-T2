@@ -109,11 +109,15 @@ def automate_news_of_entity_and_all():
     # get news of each ticker from gnews and finviz
     for ticker in tickers_list:
         # get news of ticker from gnews
-        gnews_result += get_gnews_news_by_ticker(ticker, format_start_date, format_end_date)
+        result = get_gnews_news_by_ticker(ticker, format_start_date, format_end_date)
+        if isinstance(result, list):
+            gnews_result += result
         print("gnews done for ", ticker)
 
         # get news of ticker from finviz
-        finviz_result += get_finviz_news_by_ticker(ticker)
+        result = get_finviz_news_by_ticker(ticker)
+        if isinstance(result, list):
+            finviz_result += result
         print("finviz done for ", ticker)
 
     # get all news from gnews and finviz
@@ -130,16 +134,20 @@ def automate_news_of_entity_and_all():
     
     return format_response([], "No news data found", 404)
 
-# ** get news based on entity
 @news_bp.route("/<string:entity>", methods=['GET'])
 def get_news(entity):
-    # get news by ticker 
-    ticker = get_ticker_by_entity(entity)
+    """Get paginated news based on entity"""
+    page = request.args.get('page', 1, type=int)  # Default to page 1
+    per_page = request.args.get('per_page', 3, type=int)  # Default to 3 per page
 
-    news_list = news_by_ticker(ticker)
+    ticker = get_ticker_by_entity(entity)
+    news_list = news_by_ticker(ticker, page, per_page)
+
     if not news_list:
         return format_response([], "News not found", 404)
+
     return format_response(news_list, "News fetched successfully", 200)
+
 
 # ** get news based on id
 @news_bp.route("/<int:id>", methods=['GET'])
@@ -152,7 +160,16 @@ def get_news_by_id(id):
 # ** get all news
 @news_bp.route("/", methods=['GET'])
 def get_all_news():
-    news_list = all_news()
+    """Get paginated news"""
+    page = request.args.get('page', 1, type=int)  # Get the 'page' parameter from the request, default is 1
+    per_page = request.args.get('per_page', 4, type=int)  # Get 'per_page' parameter, default is 10
+
+     # Get sorting and filtering parameters
+    sort_order = request.args.get('sort_order', 'desc')  # Default to ascending
+    filter_time = request.args.get('filter', 'all')  # Default to all-time
+
+    news_list = all_news(page, per_page, filter_time, sort_order)
+
     if not news_list:
         return format_response([], "News not found", 404)
     return format_response(news_list, "News fetched successfully", 200)
