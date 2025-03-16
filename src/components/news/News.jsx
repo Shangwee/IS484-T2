@@ -88,26 +88,31 @@ const News = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [filter, setFilter] = useState("all"); // Store selected filter
-  const [sortOrder, setSortOrder] = useState('asc'); // Default sorting to ascending
-  const newsPerPage = 4;
+  const [filter, setFilter] = useState("all"); // Default: all time
+  const [sortOrder, setSortOrder] = useState('desc'); // Default: descending order
+  const newsPerPage = 4; // Items per page
+  
+  // Fetch news from API with filtering, sorting, and pagination
+  const { data, loading, error } = useFetch(
+    `/news/?page=${currentPage}&per_page=${newsPerPage}&sort_order=${sortOrder}&filter=${filter}`
+  );
+  
+  const newsData = data ? data.data.news : [];
 
-  const { data, loading, error } = useFetch('/news/'); // Fetch news data from the API
-
-  const newsData = data ? data.data : []; // Extract news data from the response
+  const totalPages = data ? data.data.pages : 1;
+  
   
   const now = new Date();
 
   console.log("Current Page:", currentPage);
-  console.log("Total News Items:", newsData.length);
   console.log("Sort Order:", sortOrder);
 
   // Handle sort order change
   const handleSortChange = (event) => {
     console.log('Sort Order:', event);
-    const value = event;
-    setSortOrder(value); // Change sort order to ascending or descending
-  };
+    setSortOrder(event);
+    setCurrentPage(1); // Reset to first page when sorting
+  };  
 
   // Handle search term change
   const handleSearchChange = (term) => {
@@ -123,37 +128,13 @@ const News = () => {
     setCurrentPage(1); // Reset to first page when filtering
   };
 
-  // Filter news based on date range
-  const filteredNews = newsData
-    .filter((news) => {
-      const newsDate = new Date(news.published_date);
-      const hoursAgo = (now - newsDate) / (1000 * 60 * 60); // Convert to hours
-
-      if (filter === "24") return hoursAgo <= 24;
-      if (filter === "48") return hoursAgo <= 48;
-      if (filter === "7d") return hoursAgo <= 168; // 7 days * 24 hours
-      return true; // "All Time" (default)
-    })
-    .filter((news) => news.title.toLowerCase().includes(searchTerm.toLowerCase()));
-  
-  // Sort the filtered news based on sentiment score
-  const sortedNews = [...filteredNews].sort((a, b) => {
-    if (sortOrder === 'asc') {
-      return a.sentiment - b.sentiment; // Ascending order
-    } else {
-      return b.sentiment - a.sentiment; // Descending order
-    }
-  });
-
-  // Calculate total pages
-  const totalPages = sortedNews.length > 0 ? Math.ceil(sortedNews.length / newsPerPage) : 1;
 
   console.log("Total Pages:", totalPages);
 
   // Get the news for the current page
   const indexOfLastNews = currentPage * newsPerPage;
   const indexOfFirstNews = indexOfLastNews - newsPerPage;
-  const currentNews = sortedNews.slice(indexOfFirstNews, indexOfLastNews);
+  const currentNews = newsData
 
   console.log("Index of First News:", indexOfFirstNews);
   console.log("Index of Last News:", indexOfLastNews);
@@ -161,8 +142,11 @@ const News = () => {
 
   // Handle pagination
   const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
   };
+  
 
   // Pagination items (Show only a range of pages for better UX)
   const paginationItems = [];
@@ -190,66 +174,76 @@ return (
   <Container fluid>
     {/* <h2 className="text-center my-4">Latest News</h2> */}
     <Row className="justify-content-center mt-3">
-        <Col xs={12} md={4} lg={3} className="mb-3 mb-md-0">
-          <SearchBar onSearchChange={handleSearchChange} />
-        </Col>
-        <Col xs={12} md={4} lg={3} className="mb-3 mb-md-0">
-          <Filter onFilterChange={handleFilterChange} />
-        </Col>
-        <Col xs={12} md={4} lg={3}>
-          <Sort onSortChange={handleSortChange} />
-        </Col>
-      </Row>
+      <Col xs={12} md={4} lg={3} className="mb-3 mb-md-0">
+        <SearchBar onSearchChange={setSearchTerm} />
+      </Col>
+      <Col xs={12} md={4} lg={3} className="mb-3 mb-md-0">
+        <Filter onFilterChange={handleFilterChange} />
+      </Col>
+      <Col xs={12} md={4} lg={3}>
+        <Sort onSortChange={handleSortChange} />
+      </Col>
+    </Row>
 
-      {/* News Content */}
-      <Row className="mt-4">
-        {currentNews.length > 0 ? (
-          currentNews.map((news, index) => (
-            <Col key={news.id || index} xs={12} sm={6} className="d-flex justify-content-center mb-4">
-              <div style={styles.newsBox}>
-                <div style={styles.headerContainer}>
-                <div style={{ marginTop: '25px' }}> {/* Offset to avoid overlapping */}
+    {/* News Content */}
+    <Row className="mt-4">
+      {currentNews.length > 0 ? (
+        currentNews.map((news, index) => (
+          <Col key={news.id || index} xs={12} sm={6} className="d-flex justify-content-center mb-4">
+            <div style={styles.newsBox}>
+              <div style={styles.headerContainer}>
+              <div style={{ marginTop: '25px' }}> {/* Offset to avoid overlapping */}
 
-                  <h4 style={styles.newsHeader} >
-                    <Link
-                      to='/Individualnewspage'
-                      state={{ id: news.id }}
-                      rel="noopener noreferrer"
-                      style={styles.newsLink}
-                    >
-                      {news.title}
-                    </Link>
-                  </h4>
-                  <div style={styles.sentimentScore}>
-                    <SentimentScore text={news.title + news.summary} />
-                  </div>
+                <h4 style={styles.newsHeader} >
+                  <Link
+                    to='/Individualnewspage'
+                    state={{ id: news.id }}
+                    rel="noopener noreferrer"
+                    style={styles.newsLink}
+                  >
+                    {news.title}
+                  </Link>
+                </h4>
+                <div style={styles.sentimentScore}>
+                  <SentimentScore score={news.score} sentiment = {news.sentiment} />
                 </div>
-                <p style={styles.newsSummary}><strong>Publisher:</strong> {news.publisher}</p>
-                <p style={styles.newsDate}><strong>Date:</strong> {new Date(news.published_date).toDateString()}</p>
-                <p style={styles.newsSummary}>{news.description?.slice(0, 300)}</p>
               </div>
-              </div>
+              <p style={styles.newsSummary}><strong>Publisher:</strong> {news.publisher}</p>
+              <p style={styles.newsDate}><strong>Date:</strong> {new Date(news.published_date).toDateString()}</p>
+              <p style={styles.newsSummary}>{news.summary?.length > 300 ? `${news.summary.slice(0, 300)}...` : news.summary}</p>
+            </div>
+            </div>
 
-            </Col>
-          ))
-        ) : (
-          <div style={styles.noNewsMessageContainer}>
-            <p className="text-center" style={{ fontSize: '16px', fontWeight: 'bold', color: 'black' }}>
-              No news available.
-            </p>
-          </div>
-        )}
-      </Row>
+          </Col>
+        ))
+      ) : (
+        <div style={styles.noNewsMessageContainer}>
+          <p className="text-center" style={{ fontSize: '16px', fontWeight: 'bold', color: 'black' }}>
+            No news available.
+          </p>
+        </div>
+      )}
+    </Row>
 
-      {/* Pagination Controls */}
-      <Row className="justify-content-center ">
-        <Col xs={12} md={8} lg={6}>
-          <div style={styles.paginationWrapper}>
-            <Pagination>{paginationItems}</Pagination>
-          </div>
-        </Col>
-      </Row>
-    </Container>
+    {/* Pagination Controls */}
+    <Row className="justify-content-center">
+      <Col xs={12} md={8} lg={6}>
+        <div style={styles.paginationWrapper}>
+          <Pagination>
+            <Pagination.Prev 
+              onClick={() => paginate(currentPage - 1)} 
+              disabled={currentPage === 1} 
+            />
+            {paginationItems}
+            <Pagination.Next 
+              onClick={() => paginate(currentPage + 1)} 
+              disabled={currentPage === totalPages} 
+            />
+          </Pagination>
+        </div>
+      </Col>
+    </Row>
+  </Container>
   );
 };
 export default News;
