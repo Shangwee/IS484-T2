@@ -4,13 +4,11 @@ import { Container, Row, Col } from 'react-bootstrap';
 import SentimentScore from '../ui/Sentimentscore';
 import SearchBar from '../ui/Searchbar';
 import { Link } from 'react-router-dom'; 
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Pagination from 'react-bootstrap/Pagination';
 import Filter from "./Filter";
 import Sort from './Sort'; 
 import useFetch from '../../hooks/useFetch';
-
-
+import Tags from '../ui/Tags';
 
 // Main News Component
 const News = () => {
@@ -208,6 +206,7 @@ return (
                   <SentimentScore score={news.score} sentiment = {news.sentiment} />
                 </div>
               </div>
+              <Tags tags={news.relevant_tags || []} /> {/* Pass the relevant_tags to the Tags component */}
               <p style={styles.newsSummary}><strong>Publisher:</strong> {news.publisher}</p>
               <p style={styles.newsDate}><strong>Date:</strong> {new Date(news.published_date).toDateString()}</p>
               <p style={styles.newsSummary}>{news.summary?.length > 300 ? `${news.summary.slice(0, 300)}...` : news.summary}</p>
