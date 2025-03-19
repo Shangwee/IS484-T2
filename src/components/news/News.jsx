@@ -9,7 +9,7 @@ import Pagination from 'react-bootstrap/Pagination';
 import Filter from "./Filter";
 import Sort from './Sort'; 
 import useFetch from '../../hooks/useFetch';
-
+import RatingsContainer from './ratingsContainer'
 
 
 // Main News Component
@@ -84,6 +84,14 @@ const News = () => {
       alignItems: 'center',
       justifyContent: 'center',
     },
+    RatingsContainer: {
+      position: 'absolute',
+      top: '10px',
+      right: '120px', // Adjusted for spacing between the sentiment score and ratings
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }
   };  
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -206,6 +214,7 @@ return (
                 </h4>
                 <div style={styles.sentimentScore}>
                   <SentimentScore score={news.score} sentiment = {news.sentiment} />
+                  <RatingsContainer style={styles.RatingsContainer} />
                 </div>
               </div>
               <p style={styles.newsSummary}><strong>Publisher:</strong> {news.publisher}</p>
