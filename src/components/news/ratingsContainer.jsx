@@ -23,15 +23,12 @@ function RatingsContainer() {
   const styles = {
     ratingsContainer: {
       display: 'grid',
-      gridTemplateColumns: '100px 100px',
+      gridTemplateColumns: '80px 80px',
       gridTemplateRows: 'auto 5px',
-      justifyContent: 'center',
       gridRowGap: '10px',
       alignContent: 'center',
-    },
-    secondChild: {
-      justifySelf: 'right',
-    },
+    }
+    
   };
   
   export default RatingsContainer;
