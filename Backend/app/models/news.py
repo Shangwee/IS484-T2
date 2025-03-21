@@ -19,10 +19,12 @@ class News(db.Model):
     @property
     def relevant_tags(self):
         if self.tags:
+            print(f"Original tags for {self.title}: {self.tags}")  # Log the original tags
             relevant = [tag for tag in self.tags if tag.lower() in possible_company_region_tags][:2]
-            print(f"Relevant tags for {self.title}: {relevant}")  # Debug logging
+            print(f"Relevant tags for {self.title}: {relevant}")  # Log the filtered tags
             return relevant
+        print(f"No tags found for {self.title}")  # Log if no tags are present
         return []
-    
+        
     def __repr__(self):
-        return f"<News {self.title[:30]}...>"
+            return f"<News {self.title[:30]}...>"

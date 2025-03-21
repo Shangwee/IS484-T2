@@ -11,6 +11,7 @@ class Config:
     JWT_TOKEN_LOCATION = 'headers'
     APP_DEBUG = os.getenv('APP_DEBUG', True)
     PORT = os.getenv('PORT', 5001)
+    # PORT = 5001
     LOG_LEVEL = os.getenv('LOG_LEVEL', 'DEBUG')
     FLASK_ENV = os.getenv('FLASK_ENV', 'development')
     FLASK_APP = os.getenv('FLASK_APP', 'run.py')
