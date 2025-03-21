@@ -1,7 +1,7 @@
 from app import db
 from sqlalchemy.dialects.postgresql import ARRAY
 
-possible_company_region_tags = ["tesla", "apple", "hsbc", "exxon", "americas", "europe", "asia-pacific"]
+possible_company_region_tags = ["tesla", "apple", "hsbc", "exxon", "exxonmobil", "tsmc", "tsm", "americas", "europe", "asia-pacific"]
 
 class News(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
