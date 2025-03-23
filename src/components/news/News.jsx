@@ -9,7 +9,7 @@ import Pagination from 'react-bootstrap/Pagination';
 import Filter from "./Filter";
 import Sort from './Sort'; 
 import useFetch from '../../hooks/useFetch';
-
+import RatingsContainer from './ratingsContainer'
 
 
 // Main News Component
@@ -28,6 +28,29 @@ const News = () => {
       marginBottom: '20px',
       boxSizing: 'border-box',
     },
+    headerContainer: {
+      display: 'flex', // Ensures header & sentiment score are in the same row
+      justifyContent: 'space-between', // Pushes them apart
+      alignItems: 'center', // Aligns them vertically
+      width: '100%', // Ensures full width usage
+      flexWrap: 'wrap', // Allows wrapping on smaller screens
+    },
+    sentimentAndRatingsContainer: {
+      display: 'flex', // Groups SentimentScore and RatingsContainer together
+      alignItems: 'center', // Aligns items vertically
+      gap: '10px', // Adds spacing between SentimentScore and RatingsContainer
+    },
+    sentimentScore: {
+      fontSize: '0.9rem', // Adjusted for readability
+      color: 'black',
+      fontWeight: 'bold',
+      textAlign: 'right', // Aligns it properly
+    },
+    ratingsContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     newsHeader: {
       fontSize: 'calc(0.5rem + 0.2vw)', // Dynamic font size for better responsiveness
       fontWeight: 'bold',
@@ -39,37 +62,20 @@ const News = () => {
       color: 'blue',
       textDecoration: 'none',
     },
-    headerContainer: {
-      display: 'flex', // Ensures header & sentiment score are in the same row
-      justifyContent: 'space-between', // Pushes them apart
-      alignItems: 'center', // Aligns them vertically
-      width: '100%', // Ensures full width usage
-      flexWrap: 'wrap', // Allows wrapping on smaller screens
-    },
     newsSummary: {
       fontSize: 'calc(0.9rem)', // Slightly smaller than the header
       color: 'black',
       marginBottom: '5px',
-      display: '-webkit-box',   // Enables truncation
-      WebkitBoxOrient: 'vertical',  // Required for multi-line ellipsis
-      WebkitLineClamp: 6,  // Limits to 3 lines (adjust as needed)
-      overflow: 'hidden',  // Hides overflowing text
-      textOverflow: 'ellipsis',  // Adds ellipsis for truncated text
+      display: '-webkit-box', // Enables truncation
+      WebkitBoxOrient: 'vertical', // Required for multi-line ellipsis
+      WebkitLineClamp: 6, // Limits to 3 lines (adjust as needed)
+      overflow: 'hidden', // Hides overflowing text
+      textOverflow: 'ellipsis', // Adds ellipsis for truncated text
     },
     newsDate: {
-      fontSize: 'calc(0.8rem )', // Smaller font size for the date
+      fontSize: 'calc(0.8rem)', // Smaller font size for the date
       color: 'black',
       marginBottom: '5px',
-    },
-    sentimentScore: {
-      position:'absolute',
-      top:'10px',
-      right:'10px',
-      fontSize: '0.2rem', // Adjusted for readability
-      color: 'black',
-      fontWeight: 'bold',
-      textAlign: 'right', // Aligns it properly
-      zIndex: 1
     },
     paginationWrapper: {
       marginTop: '20px',
@@ -84,7 +90,7 @@ const News = () => {
       alignItems: 'center',
       justifyContent: 'center',
     },
-  };  
+  };
 
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -204,9 +210,18 @@ return (
                     {news.title}
                   </Link>
                 </h4>
-                <div style={styles.sentimentScore}>
+                {/* <div style={styles.sentimentScore}>
                   <SentimentScore score={news.score} sentiment = {news.sentiment} />
-                </div>
+                  <RatingsContainer style={styles.RatingsContainer} />
+                </div> */}
+                 <div style={styles.sentimentAndRatingsContainer}>
+                <div style={styles.sentimentScore}>
+                <SentimentScore score={news.score} sentiment={news.sentiment} />
+              </div>
+              <div style={styles.ratingsContainer}>
+                <RatingsContainer />
+              </div>
+            </div>
               </div>
               <p style={styles.newsSummary}><strong>Publisher:</strong> {news.publisher}</p>
               <p style={styles.newsDate}><strong>Date:</strong> {new Date(news.published_date).toDateString()}</p>
