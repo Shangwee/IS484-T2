@@ -2,9 +2,26 @@ from app.models.news import News
 from sqlalchemy import any_, func, or_
 from datetime import datetime, timedelta
 
-def news_by_ticker(ticker, page=1, per_page=3):
-    """Get paginated news by ticker"""
-    query = News.query.filter(ticker == any_(News.entities)).order_by(News.published_date.desc())
+def news_by_ticker(ticker, page=1, per_page=3, sort_order="desc", filter_time="all"):
+    """Get paginated, filtered, and sorted news by ticker"""
+
+    query = News.query.filter(ticker == any_(News.entities))
+
+    # Apply time filtering
+    if filter_time != "all":
+        now = datetime.now()  # Ensure UTC consistency
+        if filter_time == "24":
+            query = query.filter(News.published_date >= now - timedelta(hours=24))
+        elif filter_time == "48":
+            query = query.filter(News.published_date >= now - timedelta(hours=48))
+        elif filter_time == "7d":
+            query = query.filter(News.published_date >= now - timedelta(days=7))
+
+    # Apply sorting (asc = oldest first, desc = newest first)
+    if sort_order == 'asc':
+        query = query.order_by(News.published_date.asc())
+    else:
+        query = query.order_by(News.published_date.desc())
 
     # Apply pagination
     news_paginated = query.paginate(page=page, per_page=per_page, error_out=False)
@@ -23,7 +40,8 @@ def news_by_ticker(ticker, page=1, per_page=3):
         "entities": n.entities,
         "score": n.score,
         "sentiment": n.sentiment,
-        "tags": n.tags
+        "tags": n.tags,
+        "confidence": n.confidence
     } for n in news_paginated.items]
 
     return {
@@ -51,7 +69,8 @@ def news_by_id(news_id):
             "entities": news.entities,
             "score": news.score,
             "sentiment": news.sentiment,
-            "tags":news.tags
+            "tags":news.tags,
+            "confidence": news.confidence
         }
     return None
 
@@ -65,7 +84,9 @@ def all_news(page=1, per_page=4, filter_time="all", sort_order="desc", search_te
         query = query.filter(
             or_(
                 News.title.ilike(f"%{search_term}%"),
-                News.summary.ilike(f"%{search_term}%")
+                News.summary.ilike(f"%{search_term}%"),
+                News.description.ilike(f"%{search_term}%"),
+                search_term == any_(News.tags)  # Search within array field
             )
         )
 
@@ -81,9 +102,9 @@ def all_news(page=1, per_page=4, filter_time="all", sort_order="desc", search_te
 
     # Sorting based on sentiment score
     if sort_order == 'asc':
-        query = query.order_by(News.score.asc())
+        query = query.order_by(News.published_date.asc())
     else:
-        query = query.order_by(News.score.desc())
+        query = query.order_by(News.published_date.desc())
 
     news_paginated = query.paginate(page=page, per_page=per_page, error_out=False)
 
@@ -100,7 +121,8 @@ def all_news(page=1, per_page=4, filter_time="all", sort_order="desc", search_te
             "entities": n.entities,
             "score": n.score,
             "sentiment": n.sentiment,
-            "tags": n.tags
+            "tags": n.tags,
+            "confidence": n.confidence
         })
 
     return {

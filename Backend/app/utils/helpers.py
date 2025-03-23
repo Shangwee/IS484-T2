@@ -66,17 +66,18 @@ def get_article_details(url, article_html):
         summary = summarise_news(article_result.text, 100)
 
         # get the sentiment of the article
-        sentiment = get_sentiment(article_result.title + summary)
+        sentiment = get_sentiment(article_result.title + summary, False)
+
+        print(f"Sentiment: {sentiment}")
 
         keyword = article_result.keywords
-
-        print("Keywords:", keyword)
     
         return {
             "text": article_result.text,
             "summary": summary,
             'numerical_score': sentiment['numerical_score'],
             'classification': sentiment['classification'],
+            'confidence': sentiment['confidence'],
             'keywords': keyword
         }
 
@@ -86,7 +87,10 @@ def get_article_details(url, article_html):
             "text": "An error occurred while fetching the article details",
             "summary": "An error occurred while fetching the article details",
             'numerical_score': 0,
-            'classification': "Neutral"}
+            'classification': "neutral",
+            'confidence': 0,
+            'keywords': []
+        }
 
 
 def summarise_news(news_text, summary_length):

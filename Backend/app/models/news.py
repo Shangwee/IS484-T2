@@ -13,7 +13,7 @@ class News(db.Model):
     sentiment = db.Column(db.String(50), nullable=True)  # e.g., Positive, Neutral, Negative
     summary = db.Column(db.Text, nullable=True)
     tags = db.Column(ARRAY(db.String), nullable=True)  # e.g., ["Technology", "Business"]
-
+    confidence = db.Column(db.Float, nullable=True)
     
     def __repr__(self):
         return f"<News {self.title[:30]}...>"

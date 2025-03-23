@@ -139,9 +139,12 @@ def get_news(entity):
     """Get paginated news based on entity"""
     page = request.args.get('page', 1, type=int)  # Default to page 1
     per_page = request.args.get('per_page', 3, type=int)  # Default to 3 per page
+    sort_order = request.args.get('sort_order', 'desc')  # Default to ascending
+    filter_time = request.args.get('filter', 'all')  # Default to all-time
 
     ticker = get_ticker_by_entity(entity)
-    news_list = news_by_ticker(ticker, page, per_page)
+
+    news_list = news_by_ticker(ticker, page, per_page, sort_order, filter_time)
 
     if not news_list:
         return format_response([], "News not found", 404)
