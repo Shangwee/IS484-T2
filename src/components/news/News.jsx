@@ -38,7 +38,8 @@ const News = () => {
     sentimentAndRatingsContainer: {
       display: 'flex', // Groups SentimentScore and RatingsContainer together
       alignItems: 'center', // Aligns items vertically
-      gap: '10px', // Adds spacing between SentimentScore and RatingsContainer
+      justifyContent: 'space-between', // Pushes SentimentScore to the left and RatingsContainer to the right
+      width: '100%', // Ensures it takes the full width of the parent container
     },
     sentimentScore: {
       fontSize: '0.9rem', // Adjusted for readability
