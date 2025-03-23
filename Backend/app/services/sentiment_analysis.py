@@ -1,4 +1,6 @@
 from transformers import pipeline, AutoModelForSequenceClassification, AutoTokenizer
+from dotenv import load_dotenv
+import os
 import numpy as np
 import re
 import logging
@@ -14,6 +16,9 @@ logger = logging.getLogger(__name__)
 MAX_SEGMENT_LENGTH = 512  # Maximum length for text segments
 AGREEMENT_THRESHOLD = 0.7  # 70% agreement required between models
 SENTIMENT_THRESHOLD = 0.1  # Threshold for determining positive/negative sentiment
+
+# load environment variables
+load_dotenv()
 
 class SentimentAnalyzer:
     def __init__(self):
@@ -37,7 +42,9 @@ class SentimentAnalyzer:
         """Initialize Gemini AI client"""
         try:
             # Direct API key for testing purposes
-            api_key = "AIzaSyCoFKaRY6MmS-nUQ0EUWX3iJ3laHIIBh3Q"  # REPLACE WITH YOUR ACTUAL API KEY
+            load_dotenv()
+
+            api_key = os.getenv("SW_GEMINI_API_KEY")  # REPLACE WITH YOUR ACTUAL API KEY
                 
             # Configure the Gemini API client
             genai.configure(api_key=api_key)
@@ -53,7 +60,9 @@ class SentimentAnalyzer:
         """Initialize OpenAI client"""
         try:
             # Direct API key for testing purposes
-            self.openai_api_key = "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"  # REPLACE WITH YOUR ACTUAL API KEY
+            load_dotenv()
+
+            self.openai_api_key = os.getenv("OPENAI_API_KEY")  # REPLACE WITH YOUR ACTUAL API KEY
                         
 
             # We're not using the client library directly anymore, just storing the API key
@@ -448,8 +457,8 @@ def get_sentiment(text, use_openai=True):
     Returns a dictionary with sentiment analysis results
     """
     analyzer = SentimentAnalyzer()
-    result = analyzer.analyze_sentiment(text, use_openai=use_openai)
-    
+    result = analyzer.analyze_sentiment(text, use_openai=False)
+
     # Return a simplified result object for external use
     return {
         'numerical_score': result['numerical_score'],

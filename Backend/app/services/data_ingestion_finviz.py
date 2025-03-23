@@ -48,6 +48,7 @@ def get_finviz_news_by_ticker(query):
             score = article_details['numerical_score']
             sentiment = article_details['classification']
             tags = article_details['keywords']
+            confidence = article_details['confidence']
 
             news_list.append({
                 "published_date": row['Date'],
@@ -59,7 +60,8 @@ def get_finviz_news_by_ticker(query):
                 "summary": summary,
                 "score": score,
                 "sentiment": sentiment,
-                "tags": tags
+                "tags": tags,
+                "confidence": confidence
             })
 
             # check if the news already exists in the database
@@ -79,7 +81,8 @@ def get_finviz_news_by_ticker(query):
                 summary=summary,
                 score=score,
                 sentiment=sentiment,
-                tags=tags
+                tags=tags,
+                confidence=confidence
             )
 
             db.session.add(news_db)
@@ -129,6 +132,7 @@ def get_all_finviz():
             score = article_details['numerical_score']
             sentiment = article_details['classification']
             tags = article_details['keywords']
+            confidence = article_details['confidence']
 
             all_news_list.append({
                 "published_date": news_date,
@@ -139,7 +143,8 @@ def get_all_finviz():
                 "summary": summary,
                 "score": score,
                 "sentiment": sentiment,
-                "tags": tags
+                "tags": tags,
+                "confidence": confidence
             })
 
             # check if the news already exists in the database
@@ -158,7 +163,8 @@ def get_all_finviz():
                 summary=summary,
                 score=score,
                 sentiment=sentiment,
-                tags=tags
+                tags=tags,
+                confidence=confidence
             )
 
             db.session.add(news_db)
