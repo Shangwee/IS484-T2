@@ -65,7 +65,7 @@ def generate_pdf(entity_name, key_metrics, news_items, output_filename="report.p
         plt.tight_layout()
 
         # Save the plot as an image
-        chart_filename = os.path.join(UPLOAD_FOLDER, "{entity_name}_price_history.png")
+        chart_filename = os.path.join(UPLOAD_FOLDER, f"{entity_name}_price_history.png")
         plt.savefig(chart_filename)
         plt.close()
 
