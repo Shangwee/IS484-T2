@@ -30,7 +30,7 @@ def generate_pdf(entity_name, key_metrics, news_items, output_filename="report.p
 
         # Set the title
         pdf.set_font("Arial", "B", 16)
-        pdf.cell(0, 10, "Dashboard", ln=True, align='C')
+        pdf.cell(0, 10, f"{entity_name} Report", ln=True, align='C')
         pdf.ln(10)
 
         # 1. Entity Name
@@ -88,7 +88,7 @@ def generate_pdf(entity_name, key_metrics, news_items, output_filename="report.p
         # For simplicity, using the same chart again (can be replaced with another chart)
         plt.figure(figsize=(6, 4))
         plt.plot(hist_data.index, hist_data['Close'], label='Closing Price', color='green', marker='o')  # Change color for variety
-        plt.title(f"Price History of {entity_name} (Second Chart)")
+        plt.title(f"Sentiment History of {entity_name}")
         plt.xlabel('Date')
         plt.ylabel('Closing Price (USD)')
         plt.xticks(rotation=45)
