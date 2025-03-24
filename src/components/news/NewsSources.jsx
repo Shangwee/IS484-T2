@@ -10,18 +10,16 @@ import useFetch from '../../hooks/useFetch';
 
 // Main News Component
 const NewsSources = () => {
-    const { data, loading, error } = useFetch('/news/'); // Fetch news data from the API
 
-    const newsData = data ? data.data : []; // Extract news data from the response
 
     const location = useLocation();
     console.log("Location object:", location);
 
     const { id } = location.state || {id: null}; // Retrieve the id from state
     console.log(id);  
+    const { data, loading, error } = useFetch(`/news/${id}`); // Fetch news data from the API with the id parameter
 
-    const filteredNewsData = id ? newsData.filter((newsItem) => newsItem.id === id) : newsData;
-    console.log(filteredNewsData);
+    const filteredNewsData = data ? data.data : []; // Extract news data from the response
     
     const styles = {
       newsBox: {
@@ -73,26 +71,24 @@ const NewsSources = () => {
   return (
     <Container fluid className="news-container">
       <Row style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-        {filteredNewsData.map((newsItem) => (
-          <Col key={newsItem.id} md={5} className="mb-4 ml-4" style={{ display: 'flex' }}>
-            <div style={styles.newsBox} className="news-box">
-              <div style={styles.sentimentContainer}>
-                <SentimentScore score={newsItem.score} sentiment = {newsItem.sentiment}  />
-              </div>
-              <Link 
-              to={newsItem.url} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              style={styles.newsLink}
-              >  
-              <h4 style={styles.newsHeader}>{newsItem.title}</h4>  
-              </Link> 
-              <h4 style={styles.newsDate}>{new Date(newsItem.published_date).toLocaleDateString()}</h4> 
-              {/* <h4 style={styles.newsLink}>{newsItem.link}</h4>  */}
-              <p style={styles.newsSummary}>{newsItem.summary?.slice(0, 300)}</p> 
+        <Col key={filteredNewsData.id} md={5} className="mb-4 ml-4" style={{ display: 'flex' }}>
+          <div style={styles.newsBox} className="news-box">
+            <div style={styles.sentimentContainer}>
+              <SentimentScore score={filteredNewsData.score} sentiment = {filteredNewsData.sentiment}  />
             </div>
-          </Col>
-        ))}
+            <Link 
+            to={filteredNewsData.url} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            style={styles.newsLink}
+            >  
+            <h4 style={styles.newsHeader}>{filteredNewsData.title}</h4>  
+            </Link> 
+            <h4 style={styles.newsDate}>{new Date(filteredNewsData.published_date).toLocaleDateString()}</h4> 
+            {/* <h4 style={styles.newsLink}>{filteredNewsData.link}</h4>  */}
+            <p style={styles.newsSummary}>{filteredNewsData.summary?.slice(0, 300)}</p> 
+          </div>
+        </Col>
       </Row>
     </Container>
   );
