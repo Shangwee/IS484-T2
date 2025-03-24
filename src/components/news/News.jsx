@@ -16,41 +16,46 @@ import RatingsContainer from './ratingsContainer'
 const News = () => {
   const styles = {
     newsBox: {
-      position: 'relative',
-      margin: '20px auto', // Centers the box horizontally
-      maxWidth: '800px', // Increased width for a wider box
-      width: '100%', // Ensures responsiveness on smaller screens
-      height: 'auto', // Adjust height based on content
+      position: 'relative', // Required for absolute positioning inside
       borderRadius: '8px',
       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-      padding: '20px', // Increased padding for better spacing
+      padding: '40px 20px 20px', // Added top padding to prevent overlap
       backgroundColor: '#fff',
       marginBottom: '20px',
+      width: '100%',
+      maxWidth: '600px',
       boxSizing: 'border-box',
     },
-    headerContainer: {
-      display: 'flex', // Ensures header & sentiment score are in the same row
+      headerContainer: {
+      
       justifyContent: 'space-between', // Pushes them apart
       alignItems: 'center', // Aligns them vertically
       width: '100%', // Ensures full width usage
       flexWrap: 'wrap', // Allows wrapping on smaller screens
     },
     sentimentAndRatingsContainer: {
-      display: 'flex', // Groups SentimentScore and RatingsContainer together
-      alignItems: 'center', // Aligns items vertically
-      gap: '10px', // Adds spacing between SentimentScore and RatingsContainer
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between', // Ensures proper spacing
+      width: '100%',
+      flexWrap: 'nowrap', // Forces everything to stay in one row
+      gap: '10px', // Adjust the spacing between sentiment and ratings
     },
     sentimentScore: {
-      fontSize: '0.9rem', // Adjusted for readability
+      fontSize: '0.9rem',
       color: 'black',
       fontWeight: 'bold',
-      textAlign: 'right', // Aligns it properly
+      whiteSpace: 'nowrap', // Prevents wrapping
+      flexShrink: 0, // Prevents it from shrinking too much
     },
     ratingsContainer: {
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'flex-end', // Pushes it to the right
+      flexShrink: 0,
+      gap: '5px', // Space between thumbs up/down
     },
+    
     newsHeader: {
       fontSize: 'calc(0.5rem + 0.2vw)', // Dynamic font size for better responsiveness
       fontWeight: 'bold',
