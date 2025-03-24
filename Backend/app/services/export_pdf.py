@@ -25,28 +25,40 @@ def generate_pdf(entity_name, key_metrics, news_items, output_filename="report.p
         pdf = FPDF()
         pdf.set_auto_page_break(auto=True, margin=15)
 
-        # Page 1: Entity Overview
-        pdf.add_page()
-        pdf.set_font("Arial", "B", 24)
-        pdf.cell(200, 20, sanitize_text("Entity Report"), ln=True, align='C')
-        pdf.set_font("Arial", "B", 18)
-        pdf.cell(200, 10, sanitize_text(entity_name), ln=True, align='C')
+        # Add the first page
+        pdf.add_page()  # Ensure a page is added before any content
+
+        # Set the title
+        pdf.set_font("Arial", "B", 16)
+        pdf.cell(0, 10, "Dashboard", ln=True, align='C')
         pdf.ln(10)
 
-        # Key Metrics Section
+        # 1. Entity Name
+        entity_name = f"Entity Name: {entity_name}"  # Replace with dynamic data
         pdf.set_font("Arial", "B", 14)
-        pdf.cell(200, 10, sanitize_text("Key Metrics:"), ln=True)
+        pdf.cell(0, 10, entity_name, ln=True)
         pdf.ln(5)
 
+        # 2. Entity Sentiment Score and Sentiment
+        sentiment = "Positive"  # Replace with dynamic sentiment data
+        sentiment_score = "Score: 0.85"  # Replace with dynamic score data
+        sentiment_label = f"Sentiment: {sentiment} | {sentiment_score}"
         pdf.set_font("Arial", size=12)
-        for key, value in key_metrics.items():
-            pdf.set_fill_color(240, 240, 240)
-            pdf.cell(100, 10, sanitize_text(key), 1, 0, 'L', 1)
-            pdf.cell(90, 10, str(value), 1, 1, 'L', 0)
+        pdf.cell(0, 10, sentiment_label, ln=True)
+        pdf.ln(5)
 
-        # Create a line break after the table to place the graph below it
-        pdf.ln(20)  # Adjust this value for more space between table and chart
+        # 3. Related Sectors
+        related_sectors = ["Technology", "Finance", "Healthcare"]  # Replace with dynamic data
+        pdf.set_font("Arial", "B", 12)
+        pdf.cell(0, 10, "Related Sectors:", ln=True)
+        pdf.set_font("Arial", size=12)
+        pdf.multi_cell(0, 10, "\n".join(related_sectors))  # Join sectors into a list
+        pdf.ln(10)
 
+        # Ensure that the chart width will fit within the page
+        chart_width = (pdf.w - 20) / 2  # Split page width in half
+
+        # Generate the first chart (price history chart)
         entity_list = news_items['news'][0]['entities']
         entity_ticker = entity_list[0]
         ticker = yf.Ticker(entity_ticker)  # Use the correct ticker symbol
@@ -69,8 +81,26 @@ def generate_pdf(entity_name, key_metrics, news_items, output_filename="report.p
         plt.savefig(chart_filename)
         plt.close()
 
-        # Embed the image in the PDF
-        pdf.image(chart_filename, x=10, y=pdf.get_y(), w=180)
+        # Embed the first chart directly (left side)
+        pdf.image(chart_filename, x=10, y=pdf.get_y(), w=chart_width)
+
+        # Generate the second chart (e.g., news sentiment chart, or any other chart)
+        # For simplicity, using the same chart again (can be replaced with another chart)
+        plt.figure(figsize=(6, 4))
+        plt.plot(hist_data.index, hist_data['Close'], label='Closing Price', color='green', marker='o')  # Change color for variety
+        plt.title(f"Price History of {entity_name} (Second Chart)")
+        plt.xlabel('Date')
+        plt.ylabel('Closing Price (USD)')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+
+        # Save the second chart as an image
+        second_chart_filename = os.path.join(UPLOAD_FOLDER, f"{entity_name}_price_history_second.png")
+        plt.savefig(second_chart_filename)
+        plt.close()
+
+        # Embed the second chart directly (right side)
+        pdf.image(second_chart_filename, x=10 + chart_width + 5, y=pdf.get_y(), w=chart_width)
 
         # Page 2: Relevant News
         pdf.add_page()
