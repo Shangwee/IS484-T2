@@ -84,27 +84,66 @@ def generate_pdf(entity_name, key_metrics, news_items, output_filename="report.p
             i += 1
             pdf.set_fill_color(245, 245, 245)
             pdf.set_font("Arial", "B", 12)
-            pdf.cell(0, 10, sanitize_text(f"{i}. {news['title']}"), 1, 1, 'L', 1)
+
+            page_width = pdf.w - 20
+
+            title_text = sanitize_text(f"{i}. {news['title']}")
+            sentiment = news.get('sentiment', 'Not provided')
+            score = news.get('score', 'N/A')
+
+            if isinstance(score, (int, float)):
+                score = f"{score:.2f}"
+
+            sentiment_label = f"{sentiment} | {score}"
+
+            if sentiment == 'Positive' or sentiment == 'bullish':
+                pill_color = (0, 200, 0)
+            elif sentiment == 'Negative' or sentiment == 'bearish':
+                pill_color = (255, 0, 0)
+            elif sentiment == 'Neutral' or sentiment == 'neutral':
+                pill_color = (255, 204, 0)
+            else:
+                pill_color = (128, 128, 128)
+
+            pdf.set_font("Arial", "B", 10)
+            sentiment_width = pdf.get_string_width(sentiment_label) + 10
+            title_width = page_width - sentiment_width - 5
+
+            # Title - Use multi_cell to allow the title to wrap if necessary
+            pdf.set_font("Arial", "B", 12)
+            pdf.multi_cell(title_width, 10, title_text, border=1, align='L', fill=False)
+
+            # Position the sentiment pill next to the title
+            pdf.set_xy(pdf.get_x() + title_width, pdf.get_y() - 10)  # Move to the correct X and Y position
+
+            # Fake pill with padding
+            pdf.set_fill_color(*pill_color)
+            pdf.set_text_color(255, 255, 255)
+            pdf.cell(sentiment_width, 10, f"  {sentiment_label}  ", border=1, ln=1, align='C', fill=True)
+
+            # Reset colors
+            pdf.set_text_color(0, 0, 0)
+            pdf.set_fill_color(245, 245, 245)
             pdf.ln(5)
 
-            # Use .get() for other fields to avoid KeyError
-            summary = news.get('summary', 'No summary available')
+            # Summary
             pdf.set_font("Arial", size=11)
+            summary = news.get('summary', 'No summary available')
             pdf.multi_cell(0, 8, f"Summary: {sanitize_text(summary)}", 0, 'L')
             pdf.ln(1)
 
+            # Publisher & Date
             publisher = news.get('publisher', 'Unknown')
             published_date = news.get('published_date', 'Unknown')
-            sentiment = news.get('sentiment', 'Not provided')
-            meta_info = f"Publisher: {publisher} | Date: {published_date} | Sentiment: {sentiment}"
+            meta_info = f"Publisher: {publisher} | Date: {published_date}"
             pdf.set_font("Arial", "I", 10)
             pdf.multi_cell(0, 8, sanitize_text(meta_info), 0, 'L')
 
             # URL
             url = news.get('url', 'No URL available')
-            pdf.set_text_color(0, 0, 255)  # blue link style
+            pdf.set_text_color(0, 0, 255)
             pdf.multi_cell(0, 8, sanitize_text(url), 0, 'L')
-            pdf.set_text_color(0, 0, 0)  # reset to black
+            pdf.set_text_color(0, 0, 0)
             pdf.set_font("Arial", size=12)
             pdf.ln(5)
 
