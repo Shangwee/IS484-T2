@@ -46,9 +46,12 @@ def get_finviz_news_by_ticker(query):
             description = article_details['text']
             summary = article_details['summary']
             score = article_details['numerical_score']
+            finbert_score = article_details['finbert_score']
+            second_model_score = article_details['second_model_score']
             sentiment = article_details['classification']
             tags = article_details['keywords']
             confidence = article_details['confidence']
+            agreement_rate = article_details['agreement_rate']
 
             news_list.append({
                 "published_date": row['Date'],
@@ -59,9 +62,12 @@ def get_finviz_news_by_ticker(query):
                 "ticker": query,
                 "summary": summary,
                 "score": score,
+                "finbert_score": finbert_score,
+                "second_model_score": second_model_score,
                 "sentiment": sentiment,
                 "tags": tags,
-                "confidence": confidence
+                "confidence": confidence,
+                agreement_rate: agreement_rate
             })
 
             # check if the news already exists in the database
@@ -80,9 +86,12 @@ def get_finviz_news_by_ticker(query):
                 entities=[query],
                 summary=summary,
                 score=score,
+                finbert_score=finbert_score,
+                second_model_score=second_model_score,
                 sentiment=sentiment,
                 tags=tags,
-                confidence=confidence
+                confidence=confidence,
+                agreement_rate=agreement_rate
             )
 
             db.session.add(news_db)
@@ -130,9 +139,12 @@ def get_all_finviz():
             description = article_details['text']
             summary = article_details['summary']
             score = article_details['numerical_score']
+            finbert_score = article_details['finbert_score']
+            second_model_score = article_details['second_model_score']
             sentiment = article_details['classification']
             tags = article_details['keywords']
             confidence = article_details['confidence']
+            agreement_rate = article_details['agreement_rate']
 
             all_news_list.append({
                 "published_date": news_date,
@@ -142,9 +154,12 @@ def get_all_finviz():
                 "publisher": row['Source'],
                 "summary": summary,
                 "score": score,
+                "finbert_score": finbert_score,
+                "second_model_score": second_model_score,
                 "sentiment": sentiment,
                 "tags": tags,
-                "confidence": confidence
+                "confidence": confidence,
+                "agreement_rate": agreement_rate
             })
 
             # check if the news already exists in the database
@@ -162,9 +177,12 @@ def get_all_finviz():
                 entities=["Top News"],
                 summary=summary,
                 score=score,
+                finbert_score=finbert_score,
+                second_model_score=second_model_score,
                 sentiment=sentiment,
                 tags=tags,
-                confidence=confidence
+                confidence=confidence,
+                agreement_rate=agreement_rate
             )
 
             db.session.add(news_db)
