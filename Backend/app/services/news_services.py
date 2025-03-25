@@ -131,7 +131,7 @@ def all_news(page=1, per_page=4, filter_time="all", sort_order="desc", search_te
             "sentiment": n.sentiment,
             "tags": n.tags,
             "confidence": n.confidence,
-            "agreement_rate": n.agreement
+            "agreement_rate": n.agreement_rate
         })
 
     return {
