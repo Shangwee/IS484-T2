@@ -107,7 +107,7 @@ const News = () => {
 const url = `/news/?page=${currentPage}&per_page=${newsPerPage}&sort_order=${sortOrder}&filter=${filter}&search=${encodeURIComponent(searchTerm)}`;
 
 const { data, loading, error } = useFetch(url);
-  
+  console.log(data);  
   const newsData = data ? data.data.news : [];
 
   const totalPages = data ? data.data.pages : 1;

@@ -1,12 +1,24 @@
-  import React, { useState } from 'react';
-  import '../../styles/sentimentFeedback.css'; // External CSS file
-  import { Modal, Button } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import '../../styles/sentimentFeedback.css'; // External CSS file
+import { Modal, Button } from 'react-bootstrap';
+import useFetch from '../../hooks/useFetch';
+import { useLocation } from 'react-router-dom';
 
 
   const SentimentFeedbackForm = ({newsTitle}) => {
     const [selectedOption, setSelectedOption] = useState(null);
     const [sentimentScore, setSentimentScore] = useState(50); // Default sentiment score (range: 0-100)
     const [showModal, setShowModal] = useState(false); // State for modal visibility
+
+    const location = useLocation();
+    console.log("Location object:", location);
+
+    const { id } = location.state || {id: null}; // Retrieve the id from state
+    console.log(id);  
+    const { data, loading, error } = useFetch(`/news/${id}`); // Fetch news data from the API with the id parameter
+    const filteredNewsData = data ? data.data : []; // Extract news data from the response
+    
+    console.log(filteredNewsData)
 
     // Handle sentiment score changes
     const handleSliderChange = (event) => {
@@ -22,10 +34,8 @@
         alert('Please select a sentiment option before submitting.');
         return;
       }
-      // alert(`Feedback Submitted!\n\nSentiment: ${selectedOption}\nSentiment Score: ${sentimentScore}`);
+
       setShowModal(true); // Show modal on successful submission
-      // setSelectedOption(null);
-      // setSentimentScore(50);      
     };
 
     return (
@@ -34,11 +44,20 @@
         <h3>Article: {newsTitle}</h3>
         <p>Model disagreement detected:</p>
         <div>
-          <span style={{ color: 'green' }}>FinBERT: Bullish (+65)</span>
-          &nbsp;&nbsp;
-          <span style={{ color: 'red' }}>Gemini: Bearish (-45)</span>
-        </div>
+        
+        <span style={{ color: 'green' }}>
+        FinBERT:
+        { Math.ceil(filteredNewsData.score)}
+        </span>
 
+        &nbsp;&nbsp;
+        
+        <span style={{ color: 'red' }}>
+        Gemini: 
+          { Math.ceil(filteredNewsData.score)}
+        </span>
+
+        </div>
         <p>Your assessment:</p>
         <div>
           <label>
