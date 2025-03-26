@@ -10,7 +10,7 @@ import Filter from "./Filter";
 import Sort from './Sort'; 
 import useFetch from '../../hooks/useFetch';
 import RatingsContainer from './ratingsContainer'
-
+import SentimentFeedbackForm from '../ui/sentimentFeedback';
 
 // Main News Component
 const News = () => {
@@ -244,6 +244,8 @@ return (
         </div>
       )}
     </Row>
+
+    <SentimentFeedbackForm/>
 
     {/* Pagination Controls */}
     <Row className="justify-content-center">
