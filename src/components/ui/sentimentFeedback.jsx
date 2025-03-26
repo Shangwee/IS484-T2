@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import '../../styles/sentimentFeedback.css'; // External CSS file
-// import Swal from "sweetalert2"; // SweetAlert2 for notifications
 
-const SentimentFeedbackForm = () => {
+
+const SentimentFeedbackForm = ({newsTitle}) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [sentimentScore, setSentimentScore] = useState(50); // Default sentiment score (range: 0-100)
 
@@ -22,7 +22,7 @@ const SentimentFeedbackForm = () => {
   return (
     <div className="feedback-form">
       <h2>Sentiment Feedback Form</h2>
-      <p>Article: "Tesla Q3 Earnings Report"</p>
+      <h3>Article: {newsTitle}</h3>
       <p>Model disagreement detected:</p>
       <div>
         <span style={{ color: 'green' }}>FinBERT: Bullish (+65)</span>
