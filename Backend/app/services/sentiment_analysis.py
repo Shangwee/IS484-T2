@@ -419,7 +419,13 @@ class SentimentAnalyzer:
         if total_weight == 0:
             total_weight = 1  # Avoid division by zero
             
+        
+        print(integrated_results)
+
+        # Calculate final scores
         final_score = sum(result['numerical_score'] * result['confidence'] for result in integrated_results) / total_weight
+        final_finbert_score = (sum(result['model_scores']['finbert'] * result['confidence'] for result in integrated_results) / total_weight) * 100
+        final_second_model_score = (sum(result['model_scores']['second_model'] * result['confidence'] for result in integrated_results) / total_weight) * 100 
         
         # Final classification
         if final_score > 10:
@@ -438,6 +444,8 @@ class SentimentAnalyzer:
         
         return {
             'numerical_score': final_score,
+            "finbert_score": final_finbert_score,
+            "second_model_score": final_second_model_score,
             'classification': final_classification,
             'confidence': avg_confidence,
             'agreement_rate': agreement_rate,
@@ -462,6 +470,8 @@ def get_sentiment(text, use_openai=True):
     # Return a simplified result object for external use
     return {
         'numerical_score': result['numerical_score'],
+        'finbert_score': result['finbert_score'],
+        'second_model_score': result['second_model_score'],
         'classification': result['classification'],
         'confidence': result['confidence'],
         'agreement_rate': result['agreement_rate']

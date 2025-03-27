@@ -39,9 +39,12 @@ def news_by_ticker(ticker, page=1, per_page=3, sort_order="desc", filter_time="a
         "url": n.url,
         "entities": n.entities,
         "score": n.score,
+        "finbert_score": n.finbert_score,
+        "second_model_score": n.second_model_score,
         "sentiment": n.sentiment,
         "tags": n.tags,
-        "confidence": n.confidence
+        "confidence": n.confidence,
+        "agreement_rate": n.agreement_rate
     } for n in news_paginated.items]
 
     return {
@@ -68,9 +71,12 @@ def news_by_id(news_id):
             "url": news.url,
             "entities": news.entities,
             "score": news.score,
+            "finbert_score": news.finbert_score,
+            "second_model_score": news.second_model_score,
             "sentiment": news.sentiment,
             "tags":news.tags,
-            "confidence": news.confidence
+            "confidence": news.confidence,
+            "agreement_rate": news.agreement_rate
         }
     return None
 
@@ -120,9 +126,12 @@ def all_news(page=1, per_page=4, filter_time="all", sort_order="desc", search_te
             "url": n.url,
             "entities": n.entities,
             "score": n.score,
+            "finbert_score": n.finbert_score,
+            "second_model_score": n.second_model_score,
             "sentiment": n.sentiment,
             "tags": n.tags,
-            "confidence": n.confidence
+            "confidence": n.confidence,
+            "agreement_rate": n.agreement_rate
         })
 
     return {
