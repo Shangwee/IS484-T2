@@ -2,17 +2,17 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import Entity from '../../components/entity/Entity';
 import Price from '../../components/ui/Price';
-import SentimentScore from '../../components/ui/Sentimentscore';
 import EntityVisuals from '../../components/entity/Entityvisuals';
 import EntityNews from '../../components/entity/Entitynews';
 import useFetch from '../../hooks/useFetch';
 import '../../styles/App.css';
 import ReportButton from '../../components/ui/export';
 import SendPDF from '../../components/ui/SendReport';
+import { Badge, Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 const EntityPage = () => {
   const { ticker } = useParams();
-  console.log(ticker)
+  console.log(ticker);
   const url = `/entities/${ticker}`;
   const { data, loading, error } = useFetch(url);
   const EntityName = data ? data.data.name : "N/A";
@@ -22,6 +22,18 @@ const EntityPage = () => {
   if (loading) return <div style={styles.loading}>Loading...</div>;
   if (error) return <div style={styles.error}>Error fetching entity data.</div>;
 
+  const scores = {
+    finbert: 0.85,
+    gemini: -0.45,
+    combined: 0.0,
+  };
+
+  const getColor = (score) => {
+    if (score > 0) return 'success';
+    if (score < 0) return 'danger';
+    return 'secondary';
+  };
+
   return (
     <div className="App">
       <main className="App-content">
@@ -29,13 +41,25 @@ const EntityPage = () => {
           <div style={styles.entityWrapper}>
             <Entity EntityTicker={EntityTicker} />
           </div>
+          <div style={styles.sentimentWrapper}>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="finbert-tooltip">FinBERT Score: {scores.finbert} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(scores.finbert)} style={styles.badge}>FinBERT: {scores.finbert}</Badge>
+              </OverlayTrigger>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Gemini Score: {scores.gemini} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(scores.gemini)} style={styles.badge}>Gemini: {scores.gemini}</Badge>
+              </OverlayTrigger>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="combined-tooltip">Combined Score: {scores.combined} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(scores.combined)} style={styles.badge}>Combined: {scores.combined}</Badge>
+              </OverlayTrigger>
+            </div>
+          </div>
+        {/* </div> */}
+
+        {/* <div style={styles.bottomRow}> */}
           <div style={styles.priceWrapper}>
             <Price id={stockID} />
           </div>
-          <div style={styles.sentimentWrapper}>
-            <SentimentScore />
-          </div>
-          {/* Buttons in the same row as entity, price, and sentiment score */}
           <div style={styles.buttonWrapper}>
             <ReportButton EntityName={EntityName} />
             <SendPDF EntityName={EntityName} />
@@ -45,7 +69,6 @@ const EntityPage = () => {
         <div style={styles.visualsWrapper}>
           <EntityVisuals id={stockID} />
         </div>
-
         <div style={styles.newsWrapper}>
           <EntityNews EntityName={EntityName} />
         </div>
@@ -59,47 +82,53 @@ const styles = {
     marginTop: '70px',
     display: 'flex',
     alignItems: 'center',
-    boxSizing: 'border-box',
-    maxWidth: '600px',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    flexWrap: 'wrap',
+    marginLeft:'10px',
+    justifyContent: 'center', // Centers everything in the row
+
   },
   entityWrapper: {
     flex: 1,
-    textAlign: 'left',
-    minWidth: '200px',
-    marginRight: '0px',  
+    textAlign: 'center',
+    maxWidth: '300px', // Limit the size if needed
+    
   },
+  sentimentWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '20px',
+    minWidth: '300px',
+  },
+
   priceWrapper: {
     flex: 1,
     textAlign: 'center',
-    minWidth: '200px',
     fontSize: 'clamp(0.8rem, 1vw, 1.2rem)',
-    marginRight: '5px', 
+    maxWidth: '300px', // Limit the size if needed
   },
-  sentimentWrapper: {
-    textAlign: 'right',
-    maxWidth: '400px',
+  bottomRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end', // Aligns everything to the right
+    marginTop: '20px',
+    maxWidth: '1200px',
+    width: '100%', // Ensures it takes full width
+  },
+  priceWrapper: {
+    textAlign: 'right', // Aligns text inside priceWrapper to the right
     fontSize: 'clamp(0.8rem, 1vw, 1.2rem)',
-    marginRight: '20px',  // Increased gap between sentiment score and buttons
+    maxWidth: '300px',
+    flexShrink: 0, // Prevents shrinking
   },
   buttonWrapper: {
     display: 'flex',
-    gap: '10px', // Reduced gap between buttons
-    marginLeft: 'auto', // Align buttons to the right
-    marginRight: '0', // Align buttons to the right
-    flexShrink: 0, // Prevent button wrapper from shrinking
+    alignItems: 'center',
+    gap: '20px',
+    minWidth: '300px',
+    flexShrink: 0, // Prevents shrinking
   },
-  visualsWrapper: {
-    padding: '10px',
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  newsWrapper: {
-    padding: '20px',
-    maxWidth: '1200px',
-    margin: '0 auto',
+  badge: {
+    padding: '8px 12px',
+    fontSize: '1rem',
   },
 };
 

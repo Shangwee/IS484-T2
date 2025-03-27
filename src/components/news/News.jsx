@@ -4,13 +4,12 @@ import { Container, Row, Col } from 'react-bootstrap';
 import SentimentScore from '../ui/Sentimentscore';
 import SearchBar from '../ui/Searchbar';
 import { Link } from 'react-router-dom'; 
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Pagination from 'react-bootstrap/Pagination';
 import Filter from "./Filter";
 import Sort from './Sort'; 
 import useFetch from '../../hooks/useFetch';
 import RatingsContainer from './ratingsContainer'
-
+import SentimentFeedbackForm from '../ui/sentimentFeedback';
 
 // Main News Component
 const News = () => {
@@ -101,13 +100,14 @@ const News = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState("all"); // Default: all time
   const [sortOrder, setSortOrder] = useState('desc'); // Default: descending order
+  const [selectedNews, setSelectedNews] = useState(null); // State to track selected news
   const newsPerPage = 4; // Items per page
   
 // Construct API URL with search parameter
 const url = `/news/?page=${currentPage}&per_page=${newsPerPage}&sort_order=${sortOrder}&filter=${filter}&search=${encodeURIComponent(searchTerm)}`;
 
 const { data, loading, error } = useFetch(url);
-  
+  console.log(data);  
   const newsData = data ? data.data.news : [];
 
   const totalPages = data ? data.data.pages : 1;
@@ -208,17 +208,18 @@ return (
                 <h4 style={styles.newsHeader} >
                   <Link
                     to='/Individualnewspage'
-                    state={{ id: news.id }}
+                    state={{ id: news.id , title: news.title }}
                     rel="noopener noreferrer"
                     style={styles.newsLink}
-                  >
+                    
+                  // After selecting a news item
+                    onClick={() => {
+                      setSelectedNews(news);
+                      console.log('Selected News:', news); // Debugging state change
+                    }}                  >
                     {news.title}
                   </Link>
                 </h4>
-                {/* <div style={styles.sentimentScore}>
-                  <SentimentScore score={news.score} sentiment = {news.sentiment} />
-                  <RatingsContainer style={styles.RatingsContainer} />
-                </div> */}
                  <div style={styles.sentimentAndRatingsContainer}>
                 <div style={styles.sentimentScore}>
                 <SentimentScore score={news.score} sentiment={news.sentiment} />
@@ -245,6 +246,16 @@ return (
       )}
     </Row>
 
+    
+      {/* Render Sentiment Feedback Form if a news item is selected */}
+      {selectedNews && (
+        <>
+          {/* Log the selected news title for debugging */}
+          {console.log('Rendering SentimentFeedbackForm with title:', selectedNews.title)}
+          <SentimentFeedbackForm newsTitle={selectedNews.title} />
+        </>
+      )}
+      
     {/* Pagination Controls */}
     <Row className="justify-content-center">
       <Col xs={12} md={8} lg={6}>
