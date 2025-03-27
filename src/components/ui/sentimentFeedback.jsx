@@ -44,17 +44,17 @@ import { useLocation } from 'react-router-dom';
         <h3>Article: {newsTitle}</h3>
         <p>Model disagreement detected:</p>
         <div>
-        
-        <span style={{ color: 'green' }}>
         FinBERT:
-        { Math.ceil(filteredNewsData.score)}
+        <span style={{ color: filteredNewsData.finbert_score > 0 ? 'green' : filteredNewsData.finbert_score < 0 ? 'red' : 'black'}}>
+        
+        { filteredNewsData.finbert_score.toFixed(2)}
         </span>
 
         &nbsp;&nbsp;
-        
-        <span style={{ color: 'red' }}>
-        Gemini: 
-          { Math.ceil(filteredNewsData.score)}
+        Gemini:  
+        <span style={{ color: filteredNewsData.second_model_score > 0 ? 'green' : filteredNewsData.second_model_score < 0 ? 'red' : 'black' }}>
+       
+          { filteredNewsData.second_model_score.toFixed(2)}
         </span>
 
         </div>
