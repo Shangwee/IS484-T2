@@ -76,8 +76,11 @@ def get_article_details(url, article_html):
             "text": article_result.text,
             "summary": summary,
             'numerical_score': sentiment['numerical_score'],
+            'finbert_score': sentiment['finbert_score'],
+            'second_model_score': sentiment['second_model_score'],
             'classification': sentiment['classification'],
             'confidence': sentiment['confidence'],
+            'agreement_rate': sentiment['agreement_rate'],
             'keywords': keyword
         }
 
