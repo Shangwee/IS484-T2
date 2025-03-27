@@ -419,10 +419,13 @@ class SentimentAnalyzer:
         if total_weight == 0:
             total_weight = 1  # Avoid division by zero
             
+        
+        print(integrated_results)
+
         # Calculate final scores
         final_score = sum(result['numerical_score'] * result['confidence'] for result in integrated_results) / total_weight
-        final_finbert_score = sum(result['model_scores']['finbert'] * result['confidence'] for result in integrated_results) / total_weight
-        final_second_model_score = sum(result['model_scores']['second_model'] * result['confidence'] for result in integrated_results) / total_weight
+        final_finbert_score = (sum(result['model_scores']['finbert'] * result['confidence'] for result in integrated_results) / total_weight) * 100
+        final_second_model_score = (sum(result['model_scores']['second_model'] * result['confidence'] for result in integrated_results) / total_weight) * 100 
         
         # Final classification
         if final_score > 10:
