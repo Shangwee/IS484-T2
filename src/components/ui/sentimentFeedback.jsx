@@ -90,7 +90,7 @@ import { useLocation } from 'react-router-dom';
             Bearish
           </label>
         </div>
-      {/* Sentiment Score Slider */}
+      {/* Sentiment Score Slider
       <div style={{ marginTop: "20px" }}>
           <p>Sentiment Score: {sentimentScore}</p>
           <input
@@ -101,7 +101,7 @@ import { useLocation } from 'react-router-dom';
             onChange={handleSliderChange}
             className="slider"
           />
-        </div>
+        </div> */}
 
         <button onClick={handleSubmit}>Submit</button>
        {/* Submission Success Modal */}
@@ -111,7 +111,7 @@ import { useLocation } from 'react-router-dom';
         </Modal.Header>
         <Modal.Body>
         <p><strong>Sentiment:</strong> {selectedOption ? selectedOption.charAt(0).toUpperCase() + selectedOption.slice(1) : 'N/A'}</p>
-          <p><strong>Sentiment Score:</strong> {sentimentScore}</p>
+          {/* <p><strong>Sentiment Score:</strong> {sentimentScore}</p> */}
           <p>Thank you for your feedback!</p>
         </Modal.Body>
         <Modal.Footer>
