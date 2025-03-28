@@ -8,3 +8,4 @@ from .news_services import news_by_ticker, news_by_id, all_news
 from .entities_service import get_ticker_by_entity, get_all_ticker_entities
 from .email_pdf import send_email_with_attachment
 from .entities_service import get_all_ticker_entities, get_ticker_by_entity
+from .feedback_services import get_feedback_by_userID, get_feedback_by_newsID, get_feedback_by_userID_and_newsID, insert_feedback
