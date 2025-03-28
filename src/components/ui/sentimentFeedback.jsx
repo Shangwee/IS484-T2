@@ -67,7 +67,7 @@ import { useLocation } from 'react-router-dom';
               value="bullish"
               onChange={handleOptionChange}
             />
-            Bullish
+            Bearish
           </label>
           &nbsp;&nbsp;
           <label>
@@ -87,7 +87,7 @@ import { useLocation } from 'react-router-dom';
               value="bearish"
               onChange={handleOptionChange}
             />
-            Bearish
+            Bullish
           </label>
         </div>
       {/* Sentiment Score Slider
