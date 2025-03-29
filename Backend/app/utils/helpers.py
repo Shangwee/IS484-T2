@@ -59,7 +59,7 @@ def get_article_details(url, article_html):
     try:
         time.sleep(10)
         # Fetch the article details
-        article_result = article(url, input_html=article_html)
+        article_result = article(url)
         article_result.nlp()
 
         # Summarise the article text

@@ -76,7 +76,8 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
     
         try:
             # Get article scraped
-            article = scrape_article(decoded_url["decoded_url"])
+            # article = scrape_article(decoded_url["decoded_url"])
+            article = ""  # Placeholder for the article scraping function
 
             # Get article details
             article_details = get_article_details(decoded_url["decoded_url"], article)
@@ -174,7 +175,8 @@ def get_all_top_gnews():
 
         try:
             # get article scraped
-            article = scrape_article(decoded_url["decoded_url"])
+            # article = scrape_article(decoded_url["decoded_url"])
+            article = ""  # Placeholder for the article scraping function
 
             # get article details
             article_details = get_article_details(decoded_url["decoded_url"], article)

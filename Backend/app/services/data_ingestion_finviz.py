@@ -38,8 +38,9 @@ def get_finviz_news_by_ticker(query):
             continue
 
         try :
-             # Get article scraped
-            article = scrape_article(row['Link'])
+            #  # Get article scraped
+            # article = scrape_article(row['Link'])
+            article = ""
 
             #get article details
             article_details = get_article_details(row['Link'], article)
@@ -52,6 +53,9 @@ def get_finviz_news_by_ticker(query):
             tags = article_details['keywords']
             confidence = article_details['confidence']
             agreement_rate = article_details['agreement_rate']
+
+            if description == "" or tags == []:
+                continue
 
             news_list.append({
                 "published_date": row['Date'],
@@ -133,6 +137,8 @@ def get_all_finviz():
         try:
             # Get article scraped
             article = scrape_article(row['Link'])
+            # article = ""  # Placeholder for the article scraping function
+
 
             #get article details
             article_details = get_article_details(row['Link'], article)
@@ -145,6 +151,9 @@ def get_all_finviz():
             tags = article_details['keywords']
             confidence = article_details['confidence']
             agreement_rate = article_details['agreement_rate']
+
+            if description == "" or tags == []:
+                continue
 
             all_news_list.append({
                 "published_date": news_date,

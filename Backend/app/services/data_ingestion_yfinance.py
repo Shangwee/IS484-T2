@@ -48,7 +48,8 @@ def get_stock_news(ticker):
 
         try:
             # Scrape the article details
-            article = scrape_article(link)
+            # article = scrape_article(link)
+            article = ""  # Placeholder for the article scraping function
 
             # Get the article details
             article_details = get_article_details(link, article)
@@ -70,6 +71,9 @@ def get_stock_news(ticker):
             # Check if the URL already exists in the database
             existing_news = NewsModel.query.filter_by(url=link).first()
             if existing_news:
+                continue
+
+            if description == "" or tags == []:
                 continue
 
             news_db = NewsModel(
