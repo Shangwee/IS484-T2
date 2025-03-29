@@ -8,7 +8,7 @@ import Pagination from 'react-bootstrap/Pagination';
 import Filter from "./Filter";
 import Sort from './Sort'; 
 import useFetch from '../../hooks/useFetch';
-import RatingsContainer from './ratingsContainer'
+// import RatingsContainer from './ratingsContainer'
 import SentimentFeedbackForm from '../ui/sentimentFeedback';
 
 // Main News Component
@@ -224,10 +224,10 @@ return (
                 <div style={styles.sentimentScore}>
                 <SentimentScore score={news.score} sentiment={news.sentiment} />
               </div>
-              <div style={styles.ratingsContainer}>
+              {/* <div style={styles.ratingsContainer}>
                 <RatingsContainer />
+              </div> */}
               </div>
-            </div>
               </div>
               <p style={styles.newsSummary}><strong>Publisher:</strong> {news.publisher}</p>
               <p style={styles.newsDate}><strong>Date:</strong> {new Date(news.published_date).toDateString()}</p>

@@ -2,7 +2,8 @@ import React from 'react';
 import NewsSources from '../../components/news/NewsSources';
 import SentimentFeedbackForm from '../../components/ui/sentimentFeedback';
 import { useLocation } from 'react-router-dom';
-import ProgressBar from '../../components/ui/progressBar';'../../components/ui/progressBar';
+import ProgressBar from '../../components/ui/progressBar';
+import SentimentScores from '../../components/ui/sentimentBadge';
 
 function IndividualNewsPage() {
   console.log('Rendering IndividualNewsPage ');
@@ -12,9 +13,11 @@ function IndividualNewsPage() {
 
   return (
     <div style={{ color:'black', padding: '20px' }}>
-      <NewsSources/>
+      {/* <NewsSources/> */}
       <SentimentFeedbackForm newsTitle={newsTitle} />
       <ProgressBar/>
+      <SentimentScores/>
+        
     </div>
   );
 }
