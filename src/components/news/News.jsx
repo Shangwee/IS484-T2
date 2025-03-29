@@ -4,53 +4,57 @@ import { Container, Row, Col } from 'react-bootstrap';
 import SentimentScore from '../ui/Sentimentscore';
 import SearchBar from '../ui/Searchbar';
 import { Link } from 'react-router-dom'; 
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Pagination from 'react-bootstrap/Pagination';
 import Filter from "./Filter";
 import Sort from './Sort'; 
 import useFetch from '../../hooks/useFetch';
 import RatingsContainer from './ratingsContainer'
-
+import SentimentFeedbackForm from '../ui/sentimentFeedback';
 
 // Main News Component
 const News = () => {
   const styles = {
     newsBox: {
-      position: 'relative',
-      margin: '20px auto', // Centers the box horizontally
-      maxWidth: '800px', // Increased width for a wider box
-      width: '100%', // Ensures responsiveness on smaller screens
-      height: 'auto', // Adjust height based on content
+      position: 'relative', // Required for absolute positioning inside
       borderRadius: '8px',
       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-      padding: '20px', // Increased padding for better spacing
+      padding: '40px 20px 20px', // Added top padding to prevent overlap
       backgroundColor: '#fff',
       marginBottom: '20px',
+      width: '100%',
+      maxWidth: '600px',
       boxSizing: 'border-box',
     },
-    headerContainer: {
-      display: 'flex', // Ensures header & sentiment score are in the same row
+      headerContainer: {
+      
       justifyContent: 'space-between', // Pushes them apart
       alignItems: 'center', // Aligns them vertically
       width: '100%', // Ensures full width usage
       flexWrap: 'wrap', // Allows wrapping on smaller screens
     },
     sentimentAndRatingsContainer: {
-      display: 'flex', // Groups SentimentScore and RatingsContainer together
-      alignItems: 'center', // Aligns items vertically
-      gap: '10px', // Adds spacing between SentimentScore and RatingsContainer
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between', // Ensures proper spacing
+      width: '100%',
+      flexWrap: 'nowrap', // Forces everything to stay in one row
+      gap: '10px', // Adjust the spacing between sentiment and ratings
     },
     sentimentScore: {
-      fontSize: '0.9rem', // Adjusted for readability
+      fontSize: '0.9rem',
       color: 'black',
       fontWeight: 'bold',
-      textAlign: 'right', // Aligns it properly
+      whiteSpace: 'nowrap', // Prevents wrapping
+      flexShrink: 0, // Prevents it from shrinking too much
     },
     ratingsContainer: {
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'flex-end', // Pushes it to the right
+      flexShrink: 0,
+      gap: '5px', // Space between thumbs up/down
     },
+    
     newsHeader: {
       fontSize: 'calc(0.5rem + 0.2vw)', // Dynamic font size for better responsiveness
       fontWeight: 'bold',
@@ -96,13 +100,14 @@ const News = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState("all"); // Default: all time
   const [sortOrder, setSortOrder] = useState('desc'); // Default: descending order
+  const [selectedNews, setSelectedNews] = useState(null); // State to track selected news
   const newsPerPage = 4; // Items per page
   
 // Construct API URL with search parameter
 const url = `/news/?page=${currentPage}&per_page=${newsPerPage}&sort_order=${sortOrder}&filter=${filter}&search=${encodeURIComponent(searchTerm)}`;
 
 const { data, loading, error } = useFetch(url);
-  
+  console.log(data);  
   const newsData = data ? data.data.news : [];
 
   const totalPages = data ? data.data.pages : 1;
@@ -203,17 +208,18 @@ return (
                 <h4 style={styles.newsHeader} >
                   <Link
                     to='/Individualnewspage'
-                    state={{ id: news.id }}
+                    state={{ id: news.id , title: news.title }}
                     rel="noopener noreferrer"
                     style={styles.newsLink}
-                  >
+                    
+                  // After selecting a news item
+                    onClick={() => {
+                      setSelectedNews(news);
+                      console.log('Selected News:', news); // Debugging state change
+                    }}                  >
                     {news.title}
                   </Link>
                 </h4>
-                {/* <div style={styles.sentimentScore}>
-                  <SentimentScore score={news.score} sentiment = {news.sentiment} />
-                  <RatingsContainer style={styles.RatingsContainer} />
-                </div> */}
                  <div style={styles.sentimentAndRatingsContainer}>
                 <div style={styles.sentimentScore}>
                 <SentimentScore score={news.score} sentiment={news.sentiment} />
@@ -240,6 +246,16 @@ return (
       )}
     </Row>
 
+    
+      {/* Render Sentiment Feedback Form if a news item is selected */}
+      {selectedNews && (
+        <>
+          {/* Log the selected news title for debugging */}
+          {console.log('Rendering SentimentFeedbackForm with title:', selectedNews.title)}
+          <SentimentFeedbackForm newsTitle={selectedNews.title} />
+        </>
+      )}
+      
     {/* Pagination Controls */}
     <Row className="justify-content-center">
       <Col xs={12} md={8} lg={6}>

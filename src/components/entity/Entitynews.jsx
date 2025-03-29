@@ -26,20 +26,17 @@ const News = ( {EntityName} ) => {
       boxSizing: 'border-box',
     },
     sentimentScore: {
-      position:'absolute',
-      top:'10px',
-      right:'10px',
-      fontSize: '0.2rem', // Adjusted for readability
-      color: 'black',
-      fontWeight: 'bold',
-      textAlign: 'right', // Aligns it properly
-      zIndex: 1
-    },
-    newsHeader: {
-      fontSize: 'clamp(1rem, 1.5vw, 1.5rem)', // Dynamic font size
-      fontWeight: 'bold',
-      color: 'black',
-      marginBottom: '10px',
+      display: 'inline-block', // Groups SentimentScore and RatingsContainer together
+      alignItems: 'center', // Aligns items vertically
+      justifyContent: 'space-between', // Pushes SentimentScore to the left and RatingsContainer to the right
+    },    
+    newsHeader:  {
+      display: 'flex', // Ensures header & sentiment score are in the same row
+      justifyContent: 'space-between', // Pushes them apart
+      alignItems: 'center', // Aligns them vertically
+      width: '100%', // Ensures full width usage
+      flexWrap: 'wrap', // Allows wrapping on smaller screens
+      fontWeight: 'bold'
     },
     newsSummary: {
       fontSize: 'clamp(0.8rem, 1vw, 1rem)', // Dynamic font size
@@ -55,12 +52,6 @@ const News = ( {EntityName} ) => {
       fontSize: 'clamp(0.9rem, 1vw, 1.1rem)', // Dynamic font size
       color: 'blue',
       textDecoration: 'none',
-    },
-    sentimentScore: {
-      fontSize: 'clamp(0.8rem, 1vw, 1rem)', // Dynamic font size
-      color: 'black',
-      fontWeight: 'bold',
-      textAlign: 'right', // Align it properly
     },
     paginationWrapper: {
       display: 'flex',
@@ -151,15 +142,15 @@ const News = ( {EntityName} ) => {
           return (
             <Col key={news.id || index} xs={12} sm={6} md={4} lg={3} className="mb-4 d-flex justify-content-center">
               <div style={styles.newsBox}>
-              <div style={styles.sentimentScore}>
-                    <SentimentScore score={news.score} sentiment = {news.sentiment} />
-                  </div>
+
                 <h4 style={styles.newsHeader}>
                   <Link to={news.url} target="_blank" rel="noopener noreferrer" style={styles.newsLink}>
                     {news.title}
                   </Link>
                 </h4>
-                
+                <div style={styles.sentimentScore}>
+                    <SentimentScore score={news.score} sentiment = {news.sentiment} />
+                  </div>
                 <p style={styles.newsSummary}><strong>Publisher:</strong> {news.publisher}</p>
                 <p style={styles.newsDate}><strong>Date:</strong> {new Date(news.published_date).toDateString()}</p>
                 <p style={styles.newsSummary}>{news.summary?.length > 300 ? `${news.summary.slice(0, 300)}...` : news.summary}</p>

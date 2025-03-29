@@ -58,8 +58,12 @@ def get_stock_news(ticker):
             published_date = datetime.datetime.fromtimestamp(news_item["providerPublishTime"])
             title = news_item["title"]
             score = article_details['numerical_score']
+            finbert_score = article_details['finbert_score']
+            second_model_score = article_details['second_model_score']
             sentiment = article_details['classification']
             tags = article_details['keywords']
+            confidence = article_details['confidence']
+            agreement_rate = article_details['agreement_rate']
 
             print("title: ", title)
 
@@ -77,8 +81,12 @@ def get_stock_news(ticker):
                 entities=[ticker],
                 summary=summary,
                 score=score,
+                finbert_score=finbert_score,
+                second_model_score=second_model_score,
                 sentiment=sentiment,
-                tags=tags
+                tags=tags,
+                confidence=confidence,
+                agreement_rate=agreement_rate
             )
 
             newslist.append({
@@ -90,8 +98,12 @@ def get_stock_news(ticker):
                 "entities": [ticker],
                 "summary": summary,
                 "score": score,
+                "finbert_score": finbert_score,
+                "second_model_score": second_model_score,
                 "sentiment": sentiment,
-                "tags": tags
+                "tags": tags,
+                "confidence": confidence,
+                "agreement_rate": agreement_rate
             })
 
             db.session.add(news_db)
