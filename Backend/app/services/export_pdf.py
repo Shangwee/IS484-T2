@@ -48,12 +48,21 @@ def generate_pdf(entity_name, key_metrics, news_items, output_filename="report.p
         pdf.ln(5)
 
         # 3. Related Sectors
-        related_sectors = ["Technology", "Finance", "Healthcare"]  # Replace with dynamic data
+        region = ["Asia", "North America"]  # Replace with dynamic region data
+        sectors = ["Technology", "Finance", "Healthcare"]  # Replace with dynamic sectors data
         pdf.set_font("Arial", "B", 12)
-        pdf.cell(0, 10, "Related Sectors:", ln=True)
+        pdf.cell(0, 10, "Related Region & Sectors:", ln=True)
+        pdf.ln(5)
+
+        # Create a row with two columns: Region and Sectors
         pdf.set_font("Arial", size=12)
-        pdf.multi_cell(0, 10, "\n".join(related_sectors))  # Join sectors into a list
+        pdf.cell(95, 10, "Region:", border=1)
+        pdf.cell(95, 10, "Sectors:", border=1)
         pdf.ln(10)
+
+        pdf.cell(95, 10, ", ".join(region), border=1)
+        pdf.cell(95, 10, ", ".join(sectors), border=1)
+        pdf.ln(20)
 
         # Ensure that the chart width will fit within the page
         chart_width = (pdf.w - 20) / 2  # Split page width in half
@@ -141,7 +150,7 @@ def generate_pdf(entity_name, key_metrics, news_items, output_filename="report.p
 
             # Title - Use multi_cell to allow the title to wrap if necessary
             pdf.set_font("Arial", "B", 12)
-            pdf.multi_cell(title_width, 10, title_text, border=1, align='L', fill=False)
+            pdf.multi_cell(title_width, 10, title_text, align='L', fill=False)
 
             # Position the sentiment pill next to the title
             pdf.set_xy(pdf.get_x() + title_width, pdf.get_y() - 10)  # Move to the correct X and Y position
@@ -176,6 +185,30 @@ def generate_pdf(entity_name, key_metrics, news_items, output_filename="report.p
             pdf.set_text_color(0, 0, 0)
             pdf.set_font("Arial", size=12)
             pdf.ln(5)
+
+            #tags
+            tags = news.get('tags', [])
+            if tags:
+                sanitized_tags = [sanitize_text(tag) for tag in tags]
+                pdf.set_font("Arial", "I", 10)
+                
+                # Start a new line for tags
+                pdf.ln(5)
+                
+                # Join the tags with commas and ensure they fit within the page width
+                tags_text = ', '.join(sanitized_tags)
+                
+                # Split the tags into multiple lines if they overflow the page width
+                max_tag_width = pdf.w - 20  # Account for page margins
+                if pdf.get_string_width(tags_text) > max_tag_width:
+                    # Use multi_cell to wrap the tags text
+                    pdf.multi_cell(0, 8, f"Tags: {tags_text}", 0, 'L')
+                else:
+                    # Otherwise, just use cell to print the tags in one line
+                    pdf.cell(0, 8, f"Tags: {tags_text}", ln=True, align='L')
+
+                pdf.ln(5)  # Add some spacing after tags
+
 
         # Footer with timestamp
         pdf.set_y(-25)
