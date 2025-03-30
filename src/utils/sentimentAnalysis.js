@@ -46,3 +46,21 @@ export function formatSentimentClassification(classification) {
   // Capitalize first letter
   return lowerClassification.charAt(0).toUpperCase() + lowerClassification.slice(1);
 }
+
+/**
+ * Get background color based on sentiment classification
+ * @param {string} sentiment - The sentiment classification from the backend
+ * @returns {string} - Corresponding background color for the sentiment
+ */
+export function getSentimentColor(sentiment) {
+  switch (sentiment) {
+    case 'positive':
+      return '#28a745'; // Green
+    case 'negative':
+      return '#dc3545'; // Red
+    case 'neutral':
+      return '#6c757d'; // Gray
+    default:
+      return '#6c757d'; // Default to gray for unknown sentiment
+  }
+}

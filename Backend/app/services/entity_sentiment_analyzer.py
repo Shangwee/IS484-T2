@@ -18,9 +18,10 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from tqdm import tqdm
 from collections import Counter
+import time
 
 # Import our core sentiment analyzer
-from sentiment_analyzer import SentimentAnalyzer
+from app.services.sentiment_analysis import SentimentAnalyzer
 
 class EntitySentimentAnalyzer:
     def __init__(self, output_dir="entity_sentiment_results"):
@@ -317,6 +318,8 @@ class EntitySentimentAnalyzer:
                     'date': article.get('metadata', {}).get('date', datetime.now().isoformat()),
                     'source': article.get('metadata', {}).get('source', 'unknown')
                 }
+                # delay the analysis to avoid rate limits 
+                time.sleep(60/15)
                 article['analysis'] = self.analyze_article(article['text'], metadata)
         
         # Extract scores and confidences
@@ -513,9 +516,9 @@ class EntitySentimentAnalyzer:
         for method, details in aggregations.items():
             print(f"  - {method}: {details['score']:.2f}")
         
-        # Save result
-        filename = f"{entity_name.lower().replace(' ', '_')}_unified_sentiment.json"
-        self._save_results(filename, result)
+        # # Save result
+        # filename = f"{entity_name.lower().replace(' ', '_')}_unified_sentiment.json"
+        # self._save_results(filename, result)
         
         # Store in entity results
         self.entity_results[entity_name] = result
