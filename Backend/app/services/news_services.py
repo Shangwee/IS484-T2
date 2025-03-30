@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 def news_by_ticker(ticker, page=1, per_page=3, sort_order="desc", filter_time="all"):
     """Get paginated, filtered, and sorted news by ticker"""
 
-    query = News.query.filter(ticker == any_(News.entities))
+    query = News.query.filter(News.entities.any(ticker))
 
     # Apply time filtering
     if filter_time != "all":
