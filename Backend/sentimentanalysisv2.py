@@ -513,3 +513,26 @@ def get_sentiment(text, use_openai=False, use_gemini=True, config=None):
     
     # Return the full result for comprehensive analysis
     return result
+# Add this at the end of the file to test
+if __name__ == "__main__":
+    # Test with a sample text
+    sample_text = """
+    Tesla reported strong Q4 earnings, beating analyst expectations with revenue growth of 12% year-over-year. 
+    The company's automotive gross margins improved to 21.6%, and the company expects to increase production significantly in 2025.
+    However, some analysts remain concerned about increasing competition in the electric vehicle market.
+    """
+    
+    # Test FinBERT only
+    finbert_result = get_sentiment(sample_text, use_openai=False, use_gemini=False)
+    print("\n=== FinBERT Analysis Only ===")
+    print(f"Sentiment: {finbert_result['classification']}")
+    print(f"Score: {finbert_result['numerical_score']:.2f}")
+    print(f"Detailed scores: {finbert_result['detailed_scores']}")
+    
+    # Test with Gemini (using your environment variable)
+    gemini_result = get_sentiment(sample_text, use_openai=False, use_gemini=True)
+    print("\n=== FinBERT + Gemini Analysis ===")
+    print(f"Sentiment: {gemini_result['classification']}")
+    print(f"Score: {gemini_result['numerical_score']:.2f}")
+    print(f"Confidence: {gemini_result['confidence']:.2f}")
+    print(f"Agreement rate: {gemini_result['agreement_rate']:.2f}")
