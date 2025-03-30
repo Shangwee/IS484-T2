@@ -27,7 +27,12 @@ def export_pdf():
 
     # Fetch data for the report
     #TODO: Replace with actual data fetch. Maybe can create a new function in services folder
-    news_items = news_by_ticker(ticker)
+    news_items = news_by_ticker(ticker, page=1, per_page=5, sort_order="desc", filter_time="24")
+
+    if not news_items:
+        # fallback to 'all' if no news in the past 24 hours
+        news_items = news_by_ticker(ticker, page=1, per_page=10, sort_order="desc", filter_time="all")
+
     key_metrics = {
         "Revenue": 1000000,
         "Net Income": 500000,

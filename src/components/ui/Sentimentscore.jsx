@@ -14,9 +14,9 @@ const SentimentScore = ({score, sentiment}) => {
 
   const getBackgroundColor = (sentiment) => {
     switch (sentiment) {
-      case 'Positive': return '#00CB14';
-      case 'Negative': return '#FF4D4D';
-      case 'Neutral': return '#FFA500';
+      case 'bullish': return '#00CB14';
+      case 'bearish': return '#FF4D4D';
+      case 'neutral': return '#FFA500';
       default: return '#808080';
     }
   };

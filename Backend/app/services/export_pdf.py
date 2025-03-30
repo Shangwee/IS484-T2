@@ -1,8 +1,10 @@
-import os
+import yfinance as yf
+import matplotlib.pyplot as plt
 from fpdf import FPDF
 from datetime import datetime
-import traceback
+import os
 import logging
+import traceback
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -18,30 +20,96 @@ def sanitize_text(text):
     return text.encode("ascii", "ignore").decode()  # Removes non-ASCII characters
 
 def generate_pdf(entity_name, key_metrics, news_items, output_filename="report.pdf"):
-    """Generate PDF with error handling"""
     try:
         output_path = os.path.join(UPLOAD_FOLDER, output_filename)
         pdf = FPDF()
         pdf.set_auto_page_break(auto=True, margin=15)
 
-        # Page 1: Entity Overview
-        pdf.add_page()
-        pdf.set_font("Arial", "B", 24)
-        pdf.cell(200, 20, sanitize_text("Entity Report"), ln=True, align='C')
-        pdf.set_font("Arial", "B", 18)
-        pdf.cell(200, 10, sanitize_text(entity_name), ln=True, align='C')
+        # Add the first page
+        pdf.add_page()  # Ensure a page is added before any content
+
+        # Set the title
+        pdf.set_font("Arial", "B", 16)
+        pdf.cell(0, 10, f"{entity_name} Report", ln=True, align='C')
         pdf.ln(10)
 
-        # Key Metrics Section
+        # 1. Entity Name
+        entity_name = f"Entity Name: {entity_name}"  # Replace with dynamic data
         pdf.set_font("Arial", "B", 14)
-        pdf.cell(200, 10, sanitize_text("Key Metrics:"), ln=True)
+        pdf.cell(0, 10, entity_name, ln=True)
         pdf.ln(5)
 
+        # 2. Entity Sentiment Score and Sentiment
+        sentiment = "Positive"  # Replace with dynamic sentiment data
+        sentiment_score = "Score: 0.85"  # Replace with dynamic score data
+        sentiment_label = f"Sentiment: {sentiment} | {sentiment_score}"
         pdf.set_font("Arial", size=12)
-        for key, value in key_metrics.items():
-            pdf.set_fill_color(240, 240, 240)
-            pdf.cell(100, 10, sanitize_text(key), 1, 0, 'L', 1)
-            pdf.cell(90, 10, str(value), 1, 1, 'L', 0)
+        pdf.cell(0, 10, sentiment_label, ln=True)
+        pdf.ln(5)
+
+        # 3. Related Sectors
+        region = ["Asia", "North America"]  # Replace with dynamic region data
+        sectors = ["Technology", "Finance", "Healthcare"]  # Replace with dynamic sectors data
+        pdf.set_font("Arial", "B", 12)
+        pdf.cell(0, 10, "Related Region & Sectors:", ln=True)
+        pdf.ln(5)
+
+        # Create a row with two columns: Region and Sectors
+        pdf.set_font("Arial", size=12)
+        pdf.cell(95, 10, "Region:", border=1)
+        pdf.cell(95, 10, "Sectors:", border=1)
+        pdf.ln(10)
+
+        pdf.cell(95, 10, ", ".join(region), border=1)
+        pdf.cell(95, 10, ", ".join(sectors), border=1)
+        pdf.ln(20)
+
+        # Ensure that the chart width will fit within the page
+        chart_width = (pdf.w - 20) / 2  # Split page width in half
+
+        # Generate the first chart (price history chart)
+        entity_list = news_items['news'][0]['entities']
+        entity_ticker = entity_list[0]
+        ticker = yf.Ticker(entity_ticker)  # Use the correct ticker symbol
+        hist_data = ticker.history(period="1mo")  # Get 1 month of price data
+
+        if hist_data.empty:
+            raise ValueError(f"No historical data available for {entity_name}.")
+
+        # Generate the price history chart
+        plt.figure(figsize=(6, 4))
+        plt.plot(hist_data.index, hist_data['Close'], label='Closing Price', color='blue', marker='o')  # Adding markers to the line
+        plt.title(f"Price History of {entity_name}")
+        plt.xlabel('Date')
+        plt.ylabel('Closing Price (USD)')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+
+        # Save the plot as an image
+        chart_filename = os.path.join(UPLOAD_FOLDER, f"{entity_name}_price_history.png")
+        plt.savefig(chart_filename)
+        plt.close()
+
+        # Embed the first chart directly (left side)
+        pdf.image(chart_filename, x=10, y=pdf.get_y(), w=chart_width)
+
+        # Generate the second chart (e.g., news sentiment chart, or any other chart)
+        # For simplicity, using the same chart again (can be replaced with another chart)
+        plt.figure(figsize=(6, 4))
+        plt.plot(hist_data.index, hist_data['Close'], label='Closing Price', color='green', marker='o')  # Change color for variety
+        plt.title(f"Sentiment History of {entity_name}")
+        plt.xlabel('Date')
+        plt.ylabel('Closing Price (USD)')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+
+        # Save the second chart as an image
+        second_chart_filename = os.path.join(UPLOAD_FOLDER, f"{entity_name}_price_history_second.png")
+        plt.savefig(second_chart_filename)
+        plt.close()
+
+        # Embed the second chart directly (right side)
+        pdf.image(second_chart_filename, x=10 + chart_width + 5, y=pdf.get_y(), w=chart_width)
 
         # Page 2: Relevant News
         pdf.add_page()
@@ -50,15 +118,97 @@ def generate_pdf(entity_name, key_metrics, news_items, output_filename="report.p
         pdf.ln(10)
 
         pdf.set_font("Arial", size=12)
-        for i, news in enumerate(news_items[:10], 1):
+        i = 0
+        for news in news_items.get('news', []):
+            i += 1
             pdf.set_fill_color(245, 245, 245)
-            pdf.cell(0, 10, sanitize_text(f"{i}. {news['title']}"), 1, 1, 'L', 1)
+            pdf.set_font("Arial", "B", 12)
+
+            page_width = pdf.w - 20
+
+            title_text = sanitize_text(f"{i}. {news['title']}")
+            sentiment = news.get('sentiment', 'Not provided')
+            score = news.get('score', 'N/A')
+
+            if isinstance(score, (int, float)):
+                score = f"{score:.2f}"
+
+            sentiment_label = f"{sentiment} | {score}"
+
+            if sentiment == 'Positive' or sentiment == 'bullish':
+                pill_color = (0, 200, 0)
+            elif sentiment == 'Negative' or sentiment == 'bearish':
+                pill_color = (255, 0, 0)
+            elif sentiment == 'Neutral' or sentiment == 'neutral':
+                pill_color = (255, 204, 0)
+            else:
+                pill_color = (128, 128, 128)
+
+            pdf.set_font("Arial", "B", 10)
+            sentiment_width = pdf.get_string_width(sentiment_label) + 10
+            title_width = page_width - sentiment_width - 5
+
+            # Title - Use multi_cell to allow the title to wrap if necessary
+            pdf.set_font("Arial", "B", 12)
+            pdf.multi_cell(title_width, 10, title_text, align='L', fill=False)
+
+            # Position the sentiment pill next to the title
+            pdf.set_xy(pdf.get_x() + title_width, pdf.get_y() - 10)  # Move to the correct X and Y position
+
+            # Fake pill with padding
+            pdf.set_fill_color(*pill_color)
+            pdf.set_text_color(255, 255, 255)
+            pdf.cell(sentiment_width, 10, f"  {sentiment_label}  ", border=1, ln=1, align='C', fill=True)
+
+            # Reset colors
+            pdf.set_text_color(0, 0, 0)
+            pdf.set_fill_color(245, 245, 245)
             pdf.ln(5)
+
+            # Summary
+            pdf.set_font("Arial", size=11)
+            summary = news.get('summary', 'No summary available')
+            pdf.multi_cell(0, 8, f"Summary: {sanitize_text(summary)}", 0, 'L')
+            pdf.ln(1)
+
+            # Publisher & Date
+            publisher = news.get('publisher', 'Unknown')
+            published_date = news.get('published_date', 'Unknown')
+            meta_info = f"Publisher: {publisher} | Date: {published_date}"
             pdf.set_font("Arial", "I", 10)
-            url = sanitize_text(news['url'])
-            pdf.multi_cell(0, 8, url, 0, 'L')
+            pdf.multi_cell(0, 8, sanitize_text(meta_info), 0, 'L')
+
+            # URL
+            url = news.get('url', 'No URL available')
+            pdf.set_text_color(0, 0, 255)
+            pdf.multi_cell(0, 8, sanitize_text(url), 0, 'L')
+            pdf.set_text_color(0, 0, 0)
             pdf.set_font("Arial", size=12)
-            pdf.ln(2)
+            pdf.ln(5)
+
+            #tags
+            tags = news.get('tags', [])
+            if tags:
+                sanitized_tags = [sanitize_text(tag) for tag in tags]
+                pdf.set_font("Arial", "I", 10)
+                
+                # Start a new line for tags
+                pdf.ln(5)
+                
+                # Join the tags with commas and ensure they fit within the page width
+                tags_text = ', '.join(sanitized_tags)
+                
+                # Split the tags into multiple lines if they overflow the page width
+                max_tag_width = pdf.w - 20  # Account for page margins
+                if pdf.get_string_width(tags_text) > max_tag_width:
+                    # Use multi_cell to wrap the tags text
+                    pdf.multi_cell(0, 8, f"Tags: {tags_text}", 0, 'L')
+                else:
+                    # Otherwise, just use cell to print the tags in one line
+                    pdf.cell(0, 8, f"Tags: {tags_text}", ln=True, align='L')
+
+                pdf.ln(5)  # Add some spacing after tags
+
 
         # Footer with timestamp
         pdf.set_y(-25)
@@ -69,9 +219,6 @@ def generate_pdf(entity_name, key_metrics, news_items, output_filename="report.p
         # Save PDF
         pdf.output(output_path, "F")
         logging.info(f"PDF successfully created: {output_path}")
-
-        if not os.path.exists(output_path):
-            raise FileNotFoundError(f"PDF file was not created at: {output_path}")
 
         return output_path
     except Exception as e:
