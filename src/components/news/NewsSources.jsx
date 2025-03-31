@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col, Badge, ButtonGroup, ToggleButton } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch';
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 const NewsSources = () => {
     const location = useLocation();
@@ -11,14 +12,24 @@ const NewsSources = () => {
 
     const newsData = data ? data.data : null;
 
+    const scores = {
+        finbert: 0.85,
+        gemini: -0.45,
+        combined: 0.0,
+    };
+    const getColor = (score) => {
+        if (score > 0) return 'success';
+        if (score < 0) return 'danger';
+        return 'secondary';
+      };
     // State to track selected sentiment type
-    const [selectedSentiment, setSelectedSentiment] = useState('average');
+    // const [selectedSentiment, setSelectedSentiment] = useState('average');
 
-    const sentimentTypes = [
-        { name: 'Avg Sentiment', value: 'average' },
-        { name: 'Weighted', value: 'weighted' },
-        { name: 'Time-Decay', value: 'time_decay' }
-    ];
+    // const sentimentTypes = [
+    //     { name: 'Avg Sentiment', value: 'average' },
+    //     { name: 'Weighted', value: 'weighted' },
+    //     { name: 'Time-Decay', value: 'time_decay' }
+    // ];
 
     const styles = {
         newsHeader: {
@@ -65,7 +76,7 @@ const NewsSources = () => {
         <Container fluid className="news-container">
             
             {/* Sentiment Score Toggle Pills */}
-            <div style={styles.sentimentToggle}>
+            {/* <div style={styles.sentimentToggle}>
             <ButtonGroup>
               {sentimentTypes.map((type) => (
                   <ToggleButton
@@ -84,16 +95,16 @@ const NewsSources = () => {
                   </ToggleButton>
               ))}
           </ButtonGroup>
-            </div>
+            </div> */}
 
             {/* Display selected sentiment */}
-            <div className="text-center">
+            {/* <div className="text-center">
                 <Badge style={styles.sentimentValue}>
                     {selectedSentiment === 'average' && <>📊 1</>}
                     {selectedSentiment === 'weighted' && <>⚖ 2</>}
                     {selectedSentiment === 'time_decay' && <>⏳ 3</>}
                 </Badge>
-            </div>
+            </div> */}
 
             {/* News Title */}
             <Link to={newsData.url} target="_blank" rel="noopener noreferrer" style={styles.newsHeader}>
@@ -109,8 +120,27 @@ const NewsSources = () => {
             {/* Entities under news date */}
             <div className="d-flex flex-wrap gap-2">
                 {newsData.entities?.map((entity) => (
-                    <Badge bg="success" style={styles.badge} key={entity}>{entity}</Badge>
+                    <Badge bg="warning" style={styles.badge} key={entity}>{entity}</Badge>
                 ))}
+            
+            <div>
+                
+            <div >
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="finbert-tooltip">FinBERT Score: {scores.finbert} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(scores.finbert)} style={styles.badge}>FinBERT: {scores.finbert}</Badge>
+              </OverlayTrigger>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Gemini Score: {scores.gemini} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(scores.gemini)} style={styles.badge}>Gemini: {scores.gemini}</Badge>
+              </OverlayTrigger>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="combined-tooltip">Combined Score: {scores.combined} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(scores.combined)} style={styles.badge}>Combined: {scores.combined}</Badge>
+              </OverlayTrigger>
+            </div>
+            </div>
+
+          </div>
+
             </div>
 
             {/* News Summary */}
