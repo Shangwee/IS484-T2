@@ -15,7 +15,7 @@ const NewsSources = () => {
     const scores = {
         finbert: newsData ? parseFloat(newsData.finbert_score).toFixed(1) : 0,
         gemini: newsData ? parseFloat(newsData.second_model_score).toFixed(1) : 0,
-        combined: newsData ? parseFloat(newsData.score).toFixed(1) : 0,
+        OpenAI: newsData ? parseFloat(newsData.score).toFixed(1) : 0,
     };
     const getColor = (score) => {
         if (score > 0) return 'success';
@@ -102,8 +102,8 @@ const NewsSources = () => {
               <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Gemini Score: {scores.gemini} is calculated with ...</Tooltip>}>
                 <Badge bg={getColor(scores.gemini)} style={styles.badge}>Gemini: {scores.gemini}</Badge>
               </OverlayTrigger>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="combined-tooltip">Combined Score: {scores.combined} is calculated with ...</Tooltip>}>
-                <Badge bg={getColor(scores.combined)} style={styles.badge}>Combined: {scores.combined}</Badge>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="OpenAI-tooltip">OpenAI: {scores.OpenAI} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(scores.OpenAI)} style={styles.badge}>OpenAI: {scores.OpenAI}</Badge>
               </OverlayTrigger>
             </div>
             </div>
