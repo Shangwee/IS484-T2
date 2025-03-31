@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatSentimentClassification, getSentimentColor } from '../../utils/sentimentAnalysis';
+import { formatSentimentClassification } from '../../utils/sentimentAnalysis';
 
 const SentimentScore = ({ 
   score, 
@@ -28,10 +28,24 @@ const SentimentScore = ({
 
   // Format the sentiment for display (capitalize first letter)
   const formattedSentiment = formatSentimentClassification(sentiment || 'neutral');
-  
+  console.log(formattedSentiment)
   // Get background color based on sentiment
-  const bgColor = getSentimentColor(sentiment);
-
+  const getBackgroundColor = (sentiment) => {
+    switch (sentiment?.toLowerCase()) {
+      case 'positive':
+      case 'bullish':
+        return '#28a745'; // Green
+      case 'negative':
+      case 'bearish':
+        return '#dc3545'; // Red
+      case 'neutral':
+        return '#ffc107'; // Yellow
+      default:
+        return '#6c757d'; // Default to grey for unknown sentiment
+    }
+  }; 
+  const bgColor = getBackgroundColor(sentiment);
+ 
   // Normalize score to be between -100 and 100
   const displayScore = typeof score === 'number' ? 
     (score > -100 && score < 100) ? score : (score > 0 ? 100 : -100) : 0;
