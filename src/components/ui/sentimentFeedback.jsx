@@ -3,11 +3,11 @@ import '../../styles/sentimentFeedback.css'; // External CSS file
 import { Modal, Button } from 'react-bootstrap';
 import useFetch from '../../hooks/useFetch';
 import { useLocation } from 'react-router-dom';
+import { postData } from '../../services/api';
 
 
   const SentimentFeedbackForm = ({newsTitle}) => {
     const [selectedOption, setSelectedOption] = useState(null);
-    const [sentimentScore, setSentimentScore] = useState(50); // Default sentiment score (range: 0-100)
     const [showModal, setShowModal] = useState(false); // State for modal visibility
 
     const location = useLocation();
@@ -15,6 +15,7 @@ import { useLocation } from 'react-router-dom';
 
     const { id } = location.state || {id: null}; // Retrieve the id from state
     console.log(id);  
+
     const { data, loading, error } = useFetch(`/news/${id}`); // Fetch news data from the API with the id parameter
     const filteredNewsData = data ? data.data : []; // Extract news data from the response
     
@@ -34,10 +35,27 @@ import { useLocation } from 'react-router-dom';
         alert('Please select a sentiment option before submitting.');
         return;
       }
+      // Prepare data for submission
+      const feedbackData = {
+        userID: 1, // Replace with actual user ID for now dummy data
+        newsID: id,
+        assessment: selectedOption,
+      };
 
-      setShowModal(true); // Show modal on successful submission
+      console.log('Feedback data:', feedbackData);
+      // Send feedback to the backend
+      postData('/feedback/', feedbackData)
+        .then((response) => {
+          console.log('Feedback submitted successfully:', response);
+          // Show success modal
+          setShowModal(true);
+        })
+        .catch((error) => {
+          console.error('Error submitting feedback:', error);
+        });
     };
 
+  
     return (
       <div className="feedback-form">
         <h2>Sentiment Feedback Form</h2>
@@ -47,14 +65,14 @@ import { useLocation } from 'react-router-dom';
         
         <span style={{ color: 'green' }}>
         FinBERT:
-        { Math.ceil(filteredNewsData.score)}
+        { Math.ceil(filteredNewsData.finbert_score)}
         </span>
 
         &nbsp;&nbsp;
         
         <span style={{ color: 'red' }}>
         Gemini: 
-          { Math.ceil(filteredNewsData.score)}
+          { Math.ceil(filteredNewsData.second_model_score)}
         </span>
 
         </div>
@@ -90,18 +108,6 @@ import { useLocation } from 'react-router-dom';
             Bearish
           </label>
         </div>
-      {/* Sentiment Score Slider */}
-      <div style={{ marginTop: "20px" }}>
-          <p>Sentiment Score: {sentimentScore}</p>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={sentimentScore}
-            onChange={handleSliderChange}
-            className="slider"
-          />
-        </div>
 
         <button onClick={handleSubmit}>Submit</button>
        {/* Submission Success Modal */}
@@ -111,7 +117,6 @@ import { useLocation } from 'react-router-dom';
         </Modal.Header>
         <Modal.Body>
         <p><strong>Sentiment:</strong> {selectedOption ? selectedOption.charAt(0).toUpperCase() + selectedOption.slice(1) : 'N/A'}</p>
-          <p><strong>Sentiment Score:</strong> {sentimentScore}</p>
           <p>Thank you for your feedback!</p>
         </Modal.Body>
         <Modal.Footer>

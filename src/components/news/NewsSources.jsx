@@ -1,99 +1,161 @@
-import React from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Row, Col } from 'react-bootstrap';
-import SentimentScore from '../ui/Sentimentscore';
-import { Link } from 'react-router-dom'; 
-import { useLocation } from 'react-router-dom';
+import { Container, Row, Col, Badge, ButtonGroup, ToggleButton } from 'react-bootstrap';
+import { Link, useLocation } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch';
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
-
-
-// Main News Component
 const NewsSources = () => {
-
-
     const location = useLocation();
-    console.log("Location object:", location);
+    const { id } = location.state || { id: null };
+    const { data } = useFetch(`news/${id}`);
 
-    const { id } = location.state || {id: null}; // Retrieve the id from state
-    console.log(id);  
-    const { data, loading, error } = useFetch(`/news/${id}`); // Fetch news data from the API with the id parameter
+    const newsData = data ? data.data : null;
 
-    const filteredNewsData = data ? data.data : []; // Extract news data from the response
-    
+    const scores = {
+        finbert: newsData ? parseFloat(newsData.finbert_score).toFixed(1) : 0,
+        gemini: newsData ? parseFloat(newsData.second_model_score).toFixed(1) : 0,
+        combined: newsData ? parseFloat(newsData.score).toFixed(1) : 0,
+    };
+    const getColor = (score) => {
+        if (score > 0) return 'success';
+        if (score < 0) return 'danger';
+        return 'secondary';
+      };
+    // State to track selected sentiment type
+    // const [selectedSentiment, setSelectedSentiment] = useState('average');
+
+    // const sentimentTypes = [
+    //     { name: 'Avg Sentiment', value: 'average' },
+    //     { name: 'Weighted', value: 'weighted' },
+    //     { name: 'Time-Decay', value: 'time_decay' }
+    // ];
+
     const styles = {
-      newsBox: {
-        minHeight: '350px', // Ensure all boxes are at least 350px tall
-        maxHeight: '400px', // Optional: Limit maximum height to prevent large content overflow
-        borderRadius: '8px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        padding: '20px', // Add some padding for better spacing
-        display: 'flex', // Flex container for child alignment
-        flexDirection: 'column', // Align content vertically
-        justifyContent: 'space-between', // Space out the header, content, and footer evenly
-        overflow: 'hidden', // Handle overflow gracefully
-    },
-    newsHeader: {
-      fontSize: 'calc(7px + 1vw)', // Dynamic font size
-      fontWeight: 'bold',
-      color: '#555555',
+        newsHeader: {
+            fontSize: 'calc(7px + 1vw)',
+            fontWeight: 'bold',
+            color: '#007BFF',
+            textDecoration: 'none',
+        },
+        metaInfo: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            fontSize: 'calc(8px + 0.5vw)',
+            color: '#777',
+            marginBottom: '5px',
+        },
+        badge: {
+            fontSize: '1em',
+            padding: '6px 12px',
+            borderRadius: '20px',
+            fontWeight: '500',
+            cursor: 'pointer',
+        },
+        sentimentToggle: {
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '10px',
+            marginBottom: '15px',
+        },
+        sentimentValue: {
+            fontSize: '1em',
+            fontWeight: 'bold',
+            padding: '5px 15px',
+            borderRadius: '20px',
+            backgroundColor: '#f8f9fa',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+        },
+    };
 
-    },
-    newsSummary: {
-        fontSize: 'calc(10px + 0.5vw)',
-        color: '#555555',
-        overflow: 'hidden', // Hide overflowing content
-        textOverflow: 'ellipsis', // Add ellipsis for truncated text
-        display: '-webkit-box', // Ensure multiline truncation works
-        WebkitLineClamp: 5, // Limit to 5 lines
-        WebkitBoxOrient: 'vertical',
-    },
-    newsDate: {
-      fontSize: 'calc(8px + 0.5vw)', // Dynamic font size
-      color: '#555555',
-    },
-    
-    newsLink: {
-      fontSize: 'calc(12px + 0.5vw)', // Dynamic font size
-      color: '#555555',
-    }, 
-    
-    sentimentContainer:{
-      display: 'flex',
-      justifyContent: 'flex-end',
-      marginTop: '10px',
-    }
-  };
+    if (!id) return <p>No ID provided. Please navigate correctly.</p>;
+    if (!newsData) return <p>Loading...</p>;
 
-  if (!id) {
-    return <p>No ID provided. Please navigate correctly.</p>;
-  } else {
-  return (
-    <Container fluid className="news-container">
-      <Row style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-        <Col key={filteredNewsData.id} md={5} className="mb-4 ml-4" style={{ display: 'flex' }}>
-          <div style={styles.newsBox} className="news-box">
-            <div style={styles.sentimentContainer}>
-              <SentimentScore score={filteredNewsData.score} sentiment = {filteredNewsData.sentiment}  />
+    return (
+        <Container fluid className="news-container">
+      
+            {/* News Title */}
+            <Link to={newsData.url} target="_blank" rel="noopener noreferrer" style={styles.newsHeader}>
+                <h4>{newsData.title}</h4>
+            </Link>
+
+            {/* News date and publisher closer together */}
+            <div style={styles.metaInfo}>
+                <span>📅 {new Date(newsData.published_date).toLocaleDateString()}</span>
+                <span>📰 {newsData.publisher}</span>
             </div>
-            <Link 
-            to={filteredNewsData.url} 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            style={styles.newsLink}
-            >  
-            <h4 style={styles.newsHeader}>{filteredNewsData.title}</h4>  
-            </Link> 
-            <h4 style={styles.newsDate}>{new Date(filteredNewsData.published_date).toLocaleDateString()}</h4> 
-            {/* <h4 style={styles.newsLink}>{filteredNewsData.link}</h4>  */}
-            <p style={styles.newsSummary}>{filteredNewsData.summary?.slice(0, 300)}</p> 
+
+            {/* Entities under news date */}
+            <div className="d-flex flex-wrap gap-2">
+                {newsData.entities?.map((entity) => (
+                    <Badge bg="warning" style={styles.badge} key={entity}>{entity}</Badge>
+                ))}
+            
+            <div>
+                
+            <div >
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="finbert-tooltip">FinBERT Score: {scores.finbert} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(scores.finbert)} style={styles.badge}>FinBERT: {scores.finbert}</Badge>
+              </OverlayTrigger>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Gemini Score: {scores.gemini} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(scores.gemini)} style={styles.badge}>Gemini: {scores.gemini}</Badge>
+              </OverlayTrigger>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="combined-tooltip">Combined Score: {scores.combined} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(scores.combined)} style={styles.badge}>Combined: {scores.combined}</Badge>
+              </OverlayTrigger>
+            </div>
+            </div>
+
           </div>
-        </Col>
-      </Row>
-    </Container>
-  );
+
+            </div>
+
+            {/* News Summary */}
+            <p>{newsData.summary}</p>
+
+            {/* Region, Sectors, and Affected Companies in separate columns */}
+            <Row className="mt-3">
+                <Col md={4}>
+                    {newsData.tags?.length > 0 && (
+                        <>
+                            <strong>🌍 Region:</strong>
+                            <div className="d-flex flex-wrap gap-2 mt-2">
+                                {newsData.tags.map((region) => (
+                                    <Badge bg="info" style={styles.badge} key={region}>{region}</Badge>
+                                ))}
+                            </div>
+                        </>
+                    )}
+                </Col>
+                <Col md={4}>
+                    {newsData.tags?.length > 0 && (
+                        <>
+                            <strong>🏢 Sectors:</strong>
+                            <div className="d-flex flex-wrap gap-2 mt-2">
+                                {newsData.tags.map((sector) => (
+                                    <Badge bg="dark" style={styles.badge} key={sector}>{sector}</Badge>
+                                ))}
+                            </div>
+                        </>
+                    )}
+                </Col>
+                <Col md={4}>
+                    {newsData.tags?.length > 0 && (
+                        <>
+                            <strong>🏭 Affected Companies:</strong>
+                            <div className="d-flex flex-wrap gap-2 mt-2">
+                                {newsData.tags.map((company) => (
+                                    <Badge bg="warning" style={styles.badge} key={company}>{company}</Badge>
+                                ))}
+                            </div>
+                        </>
+                    )}
+                </Col>
+            </Row>
+        </Container>
+    );
 };
-}
 
 export default NewsSources;
-

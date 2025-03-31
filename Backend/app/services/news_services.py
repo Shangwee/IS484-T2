@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 def news_by_ticker(ticker, page=1, per_page=3, sort_order="desc", filter_time="all"):
     """Get paginated, filtered, and sorted news by ticker"""
 
-    query = News.query.filter(ticker == any_(News.entities))
+    query = News.query.filter(News.entities.any(ticker))
 
     # Apply time filtering
     if filter_time != "all":
@@ -41,10 +41,14 @@ def news_by_ticker(ticker, page=1, per_page=3, sort_order="desc", filter_time="a
         "score": n.score,
         "finbert_score": n.finbert_score,
         "second_model_score": n.second_model_score,
+        "third_model_score": n.third_model_score,
         "sentiment": n.sentiment,
         "tags": n.tags,
         "confidence": n.confidence,
-        "agreement_rate": n.agreement_rate
+        "agreement_rate": n.agreement_rate,
+        "company_names": n.company_names,
+        "regions": n.regions,
+        "sectors": n.sectors
     } for n in news_paginated.items]
 
     return {
@@ -73,10 +77,14 @@ def news_by_id(news_id):
             "score": news.score,
             "finbert_score": news.finbert_score,
             "second_model_score": news.second_model_score,
+            "third_model_score": news.third_model_score,
             "sentiment": news.sentiment,
             "tags":news.tags,
             "confidence": news.confidence,
-            "agreement_rate": news.agreement_rate
+            "agreement_rate": news.agreement_rate,
+            "company_names": news.company_names,
+            "regions": news.regions,
+            "sectors": news.sectors
         }
     return None
 
@@ -128,10 +136,14 @@ def all_news(page=1, per_page=4, filter_time="all", sort_order="desc", search_te
             "score": n.score,
             "finbert_score": n.finbert_score,
             "second_model_score": n.second_model_score,
+            "third_model_score": n.third_model_score,
             "sentiment": n.sentiment,
             "tags": n.tags,
             "confidence": n.confidence,
-            "agreement_rate": n.agreement_rate
+            "agreement_rate": n.agreement_rate,
+            "company_names": n.company_names,
+            "regions": n.regions,
+            "sectors": n.sectors
         })
 
     return {

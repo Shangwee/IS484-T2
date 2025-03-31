@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Entity from '../../components/entity/Entity';
 import Price from '../../components/ui/Price';
@@ -10,7 +10,15 @@ import ReportButton from '../../components/ui/export';
 import SendPDF from '../../components/ui/SendReport';
 import { Badge, Tooltip, OverlayTrigger } from 'react-bootstrap';
 
+
 const EntityPage = () => {
+ 
+  const getColor = (sentimentType) => {
+    if (sentimentType > 0) return 'success';
+    if (sentimentType < 0) return 'danger';
+    return 'secondary';
+  };
+
   const { ticker } = useParams();
   console.log(ticker);
   const url = `/entities/${ticker}`;
@@ -19,56 +27,66 @@ const EntityPage = () => {
   const stockID = data ? data.data.id : "N/A";
   const EntityTicker = data ? data.data.ticker : "N/A";
 
+  const sentimentTypes = {
+    AvgSentiment: data ? parseFloat(data.data.sentiment_score).toFixed(1) : 0,
+    simpleAverage: data ? parseFloat(data.data.simple_average).toFixed(1) : 0,
+    TimeDecay: data ? parseFloat(data.data.time_decay).toFixed(1) : 0,
+  };
+
   if (loading) return <div style={styles.loading}>Loading...</div>;
   if (error) return <div style={styles.error}>Error fetching entity data.</div>;
-
-  const scores = {
-    finbert: 0.85,
-    gemini: -0.45,
-    combined: 0.0,
-  };
-
-  const getColor = (score) => {
-    if (score > 0) return 'success';
-    if (score < 0) return 'danger';
-    return 'secondary';
-  };
 
   return (
     <div className="App">
       <main className="App-content">
+
+
+        {/* Top Row */}
         <div style={styles.topRow}>
+          {/* Entity Ticker */}
           <div style={styles.entityWrapper}>
             <Entity EntityTicker={EntityTicker} />
           </div>
+
+          {/* Sentiment Scores */}
           <div style={styles.sentimentWrapper}>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="finbert-tooltip">FinBERT Score: {scores.finbert} is calculated with ...</Tooltip>}>
-                <Badge bg={getColor(scores.finbert)} style={styles.badge}>FinBERT: {scores.finbert}</Badge>
+           
+
+          <div style={styles.sentimentToggle}>
+          <div style={{ display: 'flex', gap: '6px' }}>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="finbert-tooltip">Average Sentiment Score: {sentimentTypes.AvgSentiment} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(sentimentTypes.AvgSentiment)} style={styles.badge}>Average Sentiment Score: {sentimentTypes.AvgSentiment}</Badge>
               </OverlayTrigger>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Gemini Score: {scores.gemini} is calculated with ...</Tooltip>}>
-                <Badge bg={getColor(scores.gemini)} style={styles.badge}>Gemini: {scores.gemini}</Badge>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Simple Average: {sentimentTypes.simpleAverage} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(sentimentTypes.simpleAverage)} style={styles.badge}>Simple Average: {sentimentTypes.simpleAverage}</Badge>
               </OverlayTrigger>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="combined-tooltip">Combined Score: {scores.combined} is calculated with ...</Tooltip>}>
-                <Badge bg={getColor(scores.combined)} style={styles.badge}>Combined: {scores.combined}</Badge>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="combined-tooltip">Time Decay: {sentimentTypes.TimeDecay} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(sentimentTypes.TimeDecay)} style={styles.badge}>Time Decay: {sentimentTypes.TimeDecay}</Badge>
               </OverlayTrigger>
             </div>
+            </div> 
+           
           </div>
-        {/* </div> */}
 
-        {/* <div style={styles.bottomRow}> */}
-          <div style={styles.priceWrapper}>
-            <Price id={stockID} />
-          </div>
-          <div style={styles.buttonWrapper}>
-            <ReportButton EntityName={EntityName} />
-            <SendPDF EntityName={EntityName} />
+
+          {/* Price and Buttons */} 
+          <div style={styles.priceAndButtonsContainer}>
+            <div style={styles.priceWrapper}>
+              <Price id={stockID} />
+            </div>
+            <div style={styles.buttonWrapper}>
+              <ReportButton EntityName={EntityName} />
+              <SendPDF EntityName={EntityName} />
+            </div>
           </div>
         </div>
 
+        {/* Visuals Section */}
         <div style={styles.visualsWrapper}>
           <EntityVisuals id={stockID} />
         </div>
+
+        {/* News Section */}
         <div style={styles.newsWrapper}>
           <EntityNews EntityName={EntityName} />
         </div>
@@ -78,57 +96,74 @@ const EntityPage = () => {
 };
 
 const styles = {
+  // Single Row Layout
   topRow: {
-    marginTop: '70px',
     display: 'flex',
     alignItems: 'center',
-    marginLeft:'10px',
-    justifyContent: 'center', // Centers everything in the row
-
+    justifyContent: 'space-between', // Distributes space evenly
+    flexWrap: 'wrap', // Allows wrapping for smaller screens
+    marginTop: '20px',
+    padding: '0 10px',
+    gap: '10px', // Minimal gap between components
   },
   entityWrapper: {
-    flex: 1,
+    flex: '3 3 auto',
     textAlign: 'center',
-    maxWidth: '300px', // Limit the size if needed
-    
+    margin: '5px', // Reduced margin
   },
   sentimentWrapper: {
+    flex: '1 1 auto',
     display: 'flex',
     alignItems: 'center',
-    gap: '20px',
-    minWidth: '300px',
-  },
-
-  priceWrapper: {
-    flex: 1,
-    textAlign: 'center',
-    fontSize: 'clamp(0.8rem, 1vw, 1.2rem)',
-    maxWidth: '300px', // Limit the size if needed
-  },
-  bottomRow: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end', // Aligns everything to the right
-    marginTop: '20px',
-    maxWidth: '1200px',
-    width: '100%', // Ensures it takes full width
-  },
-  priceWrapper: {
-    textAlign: 'right', // Aligns text inside priceWrapper to the right
-    fontSize: 'clamp(0.8rem, 1vw, 1.2rem)',
-    maxWidth: '300px',
-    flexShrink: 0, // Prevents shrinking
-  },
-  buttonWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '20px',
-    minWidth: '300px',
-    flexShrink: 0, // Prevents shrinking
+    gap: '6px', // Minimal gap
+    margin: '5px', // Reduced margin
   },
   badge: {
-    padding: '8px 12px',
     fontSize: '1rem',
+    padding: '6px 12px',
+    borderRadius: '20px',
+    fontWeight: '500',
+    cursor: 'pointer',
+},
+  priceAndButtonsContainer: {
+    display: 'flex',
+    flex: '2 2 auto'
+  },
+  priceWrapper: {
+    flex: '1 1 auto',
+    textAlign: 'center',
+    fontSize: 'clamp(0.8rem, 1vw, 1.2rem)',
+    margin: '5px', // Reduced margin
+  },
+  buttonWrapper: {
+    flex: '15  15 auto',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '20px', // Minimal gap
+    // margin: '5px', // Reduced margin
+  },
+  visualsWrapper: {
+    flex: '1 1 auto',
+    margin: '5px', // Reduced margin
+  },
+  newsWrapper: {
+    flex: '1 1 auto',
+    margin: '5px', // Reduced margin
+  },
+  loading: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+    fontSize: '1.5rem',
+  },
+  error: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+    fontSize: '1.5rem',
+    color: 'red',
   },
 };
 

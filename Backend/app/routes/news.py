@@ -151,7 +151,6 @@ def get_news(entity):
 
     return format_response(news_list, "News fetched successfully", 200)
 
-
 # ** get news based on id
 @news_bp.route("/<int:id>", methods=['GET'])
 def get_news_by_id(id):
