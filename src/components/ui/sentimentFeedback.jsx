@@ -65,14 +65,14 @@ import { postData } from '../../services/api';
         
         <span style={{ color: 'green' }}>
         FinBERT:
-        { Math.ceil(filteredNewsData.score)}
+        { Math.ceil(filteredNewsData.finbert_score)}
         </span>
 
         &nbsp;&nbsp;
         
         <span style={{ color: 'red' }}>
         Gemini: 
-          { Math.ceil(filteredNewsData.score)}
+          { Math.ceil(filteredNewsData.second_model_score)}
         </span>
 
         </div>
