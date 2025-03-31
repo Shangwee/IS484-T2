@@ -4,6 +4,7 @@ import { Container, Row, Col, Badge } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch';
 import SentimentScore from '../ui/Sentimentscore';
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 const NewsSources = () => {
     const location = useLocation();
@@ -11,6 +12,25 @@ const NewsSources = () => {
     const { data } = useFetch(`news/${id}`);
 
     const newsData = data ? data.data : null;
+
+    const scores = {
+        finbert: newsData ? parseFloat(newsData.finbert_score).toFixed(1) : 0,
+        gemini: newsData ? parseFloat(newsData.second_model_score).toFixed(1) : 0,
+        OpenAI: newsData ? parseFloat(newsData.score).toFixed(1) : 0,
+    };
+    const getColor = (score) => {
+        if (score > 0) return 'success';
+        if (score < 0) return 'danger';
+        return 'secondary';
+      };
+    // State to track selected sentiment type
+    // const [selectedSentiment, setSelectedSentiment] = useState('average');
+
+    // const sentimentTypes = [
+    //     { name: 'Avg Sentiment', value: 'average' },
+    //     { name: 'Weighted', value: 'weighted' },
+    //     { name: 'Time-Decay', value: 'time_decay' }
+    // ];
 
     const styles = {
         newsHeader: {
@@ -28,7 +48,7 @@ const NewsSources = () => {
             marginBottom: '5px',
         },
         badge: {
-            fontSize: '0.8em',
+            fontSize: '1em',
             padding: '6px 12px',
             borderRadius: '20px',
             fontWeight: '500',
@@ -58,7 +78,7 @@ const NewsSources = () => {
                 </Col>
             </Row>
 
-            {/* News Date & Publisher */}
+            {/* News date and publisher closer together */}
             <div style={styles.metaInfo}>
                 <span>📅 {new Date(newsData.published_date).toLocaleDateString()}</span>
                 <span>📰 {newsData.publisher}</span>
@@ -67,8 +87,27 @@ const NewsSources = () => {
             {/* Entities */}
             <div className="d-flex flex-wrap gap-2">
                 {newsData.entities?.map((entity) => (
-                    <Badge bg="success" style={styles.badge} key={entity}>{entity}</Badge>
+                    <Badge bg="warning" style={styles.badge} key={entity}>{entity}</Badge>
                 ))}
+            
+            <div>
+                
+            <div >
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="finbert-tooltip">FinBERT Score: {scores.finbert} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(scores.finbert)} style={styles.badge}>FinBERT: {scores.finbert}</Badge>
+              </OverlayTrigger>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Gemini Score: {scores.gemini} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(scores.gemini)} style={styles.badge}>Gemini: {scores.gemini}</Badge>
+              </OverlayTrigger>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="OpenAI-tooltip">OpenAI: {scores.OpenAI} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(scores.OpenAI)} style={styles.badge}>OpenAI: {scores.OpenAI}</Badge>
+              </OverlayTrigger>
+            </div>
+            </div>
+
+          </div>
+
             </div>
 
             {/* News Summary */}

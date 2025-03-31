@@ -11,6 +11,9 @@ psycopg2-binary==2.9.10  # PostgreSQL database driver
 # Data Processing and Analysis
 pandas
 numpy
+matplotlib.pyplot
+matplotlib.patches
+
 
 
 # Web Scraping and API Requests
