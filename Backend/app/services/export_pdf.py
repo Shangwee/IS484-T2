@@ -34,14 +34,20 @@ def generate_pdf(entity_name, key_metrics, news_items, output_filename="report.p
         pdf.ln(10)
 
         # 1. Entity Name
-        entity_name = f"Entity Name: {entity_name}"  # Replace with dynamic data
+        entity_name = f"Entity Name: {entity_name}"  
         pdf.set_font("Arial", "B", 14)
         pdf.cell(0, 10, entity_name, ln=True)
         pdf.ln(5)
 
         # 2. Entity Sentiment Score and Sentiment
-        sentiment = "Positive"  # Replace with dynamic sentiment data
-        sentiment_score = "Score: 0.85"  # Replace with dynamic score data
+        sentiment_score = round(key_metrics,2)  
+        if sentiment_score > 0: 
+            sentiment = "Bullish"
+        elif sentiment_score < 0:
+            sentiment = "Bearish"   
+        else:
+            sentiment = "Neutral"
+
         sentiment_label = f"Sentiment: {sentiment} | {sentiment_score}"
         pdf.set_font("Arial", size=12)
         pdf.cell(0, 10, sentiment_label, ln=True)

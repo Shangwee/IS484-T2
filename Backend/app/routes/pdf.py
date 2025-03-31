@@ -6,7 +6,7 @@ import logging
 import traceback
 from app.services.export_pdf import generate_pdf
 from app.services.news_services import news_by_ticker
-from app.services.entities_service import get_ticker_by_entity
+from app.services.entities_service import get_ticker_by_entity, get_entity_details
 from app.utils.helpers import format_response
 import threading
 
@@ -20,7 +20,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 def export_pdf():
     data = request.get_json()
     entity_name = data.get("entity_name")
-    ticker = get_ticker_by_entity(entity_name)
+    ticker = get_ticker_by_entity(entity_name)     
 
     if not entity_name or not ticker:
         return format_response(None, "Missing required fields", 400)
@@ -33,12 +33,9 @@ def export_pdf():
         # fallback to 'all' if no news in the past 24 hours
         news_items = news_by_ticker(ticker, page=1, per_page=10, sort_order="desc", filter_time="all")
 
-    key_metrics = {
-        "Revenue": 1000000,
-        "Net Income": 500000,
-        "EPS": 2.5,
-        "Market Cap": 1000000000
-    }
+    key_metrics = get_entity_details(ticker)
+    if not key_metrics:
+        return format_response(None, "No key metrics found", 404)
 
     # Generate PDF
     output_filename = f"{entity_name}_report_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"

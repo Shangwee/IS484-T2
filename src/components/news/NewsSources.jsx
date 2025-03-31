@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Row, Col, Badge, ButtonGroup, ToggleButton } from 'react-bootstrap';
+import { Container, Row, Col, Badge } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch';
+import SentimentScore from '../ui/Sentimentscore';
 
 const NewsSources = () => {
     const location = useLocation();
@@ -10,15 +11,6 @@ const NewsSources = () => {
     const { data } = useFetch(`news/${id}`);
 
     const newsData = data ? data.data : null;
-
-    // State to track selected sentiment type
-    const [selectedSentiment, setSelectedSentiment] = useState('average');
-
-    const sentimentTypes = [
-        { name: 'Avg Sentiment', value: 'average' },
-        { name: 'Weighted', value: 'weighted' },
-        { name: 'Time-Decay', value: 'time_decay' }
-    ];
 
     const styles = {
         newsHeader: {
@@ -40,21 +32,11 @@ const NewsSources = () => {
             padding: '6px 12px',
             borderRadius: '20px',
             fontWeight: '500',
-            cursor: 'pointer',
         },
-        sentimentToggle: {
+        sentimentContainer: {
             display: 'flex',
-            justifyContent: 'center',
-            gap: '10px',
-            marginBottom: '15px',
-        },
-        sentimentValue: {
-            fontSize: '1em',
-            fontWeight: 'bold',
-            padding: '5px 15px',
-            borderRadius: '20px',
-            backgroundColor: '#f8f9fa',
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
         },
     };
 
@@ -63,50 +45,26 @@ const NewsSources = () => {
 
     return (
         <Container fluid className="news-container">
-            
-            {/* Sentiment Score Toggle Pills */}
-            <div style={styles.sentimentToggle}>
-            <ButtonGroup>
-              {sentimentTypes.map((type) => (
-                  <ToggleButton
-                      key={type.value}
-                      type="radio"
-                      variant={selectedSentiment === type.value ? 'primary' : 'outline-primary'}
-                      name="sentiment"
-                      value={type.value}
-                      onClick={() => {setSelectedSentiment(type.value);
-                                      console.log("Selected Sentiment:", type.value);
-                      }}  // Simplified onChange handler
-                      checked={selectedSentiment === type.value}
-                  >
-                      {type.name}
+            {/* News Title and Sentiment Row */}
+            <Row className="align-items-center">
+                <Col md={8}>
+                    <Link to={newsData.url} target="_blank" rel="noopener noreferrer" style={styles.newsHeader}>
+                        <h4>{newsData.title}</h4>
+                    </Link>
+                </Col>
+                <Col md={4} style={styles.sentimentContainer}>
+                    {/* Sentiment Score Pill */}
+                    <SentimentScore score={newsData.score} sentiment={newsData.sentiment} />
+                </Col>
+            </Row>
 
-                  </ToggleButton>
-              ))}
-          </ButtonGroup>
-            </div>
-
-            {/* Display selected sentiment */}
-            <div className="text-center">
-                <Badge style={styles.sentimentValue}>
-                    {selectedSentiment === 'average' && <>📊 1</>}
-                    {selectedSentiment === 'weighted' && <>⚖ 2</>}
-                    {selectedSentiment === 'time_decay' && <>⏳ 3</>}
-                </Badge>
-            </div>
-
-            {/* News Title */}
-            <Link to={newsData.url} target="_blank" rel="noopener noreferrer" style={styles.newsHeader}>
-                <h4>{newsData.title}</h4>
-            </Link>
-
-            {/* News date and publisher closer together */}
+            {/* News Date & Publisher */}
             <div style={styles.metaInfo}>
                 <span>📅 {new Date(newsData.published_date).toLocaleDateString()}</span>
                 <span>📰 {newsData.publisher}</span>
             </div>
 
-            {/* Entities under news date */}
+            {/* Entities */}
             <div className="d-flex flex-wrap gap-2">
                 {newsData.entities?.map((entity) => (
                     <Badge bg="success" style={styles.badge} key={entity}>{entity}</Badge>
@@ -119,11 +77,11 @@ const NewsSources = () => {
             {/* Region, Sectors, and Affected Companies in separate columns */}
             <Row className="mt-3">
                 <Col md={4}>
-                    {newsData.tags?.length > 0 && (
+                    {newsData.regions?.length > 0 && (
                         <>
                             <strong>🌍 Region:</strong>
                             <div className="d-flex flex-wrap gap-2 mt-2">
-                                {newsData.tags.map((region) => (
+                                {newsData.regions.map((region) => (
                                     <Badge bg="info" style={styles.badge} key={region}>{region}</Badge>
                                 ))}
                             </div>
@@ -131,11 +89,11 @@ const NewsSources = () => {
                     )}
                 </Col>
                 <Col md={4}>
-                    {newsData.tags?.length > 0 && (
+                    {newsData.sectors?.length > 0 && (
                         <>
                             <strong>🏢 Sectors:</strong>
                             <div className="d-flex flex-wrap gap-2 mt-2">
-                                {newsData.tags.map((sector) => (
+                                {newsData.sectors.map((sector) => (
                                     <Badge bg="dark" style={styles.badge} key={sector}>{sector}</Badge>
                                 ))}
                             </div>
@@ -143,11 +101,11 @@ const NewsSources = () => {
                     )}
                 </Col>
                 <Col md={4}>
-                    {newsData.tags?.length > 0 && (
+                    {newsData.affected_companies?.length > 0 && (
                         <>
                             <strong>🏭 Affected Companies:</strong>
                             <div className="d-flex flex-wrap gap-2 mt-2">
-                                {newsData.tags.map((company) => (
+                                {newsData.affected_companies.map((company) => (
                                     <Badge bg="warning" style={styles.badge} key={company}>{company}</Badge>
                                 ))}
                             </div>

@@ -18,3 +18,10 @@ def get_all_ticker_entities():
         ticker_list.append(entity.ticker)
 
     return ticker_list
+
+def get_entity_details(ticker):
+    """Get entity details by ticker"""
+    entity = Entity.query.filter(Entity.ticker == ticker).first()
+    if entity:
+        return entity.sentiment_score
+    return None
