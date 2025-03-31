@@ -12,11 +12,7 @@ import { Badge, Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 
 const EntityPage = () => {
-  const sentimentTypes = {
-    AvgSentiment: 0.25,
-    simpleAverage: -0.35 ,
-    TimeDecay: 0.0,
-  };
+ 
   const getColor = (sentimentType) => {
     if (sentimentType > 0) return 'success';
     if (sentimentType < 0) return 'danger';
@@ -30,6 +26,12 @@ const EntityPage = () => {
   const EntityName = data ? data.data.name : "N/A";
   const stockID = data ? data.data.id : "N/A";
   const EntityTicker = data ? data.data.ticker : "N/A";
+
+  const sentimentTypes = {
+    AvgSentiment: data ? parseFloat(data.data.sentiment_score).toFixed(1) : 0,
+    simpleAverage: data ? parseFloat(data.data.simple_average).toFixed(1) : 0,
+    TimeDecay: data ? parseFloat(data.data.time_decay).toFixed(1) : 0,
+  };
 
   if (loading) return <div style={styles.loading}>Loading...</div>;
   if (error) return <div style={styles.error}>Error fetching entity data.</div>;
