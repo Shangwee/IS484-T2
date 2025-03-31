@@ -1,5 +1,6 @@
 from app.models import Entity
 from sqlalchemy import any_
+from app import db
 
 def get_ticker_by_entity(entity_name):
     """Get ticker by entity name"""
@@ -18,3 +19,17 @@ def get_all_ticker_entities():
         ticker_list.append(entity.ticker)
 
     return ticker_list
+
+# update entity sentiment
+def update_entity_sentiment(ticker, sentiment_score, confidence_score, time_decay_score, simple_average_score, classification):
+    """Update entity sentiment"""
+    entity = Entity.query.filter(Entity.ticker == ticker).first()
+    if entity:
+        entity.sentiment_score = sentiment_score
+        entity.confidence_score = confidence_score
+        entity.time_decay = time_decay_score
+        entity.simple_average = simple_average_score
+        entity.classification = classification
+        db.session.commit()
+        return True
+    return False

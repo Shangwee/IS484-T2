@@ -3,6 +3,7 @@ from sqlalchemy import func, desc, asc
 from app import db
 
 from datetime import datetime, timedelta
+import numpy as np
 
 def get_sentiment_history_by_entity_id(entity_id, page=1, per_page=10, sort_order="desc"):
     """Get sentiment history by entity ID"""
@@ -48,9 +49,16 @@ def create_sentiment_history(entity_id, sentiment_score):
     ).first()
 
     if existing_entry:
+        # Convert np.float64 to standard Python float
+        if isinstance(sentiment_score, np.float64):
+            sentiment_score = float(sentiment_score)
         existing_entry.sentiment_score = sentiment_score
         db.session.commit()
         return existing_entry.to_dict()  # Or handle as needed (e.g., update, skip, raise error)
+
+    # Convert np.float64 to standard Python float
+    if isinstance(sentiment_score, np.float64):
+        sentiment_score = float(sentiment_score)
 
     # Create a new entry if not found
     new_entry = SentimentHistory(
@@ -61,3 +69,22 @@ def create_sentiment_history(entity_id, sentiment_score):
     db.session.add(new_entry)
     db.session.commit()
     return new_entry.to_dict()
+
+
+def insert_sentiment_history(entity_id, date, sentiment_score):
+    try:
+        # Convert np.float64 to standard Python float
+        if isinstance(sentiment_score, np.float64):
+            sentiment_score = float(sentiment_score)
+
+        new_entry = SentimentHistory(
+            entity_id=entity_id,
+            date=date,
+            sentiment_score=sentiment_score
+        )
+        db.session.add(new_entry)
+        db.session.commit()
+        return {"status": "success", "message": "Sentiment history inserted successfully"}
+    except Exception as e:
+        print(f"An error occurred while inserting sentiment history: {e}")
+        return {"status": "error", "message": str(e)}
