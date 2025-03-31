@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Entity from '../../components/entity/Entity';
 import Price from '../../components/ui/Price';
@@ -10,7 +10,19 @@ import ReportButton from '../../components/ui/export';
 import SendPDF from '../../components/ui/SendReport';
 import { Badge, Tooltip, OverlayTrigger } from 'react-bootstrap';
 
+
 const EntityPage = () => {
+  const sentimentTypes = {
+    AvgSentiment: 0.25,
+    Weighted: -0.35 ,
+    TimeDecay: 0.0,
+  };
+  const getColor = (sentimentType) => {
+    if (sentimentType > 0) return 'success';
+    if (sentimentType < 0) return 'danger';
+    return 'secondary';
+  };
+
   const { ticker } = useParams();
   console.log(ticker);
   const url = `/entities/${ticker}`;
@@ -22,21 +34,11 @@ const EntityPage = () => {
   if (loading) return <div style={styles.loading}>Loading...</div>;
   if (error) return <div style={styles.error}>Error fetching entity data.</div>;
 
-  const scores = {
-    finbert: 0.85,
-    gemini: -0.45,
-    combined: 0.0,
-  };
-
-  const getColor = (score) => {
-    if (score > 0) return 'success';
-    if (score < 0) return 'danger';
-    return 'secondary';
-  };
-
   return (
     <div className="App">
       <main className="App-content">
+
+
         {/* Top Row */}
         <div style={styles.topRow}>
           {/* Entity Ticker */}
@@ -46,18 +48,25 @@ const EntityPage = () => {
 
           {/* Sentiment Scores */}
           <div style={styles.sentimentWrapper}>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="finbert-tooltip">FinBERT Score: {scores.finbert} is calculated with ...</Tooltip>}>
-                <Badge bg={getColor(scores.finbert)} style={styles.badge}>FinBERT: {scores.finbert}</Badge>
+           
+
+          <div style={styles.sentimentToggle}>
+          <div style={{ display: 'flex', gap: '6px' }}>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="finbert-tooltip">Average Sentiment: {sentimentTypes.AvgSentiment} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(sentimentTypes.AvgSentiment)} style={styles.badge}>Average Sentiment: {sentimentTypes.AvgSentiment}</Badge>
               </OverlayTrigger>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Gemini Score: {scores.gemini} is calculated with ...</Tooltip>}>
-                <Badge bg={getColor(scores.gemini)} style={styles.badge}>Gemini: {scores.gemini}</Badge>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Weighted: {sentimentTypes.Weighted} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(sentimentTypes.Weighted)} style={styles.badge}>Weighted: {sentimentTypes.Weighted}</Badge>
               </OverlayTrigger>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="combined-tooltip">Combined Score: {scores.combined} is calculated with ...</Tooltip>}>
-                <Badge bg={getColor(scores.combined)} style={styles.badge}>Combined: {scores.combined}</Badge>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="combined-tooltip">Time Decay: {sentimentTypes.TimeDecay} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(sentimentTypes.TimeDecay)} style={styles.badge}>Time Decay: {sentimentTypes.TimeDecay}</Badge>
               </OverlayTrigger>
             </div>
+            </div> 
+           
           </div>
+
+
           {/* Price and Buttons */} 
           <div style={styles.priceAndButtonsContainer}>
             <div style={styles.priceWrapper}>
@@ -107,10 +116,16 @@ const styles = {
     gap: '6px', // Minimal gap
     margin: '5px', // Reduced margin
   },
+  badge: {
+    fontSize: '1rem',
+    padding: '6px 12px',
+    borderRadius: '20px',
+    fontWeight: '500',
+    cursor: 'pointer',
+},
   priceAndButtonsContainer: {
     display: 'flex',
-    flex: '1 1 auto'
-    // justifyContent: 'space-between',
+    flex: '2 2 auto'
   },
   priceWrapper: {
     flex: '1 1 auto',
@@ -124,9 +139,6 @@ const styles = {
     alignItems: 'center',
     gap: '20px', // Minimal gap
     // margin: '5px', // Reduced margin
-  },
-  badge: {
-    fontSize: 'clamp(0.8rem, 1vw, 1.2rem)', // Responsive font size
   },
   visualsWrapper: {
     flex: '1 1 auto',

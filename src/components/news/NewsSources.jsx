@@ -47,7 +47,7 @@ const NewsSources = () => {
             marginBottom: '5px',
         },
         badge: {
-            fontSize: '0.8em',
+            fontSize: '1em',
             padding: '6px 12px',
             borderRadius: '20px',
             fontWeight: '500',
@@ -74,38 +74,7 @@ const NewsSources = () => {
 
     return (
         <Container fluid className="news-container">
-            
-            {/* Sentiment Score Toggle Pills */}
-            {/* <div style={styles.sentimentToggle}>
-            <ButtonGroup>
-              {sentimentTypes.map((type) => (
-                  <ToggleButton
-                      key={type.value}
-                      type="radio"
-                      variant={selectedSentiment === type.value ? 'primary' : 'outline-primary'}
-                      name="sentiment"
-                      value={type.value}
-                      onClick={() => {setSelectedSentiment(type.value);
-                                      console.log("Selected Sentiment:", type.value);
-                      }}  // Simplified onChange handler
-                      checked={selectedSentiment === type.value}
-                  >
-                      {type.name}
-
-                  </ToggleButton>
-              ))}
-          </ButtonGroup>
-            </div> */}
-
-            {/* Display selected sentiment */}
-            {/* <div className="text-center">
-                <Badge style={styles.sentimentValue}>
-                    {selectedSentiment === 'average' && <>📊 1</>}
-                    {selectedSentiment === 'weighted' && <>⚖ 2</>}
-                    {selectedSentiment === 'time_decay' && <>⏳ 3</>}
-                </Badge>
-            </div> */}
-
+      
             {/* News Title */}
             <Link to={newsData.url} target="_blank" rel="noopener noreferrer" style={styles.newsHeader}>
                 <h4>{newsData.title}</h4>
