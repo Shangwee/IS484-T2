@@ -13,9 +13,9 @@ const NewsSources = () => {
     const newsData = data ? data.data : null;
 
     const scores = {
-        finbert: 0.85,
-        gemini: -0.45,
-        combined: 0.0,
+        finbert: newsData ? parseFloat(newsData.finbert_score).toFixed(1) : 0,
+        gemini: newsData ? parseFloat(newsData.second_model_score).toFixed(1) : 0,
+        combined: newsData ? parseFloat(newsData.score).toFixed(1) : 0,
     };
     const getColor = (score) => {
         if (score > 0) return 'success';
