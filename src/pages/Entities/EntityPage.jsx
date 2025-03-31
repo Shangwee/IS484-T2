@@ -14,7 +14,7 @@ import { Badge, Tooltip, OverlayTrigger } from 'react-bootstrap';
 const EntityPage = () => {
   const sentimentTypes = {
     AvgSentiment: 0.25,
-    Weighted: -0.35 ,
+    simpleAverage: -0.35 ,
     TimeDecay: 0.0,
   };
   const getColor = (sentimentType) => {
@@ -52,11 +52,11 @@ const EntityPage = () => {
 
           <div style={styles.sentimentToggle}>
           <div style={{ display: 'flex', gap: '6px' }}>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="finbert-tooltip">Average Sentiment: {sentimentTypes.AvgSentiment} is calculated with ...</Tooltip>}>
-                <Badge bg={getColor(sentimentTypes.AvgSentiment)} style={styles.badge}>Average Sentiment: {sentimentTypes.AvgSentiment}</Badge>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="finbert-tooltip">Average Sentiment Score: {sentimentTypes.AvgSentiment} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(sentimentTypes.AvgSentiment)} style={styles.badge}>Average Sentiment Score: {sentimentTypes.AvgSentiment}</Badge>
               </OverlayTrigger>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Weighted: {sentimentTypes.Weighted} is calculated with ...</Tooltip>}>
-                <Badge bg={getColor(sentimentTypes.Weighted)} style={styles.badge}>Weighted: {sentimentTypes.Weighted}</Badge>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Simple Average: {sentimentTypes.simpleAverage} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(sentimentTypes.simpleAverage)} style={styles.badge}>Simple Average: {sentimentTypes.simpleAverage}</Badge>
               </OverlayTrigger>
               <OverlayTrigger placement="top" overlay={<Tooltip id="combined-tooltip">Time Decay: {sentimentTypes.TimeDecay} is calculated with ...</Tooltip>}>
                 <Badge bg={getColor(sentimentTypes.TimeDecay)} style={styles.badge}>Time Decay: {sentimentTypes.TimeDecay}</Badge>
