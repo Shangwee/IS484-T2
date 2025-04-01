@@ -1,6 +1,8 @@
 from app.models.news import News
 from sqlalchemy import any_, func, or_
 from datetime import datetime, timedelta
+from app import db
+import time
 
 def news_by_ticker(ticker, page=1, per_page=3, sort_order="desc", filter_time="all"):
     """Get paginated, filtered, and sorted news by ticker"""
@@ -97,10 +99,13 @@ def all_news(page=1, per_page=4, filter_time="all", sort_order="desc", search_te
     if search_term:
         query = query.filter(
             or_(
-                News.title.ilike(f"%{search_term}%"),
-                News.summary.ilike(f"%{search_term}%"),
-                News.description.ilike(f"%{search_term}%"),
-                search_term == any_(News.tags)  # Search within array field
+            News.title.ilike(f"%{search_term}%"),
+            News.summary.ilike(f"%{search_term}%"),
+            News.description.ilike(f"%{search_term}%"),
+            search_term == any_(News.tags),
+            search_term == any_(News.sectors),
+            search_term == any_(News.regions),
+            search_term == any_(News.company_names)
             )
         )
 
@@ -155,3 +160,60 @@ def all_news(page=1, per_page=4, filter_time="all", sort_order="desc", search_te
         "prev_page": news_paginated.prev_num,
         "per_page": per_page
     }
+
+
+def resync_news_data():
+    """
+    Reprocess all news articles where sentiment data is missing.
+    Commits after each update and tracks progress.
+    """
+    from app.utils.helpers import news_interpreter
+
+    now = datetime.now()
+
+    # Get all news articles where second_model_score is NULL
+    news_to_update = News.query.filter(News.published_date >= now - timedelta(hours=48)).all()
+
+    if not news_to_update:
+        return {"message": "No news articles to update."}
+
+    total = len(news_to_update)
+    updated = 0
+    failed = 0
+
+    for i, news in enumerate(news_to_update, start=1):
+        try:
+            time.sleep(10)  # Sleep to avoid rate limiting
+
+            # Fetch the article details
+            description = news.description or ""
+
+            interpreted_news = news_interpreter(description, 100)
+
+            metadata = interpreted_news.get("metadata", {})
+            companies = metadata.get("companies", [])
+            regions = metadata.get("regions", [])
+            sectors = metadata.get("sectors", [])
+
+            # update the news object with the new values
+            news.company_names = companies
+            news.regions = regions
+            news.sectors = sectors
+
+            db.session.commit()
+            updated += 1
+
+            print(f"[{i}/{total}] ✅ Updated news ID {news.id}")
+        except Exception as e:
+            db.session.rollback()
+            failed += 1
+            print(f"[{i}/{total}] ❌ Failed to update news ID {news.id} — {str(e)}")
+
+    return {
+        "message": "Resync complete.",
+        "total": total,
+        "updated": updated,
+        "failed": failed
+    }
+
+        
