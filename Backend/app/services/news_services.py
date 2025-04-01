@@ -1,7 +1,6 @@
 from app.models.news import News
 from sqlalchemy import any_, func, or_
 from datetime import datetime, timedelta
-from newspaper import article
 from app import db
 import time
 
@@ -100,10 +99,13 @@ def all_news(page=1, per_page=4, filter_time="all", sort_order="desc", search_te
     if search_term:
         query = query.filter(
             or_(
-                News.title.ilike(f"%{search_term}%"),
-                News.summary.ilike(f"%{search_term}%"),
-                News.description.ilike(f"%{search_term}%"),
-                search_term == any_(News.tags)  # Search within array field
+            News.title.ilike(f"%{search_term}%"),
+            News.summary.ilike(f"%{search_term}%"),
+            News.description.ilike(f"%{search_term}%"),
+            search_term == any_(News.tags),
+            search_term == any_(News.sectors),
+            search_term == any_(News.regions),
+            search_term == any_(News.company_names)
             )
         )
 
@@ -165,10 +167,12 @@ def resync_news_data():
     Reprocess all news articles where sentiment data is missing.
     Commits after each update and tracks progress.
     """
-    from app.services.sentiment_analysis import get_sentiment
+    from app.utils.helpers import news_interpreter
+
+    now = datetime.now()
 
     # Get all news articles where second_model_score is NULL
-    news_to_update = News.query.filter(News.second_model_score.is_(None)).all()
+    news_to_update = News.query.filter(News.published_date >= now - timedelta(hours=48)).all()
 
     if not news_to_update:
         return {"message": "No news articles to update."}
@@ -179,26 +183,22 @@ def resync_news_data():
 
     for i, news in enumerate(news_to_update, start=1):
         try:
-            title = news.title or ""
-            summary = news.summary or ""
+            time.sleep(10)  # Sleep to avoid rate limiting
+
+            # Fetch the article details
             description = news.description or ""
-            url = news.url
 
-            # Parse article (with HTML if provided)
-            article_result = article(url, input_html=description)
-            article_result.nlp()
+            interpreted_news = news_interpreter(description, 100)
 
-            time.sleep(10)  # Avoid API rate limits
+            metadata = interpreted_news.get("metadata", {})
+            companies = metadata.get("companies", [])
+            regions = metadata.get("regions", [])
+            sectors = metadata.get("sectors", [])
 
-            sentiment = get_sentiment(title + summary, use_openai=False)
-            keywords = article_result.keywords
-
-            # Update fields
-            news.tags = keywords
-            news.finbert_score = sentiment['finbert_score']
-            news.second_model_score = sentiment['second_model_score']
-            news.confidence = sentiment['confidence']
-            news.agreement_rate = sentiment['agreement_rate']
+            # update the news object with the new values
+            news.company_names = companies
+            news.regions = regions
+            news.sectors = sectors
 
             db.session.commit()
             updated += 1

@@ -22,14 +22,10 @@ const NewsSources = () => {
         if (score < 0) return 'danger';
         return 'secondary';
       };
-    // State to track selected sentiment type
-    // const [selectedSentiment, setSelectedSentiment] = useState('average');
 
-    // const sentimentTypes = [
-    //     { name: 'Avg Sentiment', value: 'average' },
-    //     { name: 'Weighted', value: 'weighted' },
-    //     { name: 'Time-Decay', value: 'time_decay' }
-    // ];
+    const region_list = newsData?.regions? newsData.regions : 'Unknown Region';
+    const sectors_list = newsData?.sectors ? newsData.sectors : 'Unknown Sectors';
+    const company_name_list = newsData?.company_names ? newsData.company_names : 'Unknown Companies';
 
     const styles = {
         newsHeader: {
@@ -118,11 +114,11 @@ const NewsSources = () => {
             {/* Region, Sectors, and Affected Companies in separate columns */}
             <Row className="mt-3">
                 <Col md={4}>
-                    {newsData.tags?.length > 0 && (
+                    {region_list?.length > 0 && (
                         <>
                             <strong>🌍 Region:</strong>
                             <div className="d-flex flex-wrap gap-2 mt-2">
-                                {newsData.tags.map((region) => (
+                                {region_list.map((region) => (
                                     <Badge bg="info" style={styles.badge} key={region}>{region}</Badge>
                                 ))}
                             </div>
@@ -130,11 +126,11 @@ const NewsSources = () => {
                     )}
                 </Col>
                 <Col md={4}>
-                    {newsData.tags?.length > 0 && (
+                    {sectors_list?.length > 0 && (
                         <>
                             <strong>🏢 Sectors:</strong>
                             <div className="d-flex flex-wrap gap-2 mt-2">
-                                {newsData.tags.map((sector) => (
+                                {sectors_list.map((sector) => (
                                     <Badge bg="dark" style={styles.badge} key={sector}>{sector}</Badge>
                                 ))}
                             </div>
@@ -142,11 +138,11 @@ const NewsSources = () => {
                     )}
                 </Col>
                 <Col md={4}>
-                    {newsData.tags?.length > 0 && (
+                    {company_name_list?.length > 0 && (
                         <>
                             <strong>🏭 Affected Companies:</strong>
                             <div className="d-flex flex-wrap gap-2 mt-2">
-                                {newsData.tags.map((company) => (
+                                {company_name_list.map((company) => (
                                     <Badge bg="warning" style={styles.badge} key={company}>{company}</Badge>
                                 ))}
                             </div>

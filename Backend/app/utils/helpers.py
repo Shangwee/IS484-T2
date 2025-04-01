@@ -5,6 +5,8 @@ from googlenewsdecoder import new_decoderv1
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
+import re
+import json
 
 # ** General-purpose helper functions for common tasks like formatting responses or handling dates.
 
@@ -63,7 +65,18 @@ def get_article_details(url, article_html):
         article_result.nlp()
 
         # Summarise the article text
-        summary = summarise_news(article_result.text, 100)
+        interpreted_news = news_interpreter(article_result.text, 100)
+
+        # extract the metadata from the interpreted news
+        metadata = interpreted_news.get("metadata", {})
+        companies = metadata.get("companies", [])
+        regions = metadata.get("regions", [])
+        sectors = metadata.get("sectors", [])
+
+        # Extract the summary from the interpreted news
+        summary = interpreted_news.get("summary", "No summary available")
+        if not summary:
+            summary = article_result.summary
 
         # get the sentiment of the article
         sentiment = get_sentiment(article_result.title + summary, False)
@@ -79,7 +92,10 @@ def get_article_details(url, article_html):
             'classification': sentiment['classification'],
             'confidence': sentiment['confidence'],
             'agreement_rate': sentiment['agreement_rate'],
-            'keywords': keyword
+            'keywords': keyword,
+            'companies': companies,
+            'regions': regions,
+            'sectors': sectors,
         }
 
     except Exception as e:
@@ -88,17 +104,21 @@ def get_article_details(url, article_html):
             "text": "An error occurred while fetching the article details",
             "summary": "An error occurred while fetching the article details",
             'numerical_score': 0,
+            'finbert_score': 0,
+            'second_model_score': 0,
             'classification': "neutral",
             'confidence': 0,
-            'keywords': []
+            'agreement_rate': 0,
+            'keywords': [],
+            'companies': [],
+            'regions': [],
+            'sectors': [],
         }
 
 
-def summarise_news(news_text, summary_length):
-    # Load environment variables from .env file
-    load_dotenv()
+def news_interpreter(news_text, summary_length):
 
-    api_key = os.getenv("GEMINI_API_KEY")  # Retrieve API key securely
+    api_key = os.getenv("GEMINI_API_KEY")
 
     if not api_key:
         raise ValueError("API key not found. Please set the GEMINI_API_KEY in the .env file.")
@@ -106,7 +126,90 @@ def summarise_news(news_text, summary_length):
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel("gemini-1.5-flash")
 
-    response = model.generate_content(f"summarise this in {summary_length} words or less: {news_text}")
+    prompt = f"""
+        You are a financial news assistant.
 
-    # Return only the text of the response
-    return response.candidates[0].content.parts[0].text
+        Given the news article below, do the following:
+
+        1. Summarize the article in {summary_length} words or less.
+        2. Extract the involved company names, regions, and sectors.
+
+        {news_text}
+
+        Output format:
+        {{
+            "summary": "your summary here (within {summary_length} words)",
+            "metadata": {{
+                "companies": "...", 
+                "regions": "...", 
+                "sectors": "..."
+            }}
+        }}
+
+        Important rules:
+        - Return ONLY the JSON object with no other text, markdown formatting, or code block markers.
+        - When returning company names, use their full security names (e.g. Taiwan Semiconductor Manufacturing Company Limited, not TSM).
+        - For sectors, return their full GICS sector names only.
+        - For regions, include both country name and World Bank region (e.g. United States, North America).
+        - Respond strictly in a single valid JSON object. Do not include any explanations, line breaks outside JSON, or extra characters. Invalid formats will be rejected.
+    """
+
+    response = model.generate_content(prompt)
+
+    # Check if we have a valid response
+    if not response or not response.candidates or not response.candidates[0].content.parts:
+        print("Error: No valid response received from the model")
+        return None
+    
+    # Process the response
+    news_summary = response.candidates[0].content.parts[0].text
+    
+    # Clean the text of any markdown or extra formatting
+    clean_text = re.sub(r'```json\s*|\s*```$', '', news_summary)
+    clean_text = clean_text.strip()
+
+    # check if the response is a valid JSON object
+    parsed_response = safe_parse_gemini_response(clean_text)
+
+    if parsed_response:
+        summary = parsed_response.get("summary")
+        metadata = parsed_response.get("metadata")
+
+        companies = ensure_list(metadata.get("companies", []))
+        regions = ensure_list(metadata.get("regions", []))
+        sectors = ensure_list(metadata.get("sectors", []))
+
+        return {
+            "summary": summary,
+            "metadata": {
+                "companies": companies,
+                "regions": regions,
+                "sectors": sectors
+            }
+        }
+    else:
+        print("Error: Invalid JSON format in response")
+        return None
+
+def safe_parse_gemini_response(text):
+    try:
+        result = json.loads(text)
+        if all(key in result for key in ("summary", "metadata")):
+            meta = result["metadata"]
+            if all(k in meta for k in ("companies", "regions", "sectors")):
+                return result
+            else:
+                raise ValueError("Missing keys in metadata")
+        else:
+            raise ValueError("Missing top-level keys")
+    except Exception as e:
+        print("❌ Invalid format:", e)
+        return None
+
+def ensure_list(item):
+    if isinstance(item, str):
+        return [i.strip() for i in item.split(',')]
+    elif isinstance(item, list):
+        return [i.strip() for i in item]
+    else:
+        return []
