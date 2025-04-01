@@ -1,6 +1,9 @@
 from app.models.news import News
 from sqlalchemy import any_, func, or_
 from datetime import datetime, timedelta
+from newspaper import article
+from app import db
+import time
 
 def news_by_ticker(ticker, page=1, per_page=3, sort_order="desc", filter_time="all"):
     """Get paginated, filtered, and sorted news by ticker"""
@@ -155,3 +158,62 @@ def all_news(page=1, per_page=4, filter_time="all", sort_order="desc", search_te
         "prev_page": news_paginated.prev_num,
         "per_page": per_page
     }
+
+
+def resync_news_data():
+    """
+    Reprocess all news articles where sentiment data is missing.
+    Commits after each update and tracks progress.
+    """
+    from app.services.sentiment_analysis import get_sentiment
+
+    # Get all news articles where second_model_score is NULL
+    news_to_update = News.query.filter(News.second_model_score.is_(None)).all()
+
+    if not news_to_update:
+        return {"message": "No news articles to update."}
+
+    total = len(news_to_update)
+    updated = 0
+    failed = 0
+
+    for i, news in enumerate(news_to_update, start=1):
+        try:
+            title = news.title or ""
+            summary = news.summary or ""
+            description = news.description or ""
+            url = news.url
+
+            # Parse article (with HTML if provided)
+            article_result = article(url, input_html=description)
+            article_result.nlp()
+
+            time.sleep(10)  # Avoid API rate limits
+
+            sentiment = get_sentiment(title + summary, use_openai=False)
+            keywords = article_result.keywords
+
+            # Update fields
+            news.tags = keywords
+            news.finbert_score = sentiment['finbert_score']
+            news.second_model_score = sentiment['second_model_score']
+            news.confidence = sentiment['confidence']
+            news.agreement_rate = sentiment['agreement_rate']
+
+            db.session.commit()
+            updated += 1
+
+            print(f"[{i}/{total}] ✅ Updated news ID {news.id}")
+        except Exception as e:
+            db.session.rollback()
+            failed += 1
+            print(f"[{i}/{total}] ❌ Failed to update news ID {news.id} — {str(e)}")
+
+    return {
+        "message": "Resync complete.",
+        "total": total,
+        "updated": updated,
+        "failed": failed
+    }
+
+        

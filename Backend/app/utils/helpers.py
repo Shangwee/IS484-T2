@@ -68,8 +68,6 @@ def get_article_details(url, article_html):
         # get the sentiment of the article
         sentiment = get_sentiment(article_result.title + summary, False)
 
-        print(f"Sentiment: {sentiment}")
-
         keyword = article_result.keywords
     
         return {

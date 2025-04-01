@@ -49,7 +49,7 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
     gn = GNews(
         start_date=start_date, 
         end_date=end_date, 
-        exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com', "marketbeat.com", "benzinga.com", "streetinsider.com", "msn.com", "reuters.com", "uk.finance.yahoo.com", "seekingalpha.com", "fool.com", "GuruFocus.com", "mix941kmxj.com", "wibx950.com", "insidermonkey.com", "marketwatch.com", "cheap-sound.com", "retro1025.com", "wrrv.com", "apnnews.com"],
+        exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com', "marketbeat.com", "benzinga.com", "streetinsider.com", "msn.com", "reuters.com", "uk.finance.yahoo.com", "seekingalpha.com", "fool.com", "GuruFocus.com", "mix941kmxj.com", "wibx950.com", "insidermonkey.com", "marketwatch.com", "cheap-sound.com", "retro1025.com", "wrrv.com", "apnnews.com", "fool.com"],
         # max_results=1  # For testing purposes
     )
     data = gn.get_news(query)
@@ -128,7 +128,7 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
 def get_all_top_gnews():
     gn = GNews(
         # max_results=5, # For testing purposes
-        exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com', "marketbeat.com", "benzinga.com", "streetinsider.com", "msn.com", "reuters.com", "uk.finance.yahoo.com", "seekingalpha.com", "fool.com", "GuruFocus.com", "mix941kmxj.com", "wibx950.com", "insidermonkey.com", "marketwatch.com", "cheap-sound.com", "retro1025.com", "wrrv.com", "apnnews.com"],
+        exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com', "marketbeat.com", "benzinga.com", "streetinsider.com", "msn.com", "reuters.com", "uk.finance.yahoo.com", "seekingalpha.com", "fool.com", "GuruFocus.com", "mix941kmxj.com", "wibx950.com", "insidermonkey.com", "marketwatch.com", "cheap-sound.com", "retro1025.com", "wrrv.com", "apnnews.com","fool.com"],
     )
     data = gn.get_top_news()
 
