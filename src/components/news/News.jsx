@@ -9,7 +9,7 @@ import Filter from "./Filter";
 import Sort from './Sort'; 
 import useFetch from '../../hooks/useFetch';
 import SentimentFeedbackForm from '../ui/sentimentFeedback';
-
+import TagFilter from '../ui/TagFilter';  
 // Main News Component
 const News = () => {
   const styles = {
@@ -94,6 +94,19 @@ const News = () => {
       justifyContent: 'center',
     },
   };
+    // Available tags
+  const REGIONS = ['Canada, North America', 'United States, North America'];
+  const SECTORS = ['Materials', 'Consumer Discretionary'];
+  const COMPANIES = ['MPG Canada', 'Algoma Steel'];
+  
+  const INITIAL_SELECTED_TAGS = {
+    regions: [],
+    sectors: [],
+    companies: [],
+  };
+  // State for selected tags
+  const [selectedTags, setSelectedTags] = useState(INITIAL_SELECTED_TAGS);
+  
 
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -103,8 +116,7 @@ const News = () => {
   const newsPerPage = 4; // Items per page
   
 // Construct API URL with search parameter
-const url = `/news/?page=${currentPage}&per_page=${newsPerPage}&sort_order=${sortOrder}&filter=${filter}&search=${encodeURIComponent(searchTerm)}`;
-
+const url = `/news/?page=${currentPage}&per_page=${newsPerPage}&sort_order=${sortOrder}&filter=${filter}&search=${encodeURIComponent(searchTerm)}&regions=${selectedTags.regions.join(',')}&sectors=${selectedTags.sectors.join(',')}&companies=${selectedTags.companies.join(',')}`;
 const { data, loading, error } = useFetch(url);
   console.log(data);  
   const newsData = data ? data.data.news : [];
@@ -180,21 +192,72 @@ const { data, loading, error } = useFetch(url);
     );
   }
 
+  // Handle tag selection
+  const handleTagSelect = (category, tag) => {
+    let updatedTags = { ...selectedTags };
+    if (updatedTags[category].includes(tag)) {
+      updatedTags[category] = updatedTags[category].filter((t) => t !== tag);
+    } else {
+      updatedTags[category] = [...updatedTags[category], tag];
+    }
+    setSelectedTags(updatedTags);
+    setCurrentPage(1); // Reset to first page when filtering
+  };
+  
 return (
   <Container fluid>
-    {/* <h2 className="text-center my-4">Latest News</h2> */}
-    <Row className="justify-content-center mt-3">
-      <Col xs={12} md={4} lg={3} className="mb-3 mb-md-0">
-        <SearchBar onSearchChange={handleSearchChange} />
-      </Col>
-      <Col xs={12} md={4} lg={3} className="mb-3 mb-md-0">
-        <Filter onFilterChange={handleFilterChange} />
-      </Col>
-      <Col xs={12} md={4} lg={3}>
-        <Sort onSortChange={handleSortChange} />
-      </Col>
-    </Row>
+  {/* <h2 className="text-center my-4">Latest News</h2> */}
+  
+  {/* First Row*/}
+  <Row className="justify-content-center text-center ">
+    <Col xs={12} md={4} lg={3} className="mb-3 mb-md-0">
+      <SearchBar onSearchChange={handleSearchChange} />
+    </Col>
+    <Col xs={12} md={8} lg={9}>
+      <Row>
 
+        <Col xs={12} md={6} lg={3} className="mb-3 mb-md-0">
+      <Filter onFilterChange={handleFilterChange} />
+    </Col>
+    <Col xs={12} md={6} lg={3}>
+      <Sort onSortChange={handleSortChange} />
+    </Col>
+      </Row>
+    </Col>
+  </Row>
+
+  {/* Second Row*/}
+  <Row className="justify-content-center mt-3">
+     {/* Region Filter */}
+     <Col xs={12} sm={4} md={4} lg={4} className="mb-3 mb-md-0">
+          <TagFilter
+            title="Region:"
+            options={REGIONS}
+            selectedTags={selectedTags.regions}
+            onSelect={(tag) => handleTagSelect('regions', tag)}
+          />
+        </Col>
+
+        {/* Sector Filter */}
+        <Col xs={12} sm={4} md={4} lg={4} className="mb-3 mb-md-0">
+          <TagFilter
+            title="Sectors:"
+            options={SECTORS}
+            selectedTags={selectedTags.sectors}
+            onSelect={(tag) => handleTagSelect('sectors', tag)}
+          />
+        </Col>
+
+        {/* Affected Companies Filter */}
+        <Col xs={12} sm={4} md={4} lg={4} className="mb-3 mb-md-0">
+          <TagFilter
+            title="Affected Companies:"
+            options={COMPANIES}
+            selectedTags={selectedTags.companies}
+            onSelect={(tag) => handleTagSelect('companies', tag)}
+          />
+        </Col>
+  </Row>
     {/* News Content */}
     <Row className="mt-4">
       {currentNews.length > 0 ? (

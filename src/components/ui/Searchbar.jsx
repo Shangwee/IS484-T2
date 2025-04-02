@@ -36,7 +36,6 @@ const styles = {
     padding: '2px', // Adjusted padding for better responsiveness
     backgroundColor: '#fff',
     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-    width: '100%', // Take up full width of the parent column
     maxWidth: 'none', // Remove max-width restriction
     height: 'auto', // Allow height to adjust dynamically
     boxSizing: 'border-box', // Ensures padding and border are included in width
