@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import NewsSources from '../../components/news/NewsSources';
 import SentimentFeedbackForm from '../../components/ui/sentimentFeedback';
 import { useLocation } from 'react-router-dom';
 import PieChart from '../../components/ui/feedbackChart';
 
 function IndividualNewsPage() {
+  const [refreshChart, setRefreshChart] = useState(false); // State to trigger chart refresh
   console.log('Rendering IndividualNewsPage ');
   const location = useLocation();
   const newsTitle = location.state?.title || 'Unknown Title'; // Get title from state
@@ -16,12 +17,13 @@ function IndividualNewsPage() {
       <div style={styles.container}>
         {/* Sentiment Feedback Form */}
         <div style={styles.sentimentFeedbackWrapper}>
-          <SentimentFeedbackForm newsTitle={newsTitle} />
+          <SentimentFeedbackForm newsTitle={newsTitle} onFeedbackSubmit={() => setRefreshChart((prev) => !prev)} />
+
         </div>
 
         {/* Pie Chart */}
         <div style={styles.pieChartWrapper}>
-          <PieChart />
+        <PieChart key={refreshChart} />
         </div>
       </div>
     </div>

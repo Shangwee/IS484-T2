@@ -8,9 +8,10 @@ import { ToastContainer, toast } from 'react-toastify';  // Import Toastify
 import 'react-toastify/dist/ReactToastify.css';  // Import Toastify styles
 
 
-  const SentimentFeedbackForm = ({newsTitle}) => {
+const SentimentFeedbackForm = ({ newsTitle, onFeedbackSubmit }) => {
     const [selectedOption, setSelectedOption] = useState(null);
     const [showModal, setShowModal] = useState(false); // State for modal visibility
+    const [isToastShown, setIsToastShown] = useState(false); // State to track if the toast has been shown
 
     const location = useLocation();
     console.log("Location object:", location);
@@ -25,10 +26,6 @@ import 'react-toastify/dist/ReactToastify.css';  // Import Toastify styles
     const agreementScore = filteredNewsData.agreement_rate
     console.log(agreementScore)
 
-    // Handle sentiment score changes
-    const handleSliderChange = (event) => {
-      setSentimentScore(parseInt(event.target.value, 10));
-    };
 
     const handleOptionChange = (event) => {
       setSelectedOption(event.target.value);
@@ -53,12 +50,28 @@ import 'react-toastify/dist/ReactToastify.css';  // Import Toastify styles
           console.log('Feedback submitted successfully:', response);
           // Show success modal
           setShowModal(true);
+          onFeedbackSubmit(); // Trigger parent component refresh
         })
         .catch((error) => {
           console.error('Error submitting feedback:', error);
         });
     };
+ // Use useEffect to show the toast only once when agreementScore is not 1
+ useEffect(() => {
+  if (agreementScore !== 1 && !isToastShown) {
+    toast.info("Model disagreement detected!", {
+      position: "top-center",
+      autoClose: 2000,  // Duration in ms
+      hideProgressBar: true,
+      closeOnClick: true,
+      draggable: true,
+      pauseOnHover: true,
+    });
 
+    // Update the state to indicate that the toast has been shown
+    setIsToastShown(true);
+  }
+}, [agreementScore, isToastShown]);
   // Disable the form if agreementScore is 1
   if (loading) {
     return <div>Loading...</div>;
@@ -70,20 +83,10 @@ import 'react-toastify/dist/ReactToastify.css';  // Import Toastify styles
 
   if (!filteredNewsData || agreementScore === 1) {
     return <div style={{ color: 'white', fontStyle: 'italic' }}>No feedback required</div>;
-  }
+  };
 
-    // Only show the toast if the agreement rate is not 1
-    if (agreementScore !== 1) {
-      toast.info("Model disagreement detected!", {
-        position: "top-center",
-        autoClose: 2000,  // Duration in ms
-        hideProgressBar: true,
-        closeOnClick: true,
-        draggable: true,
-        pauseOnHover: true,
-      });
-    }
-  
+   
+
     return (
       <div className="feedback-form">
         <ToastContainer />

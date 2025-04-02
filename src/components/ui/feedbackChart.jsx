@@ -6,10 +6,10 @@ import useFetch from '../../hooks/useFetch';
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-function PieChart() {
+function PieChart({ key }) {
   const location = useLocation();
   const { id } = location.state || { id: null };
-  const { data, loading, error } = useFetch(`feedback/news/${id}`);
+  const { data, loading, error } = useFetch(`feedback/news/${id}`, { key });
 
   // Fetch the agreement rate
   const { data: agreementData } = useFetch(`/news/${id}`);  // Assuming a different endpoint
