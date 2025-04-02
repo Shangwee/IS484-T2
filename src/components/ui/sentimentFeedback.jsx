@@ -20,6 +20,8 @@ import { postData } from '../../services/api';
     const filteredNewsData = data ? data.data : []; // Extract news data from the response
     
     console.log(filteredNewsData)
+    const agreementScore = filteredNewsData.agreement_rate
+    console.log(agreementScore)
 
     // Handle sentiment score changes
     const handleSliderChange = (event) => {
@@ -55,12 +57,24 @@ import { postData } from '../../services/api';
         });
     };
 
+  // Disable the form if agreementScore is 1
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error fetching news data.</div>;
+  }
+
+  if (!filteredNewsData || agreementScore === 1) {
+    return <div style={{ color: 'white', fontStyle: 'italic' }}>No feedback required</div>;
+  }
   
     return (
       <div className="feedback-form">
         <h2>Sentiment Feedback Form</h2>
         <h3>Article: {newsTitle}</h3>
-        <p>Model disagreement detected:</p>
+        <p>Model disagreement detected!</p>
         <div>
         
         <span style={{ color: 'green' }}>

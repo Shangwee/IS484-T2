@@ -21,7 +21,6 @@ function IndividualNewsPage() {
 
         {/* Pie Chart */}
         <div style={styles.pieChartWrapper}>
-          <h3 style={styles.chartTitle}>Feedback Based on Users</h3>
           <PieChart />
         </div>
       </div>

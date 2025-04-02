@@ -1,48 +1,21 @@
-import React, { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import axios from "axios";
 import { useLocation } from 'react-router-dom';
+import useFetch from '../../hooks/useFetch';
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 function PieChart() {
-  // State to hold feedback data, loading, and error states
-  const [feedbackData, setFeedbackData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
   const location = useLocation();
-  console.log("Location object:", location);
+  const { id } = location.state || { id: null };
+  const { data, loading, error } = useFetch(`feedback/news/${id}`);
 
-  const { id } = location.state || {id: null}; // Retrieve the id from state
-  console.log(id);  
+  // Fetch the agreement rate
+  const { data: agreementData } = useFetch(`/news/${id}`);  // Assuming a different endpoint
+  const agreementScore = agreementData?.data?.agreement_rate;
 
-  // Fetch feedback data when the component mounts
-  useEffect(() => {
-    const fetchFeedback = async () => {
-      try {
-        // Fetch feedback data from the backend
-        const response = await axios.get(`http://localhost:5001/feedback/news/${id}`);
-        const data = response.data;
 
-        if (!data || !Array.isArray(data.data)) {
-          throw new Error("Invalid feedback data");
-        }
-
-        // Set the fetched feedback data
-        setFeedbackData(data.data);
-      } catch (err) {
-        console.error("Error fetching feedback:", err.response ? err.response.data : err.message);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchFeedback();
-  }, []);
 
   // Handle loading state
   if (loading) {
@@ -50,16 +23,16 @@ function PieChart() {
   }
 
   // Handle error state
-  if (error || !feedbackData) {
+  if (error || !data || !data.data) {
     return <div>Error fetching feedback data.</div>;
   }
 
-  // Initialize counts for each sentiment
+  // Process feedbackData to count sentiments
+  const feedbackData = data.data;
   let bearishCount = 0,
     neutralCount = 0,
     bullishCount = 0;
 
-  // Process feedbackData to count sentiments
   feedbackData.forEach((item) => {
     switch (item.assessment) {
       case "bearish":
@@ -84,8 +57,8 @@ function PieChart() {
   const neutralPercentage = totalCount > 0 ? (neutralCount / totalCount) * 100 : 0;
   const bullishPercentage = totalCount > 0 ? (bullishCount / totalCount) * 100 : 0;
 
-  // Dynamically set the chart data using the percentages
-  const data = {
+  // Pie chart data
+  const chartData = {
     labels: ["Bearish", "Bullish", "Neutral"],
     datasets: [
       {
@@ -121,9 +94,24 @@ function PieChart() {
     },
   };
 
+  // Disable the pie if agreementScore is 1
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error fetching news data.</div>;
+  }
+
+  if (!agreementData || agreementScore === 1) {
+    return <div style={{ color: 'white', fontStyle: 'italic' }}>No feedback required</div>;
+  }
+
   return (
+    
     <div style={{ width: "55%", margin: "0 auto" }}>
-      <Pie data={data} options={options} />
+      <h3 >Feedback Based on Users</h3>
+      <Pie data={chartData} options={options} />
     </div>
   );
 }
