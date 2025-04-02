@@ -4,6 +4,8 @@ import { Modal, Button } from 'react-bootstrap';
 import useFetch from '../../hooks/useFetch';
 import { useLocation } from 'react-router-dom';
 import { postData } from '../../services/api';
+import { ToastContainer, toast } from 'react-toastify';  // Import Toastify
+import 'react-toastify/dist/ReactToastify.css';  // Import Toastify styles
 
 
   const SentimentFeedbackForm = ({newsTitle}) => {
@@ -69,12 +71,24 @@ import { postData } from '../../services/api';
   if (!filteredNewsData || agreementScore === 1) {
     return <div style={{ color: 'white', fontStyle: 'italic' }}>No feedback required</div>;
   }
+
+    // Only show the toast if the agreement rate is not 1
+    if (agreementScore !== 1) {
+      toast.info("Model disagreement detected!", {
+        position: "top-center",
+        autoClose: 2000,  // Duration in ms
+        hideProgressBar: true,
+        closeOnClick: true,
+        draggable: true,
+        pauseOnHover: true,
+      });
+    }
   
     return (
       <div className="feedback-form">
+        <ToastContainer />
         <h2>Sentiment Feedback Form</h2>
         <h3>Article: {newsTitle}</h3>
-        <p>Model disagreement detected!</p>
         <div>
         
         <span style={{ color: 'green' }}>
@@ -125,6 +139,7 @@ import { postData } from '../../services/api';
 
         <button onClick={handleSubmit}>Submit</button>
        {/* Submission Success Modal */}
+       
        <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Feedback Submitted</Modal.Title>
