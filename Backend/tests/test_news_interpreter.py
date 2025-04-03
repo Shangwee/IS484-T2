@@ -1,4 +1,4 @@
-from helpers import news_interpreter
+from app.utils.helpers import news_interpreter
 import time
 
 news_text = """
