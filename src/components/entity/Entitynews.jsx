@@ -62,6 +62,7 @@ const News = ( {EntityName} ) => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedNews, setSelectedNews] = useState(null); // State to track selected news
   const newsPerPage = 3; // Matches backend
   
   // Construct API URL with pagination parameters
@@ -144,7 +145,20 @@ const News = ( {EntityName} ) => {
               <div style={styles.newsBox}>
 
                 <h4 style={styles.newsHeader}>
-                  <Link to={news.url} target="_blank" rel="noopener noreferrer" style={styles.newsLink}>
+                  {/* <Link to={news.url} target="_blank" rel="noopener noreferrer" style={styles.newsLink}>
+                    {news.title}
+                  </Link> */}
+                      <Link
+                    to='/Individualnewspage'
+                    state={{ id: news.id , title: news.title }}
+                    rel="noopener noreferrer"
+                    style={styles.newsLink}
+                    
+                  // After selecting a news item
+                    onClick={() => {
+                      setSelectedNews(news);
+                      console.log('Selected News:', news); // Debugging state change
+                    }}                  >
                     {news.title}
                   </Link>
                 </h4>

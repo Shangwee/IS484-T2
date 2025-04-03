@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatSentimentClassification } from '../../utils/sentimentAnalysis';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 const EntitySentiment = ({ entityScore, className = '' }) => {
   if (!entityScore) {
@@ -47,22 +48,50 @@ const EntitySentiment = ({ entityScore, className = '' }) => {
       
       <div className="entity-score-display p-3 rounded-lg" style={{ backgroundColor: bgColor + '20' }}>
         <div className="flex justify-between items-center">
-          <div className="sentiment-label text-sm">Entity Sentiment</div>
-          <div 
-            className="score-badge px-3 py-1 rounded-full text-white font-bold"
-            style={{ backgroundColor: bgColor }}
+          <OverlayTrigger
+            placement="top"
+            overlay={<Tooltip id="entity-sentiment-tooltip">Overall sentiment based on news articles about this entity</Tooltip>}
           >
-            {unified_score.toFixed(1)} ({formattedSentiment})
-          </div>
+            <div className="sentiment-label text-sm" style={{ cursor: 'pointer' }}>Entity Sentiment</div>
+          </OverlayTrigger>
+          <OverlayTrigger
+            placement="top"
+            overlay={
+              <Tooltip id="entity-score-tooltip">
+                {formattedSentiment === 'Bullish' || formattedSentiment === 'Positive' 
+                  ? "Positive outlook based on recent news coverage" 
+                  : formattedSentiment === 'Bearish' || formattedSentiment === 'Negative'
+                    ? "Negative outlook based on recent news coverage"
+                    : "Mixed or neutral outlook based on recent news coverage"}
+              </Tooltip>
+            }
+          >
+            <div 
+              className="score-badge px-3 py-1 rounded-full text-white font-bold"
+              style={{ backgroundColor: bgColor, cursor: 'pointer' }}
+            >
+              {unified_score.toFixed(1)} ({formattedSentiment})
+            </div>
+          </OverlayTrigger>
         </div>
         
         <div className="score-details mt-2 text-xs text-gray-600">
           <div className="flex justify-between">
-            <span>Confidence:</span>
+            <OverlayTrigger
+              placement="top"
+              overlay={<Tooltip id="confidence-tooltip">Higher confidence means more reliable sentiment analysis results</Tooltip>}
+            >
+              <span style={{ cursor: 'pointer' }}>Confidence:</span>
+            </OverlayTrigger>
             <span>{(confidence * 100).toFixed(0)}%</span>
           </div>
           <div className="flex justify-between">
-            <span>Based on:</span>
+            <OverlayTrigger
+              placement="top"
+              overlay={<Tooltip id="article-count-tooltip">Number of news articles analyzed to determine sentiment</Tooltip>}
+            >
+              <span style={{ cursor: 'pointer' }}>Based on:</span>
+            </OverlayTrigger>
             <span>{article_count} article{article_count !== 1 ? 's' : ''}</span>
           </div>
         </div>
