@@ -34,9 +34,9 @@ class EntitySentimentAnalyzer:
         self.analyzer = SentimentAnalyzer()
         self.output_dir = output_dir
         
-        # Create output directory if it doesn't exist
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
+        # # Create output directory if it doesn't exist
+        # if not os.path.exists(output_dir):
+        #     os.makedirs(output_dir)
             
         # Initialize results storage
         self.entity_results = {}
