@@ -1,7 +1,7 @@
 import yfinance as yf
 import matplotlib.pyplot as plt
 import pandas as pd
-import numpy as np
+import re 
 from fpdf import FPDF
 from datetime import datetime
 import os
@@ -62,17 +62,43 @@ def generate_pdf(entity_name, entity_scores, sentiment_history, news_items, outp
         region_counter = Counter()
         sector_counter = Counter()
 
+        def clean_data(data):
+            # Remove leading/trailing spaces and normalize multiple spaces
+            cleaned_data = [item.strip() for item in data]
+            
+            # Split multi-region or multi-sector entries by commas or semicolons, and strip spaces
+            split_data = []
+            for item in cleaned_data:
+                # Use regex to split by comma or semicolon, and remove leading/trailing spaces
+                split_data.extend([i.strip() for i in re.split('[,;]', item)])
+            
+            return split_data
+        
+        def unique_data(cleaned):
+            # Use set to ensure uniqueness
+            return list(set(cleaned))
+
         for news in news_items.get('news', []):
             regions = news.get('regions', [])
             sectors = news.get('sectors', [])
             
-            # Update counters with the regions and sectors of each news item
-            region_counter.update(regions)
-            sector_counter.update(sectors)
+            clean_regions = clean_data(regions)
+            clean_sectors = clean_data(sectors)
+
+            # Ensure unique regions and sectors for each news item (using set to avoid duplicates within a news item)
+            unique_regions = set(clean_regions)
+            unique_sectors = set(clean_sectors)
+            
+            # Update counters with unique regions and sectors
+            region_counter.update(unique_regions)
+            sector_counter.update(unique_sectors)
 
         # Order  common regions and sectors
         top_5_regions = [region for region,count in region_counter.most_common(5)]
         top_5_sectors = [sector for sector,count in sector_counter.most_common(5)]
+
+        print("Top 5 Regions:", top_5_regions)  # Debugging line
+        print("Top 5 Sectors:", top_5_sectors)  # Debugging line
 
         pdf.set_font("Arial", "B", 12)
         pdf.cell(0, 10, "Related Region & Sectors:", ln=True)
@@ -227,8 +253,10 @@ def generate_pdf(entity_name, entity_scores, sentiment_history, news_items, outp
 
             #regions
             regions = news.get('regions', [])
-            if regions:
-                sanitized_regions = [sanitize_text(region) for region in regions]
+            clean_regions = clean_data(regions)
+            unique_regions = unique_data(clean_regions)
+            if unique_regions:
+                sanitized_regions = [sanitize_text(region) for region in unique_regions]
                 pdf.set_font("Arial", "I", 10)
                 
                 # Start a new line for tags
@@ -238,8 +266,8 @@ def generate_pdf(entity_name, entity_scores, sentiment_history, news_items, outp
                 regions_text = ', '.join(sanitized_regions)
                 
                 # Split the tags into multiple lines if they overflow the page width
-                max_regions_width = pdf.w - 20  # Account for page margins
-                if pdf.get_string_width(regions_text) > max_regions_width:
+                max_regions_width = pdf.w - 30  # Account for page margins
+                if pdf.get_string_width(regions_text) >= max_regions_width:
                     # Use multi_cell to wrap the tags text
                     pdf.multi_cell(0, 8, f"Region(s): {regions_text}", 0, 'L')
                 else:
@@ -250,8 +278,10 @@ def generate_pdf(entity_name, entity_scores, sentiment_history, news_items, outp
             
             #sectors
             sectors = news.get('sectors', [])
-            if sectors:
-                sanitized_sectors = [sanitize_text(sector) for sector in sectors]
+            clean_sectors = clean_data(sectors)
+            unique_sectors = unique_data(clean_sectors)
+            if unique_sectors:
+                sanitized_sectors = [sanitize_text(sector) for sector in unique_sectors]
                 pdf.set_font("Arial", "I", 10)
                 
                 # Start a new line for tags
@@ -259,9 +289,7 @@ def generate_pdf(entity_name, entity_scores, sentiment_history, news_items, outp
                 
                 # Join the tags with commas and ensure they fit within the page width
                 sectors_text = ', '.join(sanitized_sectors)
-                
-                # Split the tags into multiple lines if they overflow the page width
-                max_sectors_width = pdf.w - 20  # Account for page margins
+                max_sectors_width = pdf.w - 30  # Account for page margins
                 if pdf.get_string_width(sectors_text) > max_sectors_width:
                     # Use multi_cell to wrap the tags text
                     pdf.multi_cell(0, 8, f"Sector(s): {sectors_text}", 0, 'L')
