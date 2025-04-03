@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Row, Col, Badge, ButtonGroup, ToggleButton } from 'react-bootstrap';
+import { Container, Row, Col, Badge } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch';
+import SentimentScore from '../ui/Sentimentscore';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 const NewsSources = () => {
@@ -23,9 +24,13 @@ const NewsSources = () => {
         return 'secondary';
       };
 
-    const region_list = newsData?.regions? newsData.regions : 'Unknown Region';
-    const sectors_list = newsData?.sectors ? newsData.sectors : 'Unknown Sectors';
-    const company_name_list = newsData?.company_names ? newsData.company_names : 'Unknown Companies';
+    // Ensure that region_list is an array before calling map
+    const region_list = Array.isArray(newsData?.regions) ? newsData.regions : (typeof newsData?.regions === 'string' ? newsData.regions.split(',').map(item => item.trim()) : []);
+
+    const sectors_list = Array.isArray(newsData?.sectors) ? newsData.sectors : (typeof newsData?.sectors === 'string' ? newsData.sectors.split(',').map(item => item.trim()) : []);
+
+    const company_name_list = Array.isArray(newsData?.company_names) ? newsData.company_names : (typeof newsData?.company_names === 'string' ? newsData.company_names.split(',').map(item => item.trim()) : []);
+
 
     const styles = {
         newsHeader: {
@@ -47,21 +52,11 @@ const NewsSources = () => {
             padding: '6px 12px',
             borderRadius: '20px',
             fontWeight: '500',
-            cursor: 'pointer',
         },
-        sentimentToggle: {
+        sentimentContainer: {
             display: 'flex',
-            justifyContent: 'center',
-            gap: '10px',
-            marginBottom: '15px',
-        },
-        sentimentValue: {
-            fontSize: '1em',
-            fontWeight: 'bold',
-            padding: '5px 15px',
-            borderRadius: '20px',
-            backgroundColor: '#f8f9fa',
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
         },
     };
 
@@ -70,11 +65,18 @@ const NewsSources = () => {
 
     return (
         <Container fluid className="news-container">
-      
-            {/* News Title */}
-            <Link to={newsData.url} target="_blank" rel="noopener noreferrer" style={styles.newsHeader}>
-                <h4>{newsData.title}</h4>
-            </Link>
+            {/* News Title and Sentiment Row */}
+            <Row className="align-items-center">
+                <Col md={8}>
+                    <Link to={newsData.url} target="_blank" rel="noopener noreferrer" style={styles.newsHeader}>
+                        <h4>{newsData.title}</h4>
+                    </Link>
+                </Col>
+                <Col md={4} style={styles.sentimentContainer}>
+                    {/* Sentiment Score Pill */}
+                    <SentimentScore score={newsData.score} sentiment={newsData.sentiment} />
+                </Col>
+            </Row>
 
             {/* News date and publisher closer together */}
             <div style={styles.metaInfo}>
@@ -82,7 +84,7 @@ const NewsSources = () => {
                 <span>📰 {newsData.publisher}</span>
             </div>
 
-            {/* Entities under news date */}
+            {/* Entities */}
             <div className="d-flex flex-wrap gap-2">
                 {newsData.entities?.map((entity) => (
                     <Badge bg="warning" style={styles.badge} key={entity}>{entity}</Badge>
@@ -92,13 +94,13 @@ const NewsSources = () => {
                 
             <div >
             <div style={{ display: 'flex', gap: '6px' }}>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="finbert-tooltip">FinBERT Score: {scores.finbert} is calculated with ...</Tooltip>}>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="finbert-tooltip">Financial BERT model trained specifically on financial text to detect sentiment in financial news.</Tooltip>}>
                 <Badge bg={getColor(scores.finbert)} style={styles.badge}>FinBERT: {scores.finbert}</Badge>
               </OverlayTrigger>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Gemini Score: {scores.gemini} is calculated with ...</Tooltip>}>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Google's Gemini model provides general language understanding for broader context analysis.</Tooltip>}>
                 <Badge bg={getColor(scores.gemini)} style={styles.badge}>Gemini: {scores.gemini}</Badge>
               </OverlayTrigger>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="combine-tooltip">combine_score: {scores.combine_score} is calculated with ...</Tooltip>}>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="combine-tooltip">Weighted average of both models with confidence factoring to provide the most accurate sentiment score.</Tooltip>}>
                 <Badge bg={getColor(scores.combine_score)} style={styles.badge}>Combine Score: {scores.combine_score}</Badge>
               </OverlayTrigger>
             </div>
@@ -113,42 +115,36 @@ const NewsSources = () => {
 
             {/* Region, Sectors, and Affected Companies in separate columns */}
             <Row className="mt-3">
-                <Col md={4}>
                     {region_list?.length > 0 && (
-                        <>
+                        <Col md={4}>
                             <strong>🌍 Region:</strong>
                             <div className="d-flex flex-wrap gap-2 mt-2">
                                 {region_list.map((region) => (
                                     <Badge bg="info" style={styles.badge} key={region}>{region}</Badge>
                                 ))}
                             </div>
-                        </>
+                        </Col>
                     )}
-                </Col>
-                <Col md={4}>
                     {sectors_list?.length > 0 && (
-                        <>
+                        <Col md={4}>
                             <strong>🏢 Sectors:</strong>
                             <div className="d-flex flex-wrap gap-2 mt-2">
                                 {sectors_list.map((sector) => (
                                     <Badge bg="dark" style={styles.badge} key={sector}>{sector}</Badge>
                                 ))}
                             </div>
-                        </>
+                        </Col>
                     )}
-                </Col>
-                <Col md={4}>
                     {company_name_list?.length > 0 && (
-                        <>
+                        <Col md={4}>
                             <strong>🏭 Affected Companies:</strong>
                             <div className="d-flex flex-wrap gap-2 mt-2">
                                 {company_name_list.map((company) => (
                                     <Badge bg="warning" style={styles.badge} key={company}>{company}</Badge>
                                 ))}
                             </div>
-                        </>
+                        </Col>
                     )}
-                </Col>
             </Row>
         </Container>
     );
