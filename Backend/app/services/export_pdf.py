@@ -71,12 +71,8 @@ def generate_pdf(entity_name, entity_scores, sentiment_history, news_items, outp
             sector_counter.update(sectors)
 
         # Order  common regions and sectors
-        top_5_regions = [region for region,count in region_counter.most_common()]
-        top_5_sectors = [sector for sector,count in sector_counter.most_common()]
-
-        # If there are more than 5, truncate the list to the top 5
-        top_5_regions = top_5_regions[:5]
-        top_5_sectors = top_5_sectors[:5]
+        top_5_regions = [region for region,count in region_counter.most_common(5)]
+        top_5_sectors = [sector for sector,count in sector_counter.most_common(5)]
 
         pdf.set_font("Arial", "B", 12)
         pdf.cell(0, 10, "Related Region & Sectors:", ln=True)
