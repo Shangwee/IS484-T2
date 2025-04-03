@@ -221,7 +221,14 @@ return (
                 </h4>
                  <div style={styles.sentimentAndRatingsContainer}>
                 <div style={styles.sentimentScore}>
-                <SentimentScore score={news.score} sentiment={news.sentiment} />
+                <SentimentScore 
+                  score={news.score} 
+                  sentiment={news.sentiment} 
+                  confidence={news.confidence}
+                  finbertScore={news.finbert_score}
+                  secondModelScore={news.gemini_score}
+                  showDetails={false}
+                />
               </div>
             </div>
               </div>

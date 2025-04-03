@@ -92,13 +92,13 @@ const NewsSources = () => {
                 
             <div >
             <div style={{ display: 'flex', gap: '6px' }}>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="finbert-tooltip">FinBERT Score: {scores.finbert} is calculated with ...</Tooltip>}>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="finbert-tooltip">Financial BERT model trained specifically on financial text to detect sentiment in financial news.</Tooltip>}>
                 <Badge bg={getColor(scores.finbert)} style={styles.badge}>FinBERT: {scores.finbert}</Badge>
               </OverlayTrigger>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Gemini Score: {scores.gemini} is calculated with ...</Tooltip>}>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Google's Gemini model provides general language understanding for broader context analysis.</Tooltip>}>
                 <Badge bg={getColor(scores.gemini)} style={styles.badge}>Gemini: {scores.gemini}</Badge>
               </OverlayTrigger>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="combine-tooltip">combine_score: {scores.combine_score} is calculated with ...</Tooltip>}>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="combine-tooltip">Weighted average of both models with confidence factoring to provide the most accurate sentiment score.</Tooltip>}>
                 <Badge bg={getColor(scores.combine_score)} style={styles.badge}>Combine Score: {scores.combine_score}</Badge>
               </OverlayTrigger>
             </div>
