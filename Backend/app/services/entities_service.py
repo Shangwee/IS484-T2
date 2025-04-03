@@ -9,6 +9,13 @@ def get_ticker_by_entity(entity_name):
         return entity.ticker
     return None
 
+def get_id_by_entity(entity_name):
+    """Get ticker by entity name"""
+    entity = Entity.query.filter(Entity.name == entity_name).first()
+    if entity:
+        return entity.id
+    return None
+
 def get_all_ticker_entities():
     """Get all entities with tickers"""
     ticker_list = []
@@ -38,5 +45,11 @@ def get_entity_details(ticker):
     """Get entity details by ticker"""
     entity = Entity.query.filter(Entity.ticker == ticker).first()
     if entity:
-        return entity.sentiment_score
+        return {'avg_score' : entity.sentiment_score, 
+                'simple_average' : entity.simple_average, 
+                'time_decay' : entity.time_decay, 
+                'confidence_score' : entity.confidence_score, 
+                'classification' : entity.classification,
+                'ticker' : entity.ticker,
+                'name' : entity.name,}
     return None

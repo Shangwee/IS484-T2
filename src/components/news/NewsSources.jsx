@@ -112,7 +112,6 @@ const NewsSources = () => {
             {/* Region, Sectors, and Affected Companies in separate columns */}
             <Row className="mt-3">
                 <Col md={4}>
-                    {newsData.regions?.length > 0 && (
                     {region_list?.length > 0 && (
                         <>
                             <strong>🌍 Region:</strong>
