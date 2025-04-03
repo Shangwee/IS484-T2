@@ -6,17 +6,11 @@ import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 import re
-import json
 import pandas as pd
-import sqlite3
-import requests
-import ast
 from rapidfuzz import process, fuzz
 import spacy
-import spacy_transformers
 import subprocess
-from helpers_constants import sp500_plus2_dict, SECTOR_KEYWORDS, country_to_region, regions
-
+from .helpers_constants import sp500_plus2_dict, SECTOR_KEYWORDS, country_to_region, regions
 
 load_dotenv()
 
@@ -203,19 +197,6 @@ def extract_info_from_article(article):
 
     {article}
     """
-    # try:
-    #     response = requests.post(
-    #         "http://localhost:11434/api/generate",
-    #         json={"model": "llama3.2", "prompt": prompt, "stream": False}
-    #     )
-    #     raw = response.json()["response"]
-    #     print(raw)
-    #     return raw
-    #     #return ast.literal_eval(raw.strip())  # safely parse the dict
-    # except Exception as e:
-    #     print(f"Error processing article: {e}")
-    #     return None
-    #     #return {'company': None, 'region': None, 'sector': None}
 
     try:
         api_key = os.getenv("GEMINI_API_KEY")  # Replace with env management for security
