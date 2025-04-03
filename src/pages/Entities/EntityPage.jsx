@@ -62,14 +62,14 @@ const EntityPage = () => {
         <div style={styles.sentimentRow}>
           <div style={styles.sentimentWrapper}>
             <div style={styles.sentimentToggle}>
-              <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="finbert-tooltip">Average Sentiment Score: {sentimentTypes.AvgSentiment} is calculated with ...</Tooltip>}>
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <OverlayTrigger placement="top" overlay={<Tooltip id="finbert-tooltip">Weighted combination of multiple NLP models' sentiment predictions with confidence factored in.</Tooltip>}>
                   <Badge bg={getColor(sentimentTypes.AvgSentiment)} style={styles.badge}>Average Sentiment Score: {sentimentTypes.AvgSentiment}</Badge>
                 </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Simple Average: {sentimentTypes.simpleAverage} is calculated with ...</Tooltip>}>
+                <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Direct average of all article sentiment scores without weighting or adjustments.</Tooltip>}>
                   <Badge bg={getColor(sentimentTypes.simpleAverage)} style={styles.badge}>Simple Average: {sentimentTypes.simpleAverage}</Badge>
                 </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="combined-tooltip">Time Decay: {sentimentTypes.TimeDecay} is calculated with ...</Tooltip>}>
+                <OverlayTrigger placement="top" overlay={<Tooltip id="combined-tooltip">Recent articles weighted more heavily than older ones to reflect current market sentiment.</Tooltip>}>
                   <Badge bg={getColor(sentimentTypes.TimeDecay)} style={styles.badge}>Time Decay: {sentimentTypes.TimeDecay}</Badge>
                 </OverlayTrigger>
               </div>
