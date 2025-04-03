@@ -22,7 +22,7 @@ const styles = {
     flexDirection: "column", // Stack content vertically
     justifyContent: "center", // Center content vertically
     alignItems: "center", // Center content horizontally
-    padding: "20px", // Add padding for spacing
+    padding: "10px", // Add padding for spacing
     boxSizing: "border-box", // Include padding in width/height calculations
     maxWidth: "1200px", // Limit maximum width for larger screens
     margin: "0 auto", // Center the container horizontally
