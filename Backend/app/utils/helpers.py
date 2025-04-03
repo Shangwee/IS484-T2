@@ -1458,19 +1458,41 @@ def extract_info_from_article(article):
 
     {article}
     """
+    # try:
+    #     response = requests.post(
+    #         "http://localhost:11434/api/generate",
+    #         json={"model": "llama3.2", "prompt": prompt, "stream": False}
+    #     )
+    #     raw = response.json()["response"]
+    #     print(raw)
+    #     return raw
+    #     #return ast.literal_eval(raw.strip())  # safely parse the dict
+    # except Exception as e:
+    #     print(f"Error processing article: {e}")
+    #     return None
+    #     #return {'company': None, 'region': None, 'sector': None}
+
     try:
-        response = requests.post(
-            "http://localhost:11434/api/generate",
-            json={"model": "llama3.2", "prompt": prompt, "stream": False}
-        )
-        raw = response.json()["response"]
-        print(raw)
-        return raw
-        #return ast.literal_eval(raw.strip())  # safely parse the dict
+        api_key = os.getenv("GEMINI_API_KEY")  # Replace with env management for security
+        if not api_key:
+            raise ValueError("API key not found. Please set the GEMINI_API_KEY.")
+
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel("gemini-1.5-flash")
+
+        response_obj = model.generate_content(prompt)
+
+        if not response_obj or not response_obj.candidates or not response_obj.candidates[0].content.parts:
+            print("Error: No valid response from Gemini model")
+            return None
+
+        raw = response_obj.candidates[0].content.parts[0].text
+        # print(raw)
+        return raw.strip()
+
     except Exception as e:
         print(f"Error processing article: {e}")
         return None
-        #return {'company': None, 'region': None, 'sector': None}
 
 def combine_company_names(row):
     ner = row.get("company_names_ner")
@@ -1638,20 +1660,10 @@ def news_interpreter(news_text, summary_length):
             }
         }
 
-def ensure_list(item):
-    if isinstance(item, str):
-        return [i.strip() for i in item.split(',')]
-    elif isinstance(item, list):
-        return [i.strip() for i in item]
-    else:
-        return []
-
-# news_text_test = """
-# scitechdaily.com
-
-# Verifying you are human. This may take a few seconds.
-
-# scitechdaily.com needs to review the security of your connection before proceeding.
-# """
-# test = news_interpreter(news_text_test, 50)
-# print(test)
+# def ensure_list(item):
+#     if isinstance(item, str):
+#         return [i.strip() for i in item.split(',')]
+#     elif isinstance(item, list):
+#         return [i.strip() for i in item]
+#     else:
+#         return []
