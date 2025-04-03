@@ -24,9 +24,13 @@ const NewsSources = () => {
         return 'secondary';
       };
 
-    const region_list = newsData?.regions? newsData.regions : 'Unknown Region';
-    const sectors_list = newsData?.sectors ? newsData.sectors : 'Unknown Sectors';
-    const company_name_list = newsData?.company_names ? newsData.company_names : 'Unknown Companies';
+    // Ensure that region_list is an array before calling map
+    const region_list = Array.isArray(newsData?.regions) ? newsData.regions : (typeof newsData?.regions === 'string' ? newsData.regions.split(',').map(item => item.trim()) : []);
+
+    const sectors_list = Array.isArray(newsData?.sectors) ? newsData.sectors : (typeof newsData?.sectors === 'string' ? newsData.sectors.split(',').map(item => item.trim()) : []);
+
+    const company_name_list = Array.isArray(newsData?.company_names) ? newsData.company_names : (typeof newsData?.company_names === 'string' ? newsData.company_names.split(',').map(item => item.trim()) : []);
+
 
     const styles = {
         newsHeader: {
@@ -111,42 +115,36 @@ const NewsSources = () => {
 
             {/* Region, Sectors, and Affected Companies in separate columns */}
             <Row className="mt-3">
-                <Col md={4}>
                     {region_list?.length > 0 && (
-                        <>
+                        <Col md={4}>
                             <strong>🌍 Region:</strong>
                             <div className="d-flex flex-wrap gap-2 mt-2">
                                 {region_list.map((region) => (
                                     <Badge bg="info" style={styles.badge} key={region}>{region}</Badge>
                                 ))}
                             </div>
-                        </>
+                        </Col>
                     )}
-                </Col>
-                <Col md={4}>
                     {sectors_list?.length > 0 && (
-                        <>
+                        <Col md={4}>
                             <strong>🏢 Sectors:</strong>
                             <div className="d-flex flex-wrap gap-2 mt-2">
                                 {sectors_list.map((sector) => (
                                     <Badge bg="dark" style={styles.badge} key={sector}>{sector}</Badge>
                                 ))}
                             </div>
-                        </>
+                        </Col>
                     )}
-                </Col>
-                <Col md={4}>
                     {company_name_list?.length > 0 && (
-                        <>
+                        <Col md={4}>
                             <strong>🏭 Affected Companies:</strong>
                             <div className="d-flex flex-wrap gap-2 mt-2">
                                 {company_name_list.map((company) => (
                                     <Badge bg="warning" style={styles.badge} key={company}>{company}</Badge>
                                 ))}
                             </div>
-                        </>
+                        </Col>
                     )}
-                </Col>
             </Row>
         </Container>
     );

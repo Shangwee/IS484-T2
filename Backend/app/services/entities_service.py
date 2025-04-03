@@ -51,5 +51,5 @@ def get_entity_details(ticker):
                 'confidence_score' : entity.confidence_score, 
                 'classification' : entity.classification,
                 'ticker' : entity.ticker,
-                'name' : entity.name,}
+                'name' : entity.name}
     return None
