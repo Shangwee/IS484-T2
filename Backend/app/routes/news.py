@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from app.utils.decorators import jwt_required
-from app.services.news_services import news_by_ticker, news_by_id, all_news
+from app.services.news_services import news_by_ticker, news_by_id, all_news, resync_news_data
 from app.services.data_ingestion_finviz import get_finviz_news_by_ticker, get_all_finviz
 from app.services.data_ingestion_gnews import get_gnews_news_by_ticker, get_all_top_gnews
 from app.services.data_ingestion_yfinance import get_stock_news
@@ -131,6 +131,18 @@ def automate_news_of_entity_and_all():
 
     if len(total_news) > 0:
         return format_response(total_news, "News data generated and saved successfully", 201)
+    
+    return format_response([], "No news data found", 404)
+
+@news_bp.route('/resync', methods=['POST'])
+def resync_news():
+    """Resync news data"""
+
+    # Resync news data
+    result = resync_news_data()
+
+    if result:
+        return format_response(result, "News data resynced successfully", 201)
     
     return format_response([], "No news data found", 404)
 

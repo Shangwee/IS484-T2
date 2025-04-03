@@ -38,7 +38,14 @@ def get_finviz_news_by_ticker(query):
             continue
 
         try :
-             # Get article scraped
+            # check if the news already exists in the database
+            existing_news = NewsModel.query.filter_by(url=row['Link']).first()
+
+            if existing_news:
+                print("News already exists")
+                continue
+
+            # Get article scraped
             article = scrape_article(row['Link'])
 
             #get article details
@@ -52,6 +59,12 @@ def get_finviz_news_by_ticker(query):
             tags = article_details['keywords']
             confidence = article_details['confidence']
             agreement_rate = article_details['agreement_rate']
+            company_names = article_details['companies']
+            regions = article_details['regions']
+            sectors = article_details['sectors']
+
+            if description == "An error occurred while fetching the article details":
+                continue
 
             news_list.append({
                 "published_date": row['Date'],
@@ -67,15 +80,11 @@ def get_finviz_news_by_ticker(query):
                 "sentiment": sentiment,
                 "tags": tags,
                 "confidence": confidence,
-                agreement_rate: agreement_rate
+                "agreement_rate": agreement_rate,
+                "company_names": company_names,
+                "regions": regions,
+                "sectors": sectors
             })
-
-            # check if the news already exists in the database
-            existing_news = NewsModel.query.filter_by(url=row['Link']).first()
-
-            if existing_news:
-                print("News already exists")
-                continue
 
             news_db = NewsModel(
                 publisher=row['Source'],
@@ -91,7 +100,10 @@ def get_finviz_news_by_ticker(query):
                 sentiment=sentiment,
                 tags=tags,
                 confidence=confidence,
-                agreement_rate=agreement_rate
+                agreement_rate=agreement_rate,
+                company_names=company_names,
+                regions=regions,
+                sectors=sectors
             )
 
             db.session.add(news_db)
@@ -131,6 +143,12 @@ def get_all_finviz():
             continue
 
         try:
+            # check if the news already exists in the database
+            existing_news = NewsModel.query.filter_by(url=row['Link']).first()
+
+            if existing_news:
+                continue
+
             # Get article scraped
             article = scrape_article(row['Link'])
 
@@ -145,6 +163,12 @@ def get_all_finviz():
             tags = article_details['keywords']
             confidence = article_details['confidence']
             agreement_rate = article_details['agreement_rate']
+            company_names = article_details['companies']
+            regions = article_details['regions']
+            sectors = article_details['sectors']
+
+            if description == "An error occurred while fetching the article details":
+                continue
 
             all_news_list.append({
                 "published_date": news_date,
@@ -159,14 +183,11 @@ def get_all_finviz():
                 "sentiment": sentiment,
                 "tags": tags,
                 "confidence": confidence,
-                "agreement_rate": agreement_rate
+                "agreement_rate": agreement_rate,
+                "company_names": company_names,
+                "regions": regions,
+                "sectors": sectors
             })
-
-            # check if the news already exists in the database
-            existing_news = NewsModel.query.filter_by(url=row['Link']).first()
-
-            if existing_news:
-                continue
 
             news_db = NewsModel(
                 publisher=row['Source'],
@@ -182,7 +203,10 @@ def get_all_finviz():
                 sentiment=sentiment,
                 tags=tags,
                 confidence=confidence,
-                agreement_rate=agreement_rate
+                agreement_rate=agreement_rate,
+                company_names=company_names,
+                regions=regions,
+                sectors=sectors
             )
 
             db.session.add(news_db)

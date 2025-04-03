@@ -39,28 +39,25 @@ def get_sentiment_history_by_entity_id(entity_id, page=1, per_page=10, sort_orde
 
 
 def create_sentiment_history(entity_id, sentiment_score):
-    """Create a new sentiment history entry"""
+    """Create or update a sentiment history entry if one exists on the same date"""
     date = datetime.now()
 
-    # Check if an entry already exists for this entity on the same calendar day
+    # Convert np.float64 to float if needed
+    if isinstance(sentiment_score, np.float64):
+        sentiment_score = float(sentiment_score)
+
+    # Check for existing entry on the same date (ignore time)
     existing_entry = SentimentHistory.query.filter(
         SentimentHistory.entity_id == entity_id,
         func.date(SentimentHistory.date) == date.date()
     ).first()
 
     if existing_entry:
-        # Convert np.float64 to standard Python float
-        if isinstance(sentiment_score, np.float64):
-            sentiment_score = float(sentiment_score)
-        existing_entry.sentiment_score = sentiment_score
+        existing_entry.sentiment_score = sentiment_score  # Update score
         db.session.commit()
-        return existing_entry.to_dict()  # Or handle as needed (e.g., update, skip, raise error)
-
-    # Convert np.float64 to standard Python float
-    if isinstance(sentiment_score, np.float64):
-        sentiment_score = float(sentiment_score)
-
-    # Create a new entry if not found
+        return existing_entry.to_dict()
+    
+    # Create new entry if no existing one for the same date
     new_entry = SentimentHistory(
         entity_id=entity_id,
         date=date,
@@ -69,22 +66,3 @@ def create_sentiment_history(entity_id, sentiment_score):
     db.session.add(new_entry)
     db.session.commit()
     return new_entry.to_dict()
-
-
-def insert_sentiment_history(entity_id, date, sentiment_score):
-    try:
-        # Convert np.float64 to standard Python float
-        if isinstance(sentiment_score, np.float64):
-            sentiment_score = float(sentiment_score)
-
-        new_entry = SentimentHistory(
-            entity_id=entity_id,
-            date=date,
-            sentiment_score=sentiment_score
-        )
-        db.session.add(new_entry)
-        db.session.commit()
-        return {"status": "success", "message": "Sentiment history inserted successfully"}
-    except Exception as e:
-        print(f"An error occurred while inserting sentiment history: {e}")
-        return {"status": "error", "message": str(e)}

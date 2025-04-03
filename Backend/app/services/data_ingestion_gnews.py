@@ -29,7 +29,10 @@ def insert_data_to_db(news, query):
         sentiment=news['sentiment'],
         tags=news['tags'],
         confidence=news['confidence'],
-        agreement_rate=news['agreement_rate']
+        agreement_rate=news['agreement_rate'],
+        company_names=news['company_names'],
+        regions=news['regions'],
+        sectors=news['sectors']
     )
 
     db.session.add(n)
@@ -49,7 +52,7 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
     gn = GNews(
         start_date=start_date, 
         end_date=end_date, 
-        exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com', "marketbeat.com", "benzinga.com", "streetinsider.com", "msn.com", "reuters.com", "uk.finance.yahoo.com", "seekingalpha.com", "fool.com", "GuruFocus.com", "mix941kmxj.com", "wibx950.com", "insidermonkey.com", "marketwatch.com", "cheap-sound.com", "retro1025.com", "wrrv.com", "apnnews.com"],
+        exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com', "marketbeat.com", "benzinga.com", "streetinsider.com", "msn.com", "reuters.com", "uk.finance.yahoo.com", "seekingalpha.com", "fool.com", "GuruFocus.com", "mix941kmxj.com", "wibx950.com", "insidermonkey.com", "marketwatch.com", "cheap-sound.com", "retro1025.com", "wrrv.com", "apnnews.com", "fool.com"],
         # max_results=1  # For testing purposes
     )
     data = gn.get_news(query)
@@ -75,6 +78,12 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
             continue
     
         try:
+            # check if the data exists in the database
+            check_data = check_if_data_exists(news['url'])
+                
+            if check_data:
+                continue
+
             # Get article scraped
             article = scrape_article(decoded_url["decoded_url"])
 
@@ -92,22 +101,15 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
                 news["score"] = article_details["numerical_score"]
                 news['finbert_score'] = article_details['finbert_score']
                 news['second_model_score'] = article_details['second_model_score']
-
                 news["confidence"] = article_details["confidence"]
-
                 news["sentiment"] = article_details["classification"]
-
                 news["agreement_rate"] = article_details["agreement_rate"]
-
                 news["tags"] = article_details["keywords"]
+                news["company_names"] = article_details["companies"]
+                news["regions"] = article_details["regions"]
+                news["sectors"] = article_details["sectors"]
 
-                # check if the data exists in the database
-                check_data = check_if_data_exists(news['url'])
-                
-                if check_data:
-                    continue
-
-                if news["description"] == "" or news["tags"] == []:
+                if news["description"] == "An error occurred while fetching the article details":
                     continue
 
                 # Insert the data into the database
@@ -128,7 +130,7 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
 def get_all_top_gnews():
     gn = GNews(
         # max_results=5, # For testing purposes
-        exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com', "marketbeat.com", "benzinga.com", "streetinsider.com", "msn.com", "reuters.com", "uk.finance.yahoo.com", "seekingalpha.com", "fool.com", "GuruFocus.com", "mix941kmxj.com", "wibx950.com", "insidermonkey.com", "marketwatch.com", "cheap-sound.com", "retro1025.com", "wrrv.com", "apnnews.com"],
+        exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com', "marketbeat.com", "benzinga.com", "streetinsider.com", "msn.com", "reuters.com", "uk.finance.yahoo.com", "seekingalpha.com", "fool.com", "GuruFocus.com", "mix941kmxj.com", "wibx950.com", "insidermonkey.com", "marketwatch.com", "cheap-sound.com", "retro1025.com", "wrrv.com", "apnnews.com","fool.com"],
     )
     data = gn.get_top_news()
 
@@ -190,12 +192,12 @@ def get_all_top_gnews():
             news['finbert_score'] = article_details['finbert_score']
             news['second_model_score'] = article_details['second_model_score']
             news["sentiment"] = article_details["classification"]
-
             news["tags"] = article_details["keywords"]
-
             news["confidence"] = article_details["confidence"]
-
             news["agreement_rate"] = article_details["agreement_rate"]
+            news["company_names"] = article_details["companies"]
+            news["regions"] = article_details["regions"]
+            news["sectors"] = article_details["sectors"]
 
             # check if the data exists in the database
             check_data = check_if_data_exists(news['url'])
@@ -204,7 +206,7 @@ def get_all_top_gnews():
                 print("Data already exists")
                 continue
 
-            if news["description"] == "" or news["tags"] == []:
+            if news["description"] == "An error occurred while fetching the article details":
                 continue
 
             # insert the data into the database

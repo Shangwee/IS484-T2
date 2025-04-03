@@ -15,21 +15,17 @@ const NewsSources = () => {
     const scores = {
         finbert: newsData ? parseFloat(newsData.finbert_score).toFixed(1) : 0,
         gemini: newsData ? parseFloat(newsData.second_model_score).toFixed(1) : 0,
-        combined: newsData ? parseFloat(newsData.score).toFixed(1) : 0,
+        combine_score: newsData ? parseFloat(newsData.score).toFixed(1) : 0,
     };
     const getColor = (score) => {
         if (score > 0) return 'success';
         if (score < 0) return 'danger';
         return 'secondary';
       };
-    // State to track selected sentiment type
-    // const [selectedSentiment, setSelectedSentiment] = useState('average');
 
-    // const sentimentTypes = [
-    //     { name: 'Avg Sentiment', value: 'average' },
-    //     { name: 'Weighted', value: 'weighted' },
-    //     { name: 'Time-Decay', value: 'time_decay' }
-    // ];
+    const region_list = newsData?.regions? newsData.regions : 'Unknown Region';
+    const sectors_list = newsData?.sectors ? newsData.sectors : 'Unknown Sectors';
+    const company_name_list = newsData?.company_names ? newsData.company_names : 'Unknown Companies';
 
     const styles = {
         newsHeader: {
@@ -102,8 +98,8 @@ const NewsSources = () => {
               <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Gemini Score: {scores.gemini} is calculated with ...</Tooltip>}>
                 <Badge bg={getColor(scores.gemini)} style={styles.badge}>Gemini: {scores.gemini}</Badge>
               </OverlayTrigger>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="combined-tooltip">Combined Score: {scores.combined} is calculated with ...</Tooltip>}>
-                <Badge bg={getColor(scores.combined)} style={styles.badge}>Combined: {scores.combined}</Badge>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="combine-tooltip">combine_score: {scores.combine_score} is calculated with ...</Tooltip>}>
+                <Badge bg={getColor(scores.combine_score)} style={styles.badge}>Combine Score: {scores.combine_score}</Badge>
               </OverlayTrigger>
             </div>
             </div>
@@ -118,11 +114,11 @@ const NewsSources = () => {
             {/* Region, Sectors, and Affected Companies in separate columns */}
             <Row className="mt-3">
                 <Col md={4}>
-                    {newsData.tags?.length > 0 && (
+                    {region_list?.length > 0 && (
                         <>
                             <strong>🌍 Region:</strong>
                             <div className="d-flex flex-wrap gap-2 mt-2">
-                                {newsData.tags.map((region) => (
+                                {region_list.map((region) => (
                                     <Badge bg="info" style={styles.badge} key={region}>{region}</Badge>
                                 ))}
                             </div>
@@ -130,11 +126,11 @@ const NewsSources = () => {
                     )}
                 </Col>
                 <Col md={4}>
-                    {newsData.tags?.length > 0 && (
+                    {sectors_list?.length > 0 && (
                         <>
                             <strong>🏢 Sectors:</strong>
                             <div className="d-flex flex-wrap gap-2 mt-2">
-                                {newsData.tags.map((sector) => (
+                                {sectors_list.map((sector) => (
                                     <Badge bg="dark" style={styles.badge} key={sector}>{sector}</Badge>
                                 ))}
                             </div>
@@ -142,11 +138,11 @@ const NewsSources = () => {
                     )}
                 </Col>
                 <Col md={4}>
-                    {newsData.tags?.length > 0 && (
+                    {company_name_list?.length > 0 && (
                         <>
                             <strong>🏭 Affected Companies:</strong>
                             <div className="d-flex flex-wrap gap-2 mt-2">
-                                {newsData.tags.map((company) => (
+                                {company_name_list.map((company) => (
                                     <Badge bg="warning" style={styles.badge} key={company}>{company}</Badge>
                                 ))}
                             </div>

@@ -47,6 +47,11 @@ def get_stock_news(ticker):
         link = news_item['link']
 
         try:
+            # Check if the URL already exists in the database
+            existing_news = NewsModel.query.filter_by(url=link).first()
+            if existing_news:
+                continue
+
             # Scrape the article details
             article = scrape_article(link)
 
@@ -64,13 +69,14 @@ def get_stock_news(ticker):
             tags = article_details['keywords']
             confidence = article_details['confidence']
             agreement_rate = article_details['agreement_rate']
+            company_names = article_details['companies']
+            regions = article_details['regions']
+            sectors = article_details['sectors']
+
+            if description == "An error occurred while fetching the article details":
+                continue
 
             print("title: ", title)
-
-            # Check if the URL already exists in the database
-            existing_news = NewsModel.query.filter_by(url=link).first()
-            if existing_news:
-                continue
 
             news_db = NewsModel(
                 publisher=news_item['publisher'],
@@ -86,7 +92,10 @@ def get_stock_news(ticker):
                 sentiment=sentiment,
                 tags=tags,
                 confidence=confidence,
-                agreement_rate=agreement_rate
+                agreement_rate=agreement_rate,
+                company_names=company_names,
+                regions=regions,
+                sectors=sectors
             )
 
             newslist.append({
@@ -103,7 +112,10 @@ def get_stock_news(ticker):
                 "sentiment": sentiment,
                 "tags": tags,
                 "confidence": confidence,
-                "agreement_rate": agreement_rate
+                "agreement_rate": agreement_rate,
+                "company_names": company_names,
+                "regions": regions,
+                "sectors": sectors
             })
 
             db.session.add(news_db)
