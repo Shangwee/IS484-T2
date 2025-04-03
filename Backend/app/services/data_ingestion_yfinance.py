@@ -54,6 +54,9 @@ def get_stock_news(ticker):
 
             # Scrape the article details
             article = scrape_article(link)
+            if not article:
+                print(f"Failed to scrape article for URL: {link}")
+                continue
 
             # Get the article details
             article_details = get_article_details(link, article)

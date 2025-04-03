@@ -1,4 +1,4 @@
-FROM python:3-slim
+FROM python:3.10-slim
 
 # Set the working directory
 WORKDIR /usr/src/app
@@ -14,7 +14,10 @@ RUN apt-get update && apt-get install -y \
 
 # Upgrade pip and install dependencies
 COPY requirements.txt ./
+
 RUN python -m pip install --upgrade pip && python -m pip install --no-cache-dir -r requirements.txt
+
+RUN python -m spacy download "en_core_web_trf"
 
 # Run the custom setup script if necessary
 RUN crawl4ai-setup

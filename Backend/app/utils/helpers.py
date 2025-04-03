@@ -20,7 +20,7 @@ sp500_plus2 = pd.DataFrame.from_dict(sp500_plus2_dict)
 for region in regions:
     country_to_region[region] = region
 
-subprocess.run(["python3", "-m", "spacy", "download", "en_core_web_trf"])
+# Load the spaCy model
 nlp = spacy.load("en_core_web_trf")
 
 # Get S&P 500 tickers from Wikipedia
@@ -376,6 +376,7 @@ def news_interpreter_tagger(news_text):
 
 def news_interpreter(news_text, summary_length):
     summary = news_interpreter_summariser(news_text, summary_length)
+    time.sleep(5)
     companies, regions, sectors = news_interpreter_tagger(news_text)
     return {
             "summary": summary,
@@ -385,11 +386,3 @@ def news_interpreter(news_text, summary_length):
                 "sectors": sectors
             }
         }
-
-# def ensure_list(item):
-#     if isinstance(item, str):
-#         return [i.strip() for i in item.split(',')]
-#     elif isinstance(item, list):
-#         return [i.strip() for i in item]
-#     else:
-#         return []

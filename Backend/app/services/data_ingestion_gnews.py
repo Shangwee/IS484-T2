@@ -53,7 +53,7 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
         start_date=start_date, 
         end_date=end_date, 
         exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com', "marketbeat.com", "benzinga.com", "streetinsider.com", "msn.com", "reuters.com", "uk.finance.yahoo.com", "seekingalpha.com", "fool.com", "GuruFocus.com", "mix941kmxj.com", "wibx950.com", "insidermonkey.com", "marketwatch.com", "cheap-sound.com", "retro1025.com", "wrrv.com", "apnnews.com", "fool.com"],
-        max_results=5  # For testing purposes
+        # max_results=5  # For testing purposes
     )
     data = gn.get_news(query)
 
@@ -77,52 +77,50 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
             data.remove(news)  # Skip duplicate news
             continue
     
-        try:
-            # check if the data exists in the database
-            check_data = check_if_data_exists(news['url'])
-                
-            if check_data:
+        # check if the data exists in the database
+        check_data = check_if_data_exists(news['url'])
+            
+        if check_data:
+            continue
+
+        # Get article scraped
+        article = scrape_article(decoded_url["decoded_url"])
+        if not article:
+            print(f"Failed to scrape article for URL: {decoded_url['decoded_url']}")
+            continue
+
+        # Get article details
+        article_details = get_article_details(decoded_url["decoded_url"], article)
+
+        if article_details:
+            # Place the article details in the news object
+            news["description"] = article_details["text"]
+
+            # Add summary to the news object
+            news["summary"] = article_details["summary"]
+
+            # Add score and sentiment to the news object
+            news["score"] = article_details["numerical_score"]
+            news['finbert_score'] = article_details['finbert_score']
+            news['second_model_score'] = article_details['second_model_score']
+            news["confidence"] = article_details["confidence"]
+            news["sentiment"] = article_details["classification"]
+            news["agreement_rate"] = article_details["agreement_rate"]
+            news["tags"] = article_details["keywords"]
+            news["company_names"] = article_details["companies"]
+            news["regions"] = article_details["regions"]
+            news["sectors"] = article_details["sectors"]
+
+            if news["description"] == "An error occurred while fetching the article details":
                 continue
 
-            # Get article scraped
-            article = scrape_article(decoded_url["decoded_url"])
+            # Insert the data into the database
+            check_if_data_inserted = insert_data_to_db(news, query)
 
-            # Get article details
-            article_details = get_article_details(decoded_url["decoded_url"], article)
-
-            if article_details:
-                # Place the article details in the news object
-                news["description"] = article_details["text"]
-
-                # Add summary to the news object
-                news["summary"] = article_details["summary"]
-
-                # Add score and sentiment to the news object
-                news["score"] = article_details["numerical_score"]
-                news['finbert_score'] = article_details['finbert_score']
-                news['second_model_score'] = article_details['second_model_score']
-                news["confidence"] = article_details["confidence"]
-                news["sentiment"] = article_details["classification"]
-                news["agreement_rate"] = article_details["agreement_rate"]
-                news["tags"] = article_details["keywords"]
-                news["company_names"] = article_details["companies"]
-                news["regions"] = article_details["regions"]
-                news["sectors"] = article_details["sectors"]
-
-                if news["description"] == "An error occurred while fetching the article details":
-                    continue
-
-                # Insert the data into the database
-                check_if_data_inserted = insert_data_to_db(news, query)
-
-                if check_if_data_inserted:
-                    final_data.append(news)
-                else:
-                    print("Data not inserted")
-    
-        except Exception as e:
-            print(f"Error: {e}")
-            continue
+            if check_if_data_inserted:
+                final_data.append(news)
+            else:
+                print("Data not inserted")
     
     return final_data
 
@@ -177,6 +175,9 @@ def get_all_top_gnews():
         try:
             # get article scraped
             article = scrape_article(decoded_url["decoded_url"])
+            if not article:
+                print(f"Failed to scrape article for URL: {decoded_url['decoded_url']}")
+                continue
 
             # get article details
             article_details = get_article_details(decoded_url["decoded_url"], article)

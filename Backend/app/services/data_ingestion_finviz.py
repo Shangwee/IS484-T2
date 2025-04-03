@@ -151,6 +151,9 @@ def get_all_finviz():
 
             # Get article scraped
             article = scrape_article(row['Link'])
+            if not article:
+                print(f"Failed to scrape article for URL: {row['Link']}")
+                continue
 
             #get article details
             article_details = get_article_details(row['Link'], article)
