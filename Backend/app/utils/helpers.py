@@ -13,8 +13,10 @@ import requests
 import ast
 from rapidfuzz import process, fuzz
 import spacy
+import spacy_transformers
 import subprocess
 from helpers_constants import sp500_plus2_dict, SECTOR_KEYWORDS, country_to_region, regions
+
 
 load_dotenv()
 

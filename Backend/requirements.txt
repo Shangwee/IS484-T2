@@ -12,8 +12,6 @@ psycopg2-binary==2.9.10  # PostgreSQL database driver
 pandas
 numpy
 matplotlib
-#matplotlib.pyplot
-#matplotlib.patches
 
 
 
@@ -36,8 +34,10 @@ transformers==4.47.0  # For advanced NLP (e.g., OpenAI GPT models)
 lxml[html_clean]
 lxml_html_clean
 spacy
+spacy-transformers
 spacy-curated-transformers
-en-core-web-trf==3.8.0
+# en-core-web-trf==3.8.0
+en-core-web-trf
 
 # Summarisation and Text Generation
 google-generativeai
