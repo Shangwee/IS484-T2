@@ -64,7 +64,7 @@ const EntityPage = () => {
             <div style={styles.sentimentToggle}>
               <div style={{ display: 'flex', gap: '6px' }}>
                 <OverlayTrigger placement="top" overlay={<Tooltip id="finbert-tooltip">Weighted combination of multiple NLP models' sentiment predictions with confidence factored in.</Tooltip>}>
-                  <Badge bg={getColor(sentimentTypes.AvgSentiment)} style={styles.badge}>Average Sentiment Score: {sentimentTypes.AvgSentiment}</Badge>
+                  <Badge bg={getColor(sentimentTypes.AvgSentiment)} style={styles.badge}>Confidence Weighted Sentiment Score: {sentimentTypes.AvgSentiment}</Badge>
                 </OverlayTrigger>
                 <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Direct average of all article sentiment scores without weighting or adjustments.</Tooltip>}>
                   <Badge bg={getColor(sentimentTypes.simpleAverage)} style={styles.badge}>Simple Average: {sentimentTypes.simpleAverage}</Badge>
