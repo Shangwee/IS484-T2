@@ -95,12 +95,11 @@ def URL_decoder(url):
 def get_article_details(url, article_html):
     from app.services.sentiment_analysis import get_sentiment  # Move import here to avoid circular import
     try:
-        time.sleep(10)
         # Fetch the article details
         article_result = article(url, input_html=article_html)
         article_result.nlp()
 
-        # Summarise the article text
+        # Summaries the article text
         interpreted_news = news_interpreter(article_result.text, 100)
 
         # extract the metadata from the interpreted news
@@ -159,7 +158,7 @@ def news_interpreter_summariser(news_text, summary_length):
         raise ValueError("API key not found. Please set the GEMINI_API_KEY in the .env file.")
 
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-2.0-flash")
 
     prompt = f"""
         Summarize the article in {summary_length} words or less.
@@ -204,7 +203,7 @@ def extract_info_from_article(article):
             raise ValueError("API key not found. Please set the GEMINI_API_KEY.")
 
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-2.0-flash")
 
         response_obj = model.generate_content(prompt)
 
@@ -376,7 +375,6 @@ def news_interpreter_tagger(news_text):
 
 def news_interpreter(news_text, summary_length):
     summary = news_interpreter_summariser(news_text, summary_length)
-    time.sleep(5)
     companies, regions, sectors = news_interpreter_tagger(news_text)
     return {
             "summary": summary,

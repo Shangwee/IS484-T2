@@ -10,7 +10,6 @@ from datetime import datetime, timedelta
 
 def insert_data_to_db(news, query):
 
-    # change entities to this format e.g., ["Tesla", "Apple", "Microsoft"]
     entities_list = [query]
 
     print("inserting data to db")
@@ -42,7 +41,9 @@ def insert_data_to_db(news, query):
 def check_if_data_exists(url):
     existing_news = News.query.filter_by(url=url).first()
     if existing_news:
+        print("Data already exists")
         return True
+    print("Data does not exist")
     return False
 
 ## ingest data by ticker
@@ -65,17 +66,12 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
 
     for news in data:
         time.sleep(rate_limit_interval)  # Sleep to respect rate limit
+        
         # Decode the URL from Google RSS
         url = news["url"]
         decoded_url = URL_decoder(url)
         print("THIS IS THE DECODED URL", decoded_url)
         news["url"] = decoded_url["decoded_url"]  
-
-        # Check if the article is already in the database
-        existing_news = News.query.filter_by(url=news['url']).first()
-        if existing_news:
-            data.remove(news)  # Skip duplicate news
-            continue
     
         # check if the data exists in the database
         check_data = check_if_data_exists(news['url'])
@@ -147,13 +143,6 @@ def get_all_top_gnews():
         
         time.sleep(rate_limit_interval)  # sleep to respect rate limit
 
-        # check if the url in DB
-        existing_news = News.query.filter_by(url=news['url']).first()
-        if existing_news:
-            # skip the news and remove from the data
-            data.remove(news)
-            continue
-
         timestamp = news["published date"]
 
         # Define the format
@@ -166,11 +155,17 @@ def get_all_top_gnews():
             print("Date is not within the range")
             continue
 
-
         # decode the url
         decoded_url = URL_decoder(url)
 
         news["url"] = decoded_url["decoded_url"]
+
+        # check if the data exists in the database
+        check_data = check_if_data_exists(news['url'])
+
+        if check_data:
+            print("Data already exists")
+            continue
 
         try:
             # get article scraped
@@ -200,14 +195,7 @@ def get_all_top_gnews():
             news["regions"] = article_details["regions"]
             news["sectors"] = article_details["sectors"]
 
-            # check if the data exists in the database
-            check_data = check_if_data_exists(news['url'])
-
-            if check_data:
-                print("Data already exists")
-                continue
-
-            if news["description"] == "An error occurred while fetching the article details":
+            if news["description"] == "An error occurred while fetching the article details" or news["description"] == "":
                 continue
 
             # insert the data into the database

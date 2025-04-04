@@ -2,68 +2,68 @@ import asyncio
 from crawl4ai import AsyncWebCrawler
 from crawl4ai.async_configs import BrowserConfig, CrawlerRunConfig, CacheMode
 from fake_useragent import UserAgent
-from playwright._impl._errors import TargetClosedError
+from playwright._impl._errors import TargetClosedError, TimeoutError
+from random import choice
+import logging
 
+# Configure logging
+logger = logging.getLogger("crawler")
+logging.basicConfig(level=logging.INFO)
 
-async def scrape_article_async(url_parameter):
-    """ Asynchronous function to scrape an article. """
-    
-    # Load user agents
+# Create a reusable user agent
+def get_random_user_agent():
     ua = UserAgent()
+    return ua.random
 
-    # Set random user agent
-    user_agent = ua.random
+DEFAULT_USER_AGENT = get_random_user_agent()
 
-    browser_config = BrowserConfig(
-        browser_type="chromium",
-        headless=True,
-        viewport_width=1280,
-        viewport_height=720,
-        user_agent=user_agent,
-        verbose=True,
-        use_persistent_context=True
-    ) 
+# Shared browser config (static across scrapes for efficiency)
+BROWSER_CONFIG = BrowserConfig(
+    browser_type="chromium",
+    headless=True,
+    viewport_width=1280,
+    viewport_height=720,
+    user_agent=DEFAULT_USER_AGENT,
+    verbose=False,
+    use_persistent_context=True
+)
 
-    run_config = CrawlerRunConfig(
-        user_agent=user_agent,
+# Reusable crawler run config
+RUN_CONFIG = CrawlerRunConfig(
+    user_agent=DEFAULT_USER_AGENT,
+    word_count_threshold=50,
+    excluded_tags=['form', 'header', 'footer', 'aside'],
+    exclude_external_links=True,
+    exclude_social_media_links=True,
+    process_iframes=False,
+    remove_overlay_elements=True,
+    simulate_user=True,
+    magic=True,
+    cache_mode=CacheMode.ENABLED
+)
 
-        # Content filtering
-        word_count_threshold=10,
-        excluded_tags=['form', 'header', 'footer', 'aside'],
-        exclude_external_links=True,
-        exclude_social_media_links=True,
-
-        # Content processing
-        process_iframes=False,
-        remove_overlay_elements=True,
-        simulate_user=True,
-        magic=True,
-
-        # Cache control
-        cache_mode=CacheMode.ENABLED, # Use cache if available
-    )
-
-    try:
-        async with AsyncWebCrawler(config=browser_config) as crawler:
-            result = await crawler.arun(
-                url=url_parameter,
-                config=run_config
-            )
-            if result.success:
-                return result.cleaned_html
+async def scrape_article_async(url, retries=2, delay=2):
+    """Scrape article content asynchronously with retry mechanism."""
+    for attempt in range(retries + 1):
+        try:
+            async with AsyncWebCrawler(config=BROWSER_CONFIG) as crawler:
+                result = await crawler.arun(url=url, config=RUN_CONFIG)
+                if result.success:
+                    return result.cleaned_html
+                else:
+                    logger.warning(f"[Attempt {attempt+1}] Error: {result.error_message}")
+                    return None
+        except (TargetClosedError, TimeoutError) as e:
+            logger.warning(f"[Attempt {attempt+1}] Retriable browser error: {e}")
+            if attempt < retries:
+                await asyncio.sleep(delay)
             else:
-                print("Error:", result.error_message)
+                logger.error("Max retry limit reached.")
                 return None
-    except TargetClosedError as e:
-        print(f"Browser was closed unexpectedly: {e}")
-        # Retry logic
-        print("Retrying browser connection...")
-        await asyncio.sleep(2)  # Wait before retrying
-        return await scrape_article_async(url_parameter)
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-        return None
+        except Exception as e:
+            logger.exception(f"Unhandled exception while scraping: {e}")
+            return None
 
-def scrape_article(url):
-    """ Wrapper function to run the async function synchronously. """
+def scrape_article(url: str):
+    """Wrapper for synchronous usage of the async scraping."""
     return asyncio.run(scrape_article_async(url))

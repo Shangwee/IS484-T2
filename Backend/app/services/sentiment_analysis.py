@@ -48,7 +48,7 @@ class SentimentAnalyzer:
                 
             # Configure the Gemini API client
             genai.configure(api_key=api_key)
-            self.gemini_client = genai.GenerativeModel("gemini-1.5-flash")
+            self.gemini_client = genai.GenerativeModel("gemini-2.0-flash")
             
             logger.info("Gemini AI client initialized successfully")
             return True

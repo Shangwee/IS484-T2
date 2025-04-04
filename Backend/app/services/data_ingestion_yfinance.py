@@ -32,14 +32,13 @@ def get_stock_history(ticker):
     }
     return data
 
-
 def get_stock_news(ticker):
     stock = yf.Search(ticker, session=session, enable_fuzzy_query = True, include_cb=False)
     news = stock.news
 
     newslist = []
 
-    rate_limit_interval = 60 / 4  # 15 requests per minute
+    rate_limit_interval = 60 / 15  # 15 requests per minute
 
     for news_item in news:
         time.sleep(rate_limit_interval)  # Sleep to respect rate limit

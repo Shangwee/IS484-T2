@@ -63,7 +63,7 @@ def get_finviz_news_by_ticker(query):
             regions = article_details['regions']
             sectors = article_details['sectors']
 
-            if description == "An error occurred while fetching the article details":
+            if description == "An error occurred while fetching the article details" or description == "":
                 continue
 
             news_list.append({
@@ -217,11 +217,6 @@ def get_all_finviz():
         except Exception as e:
             print(f"An error occurred: {e}")
     return all_news_list
-
-def get_stock_price(ticker):
-    quote = Quote()
-    price = quote.get_current(ticker)
-    return price
 
 def get_stock_fundamentals(ticker):
     stock = finvizfinance(ticker)
