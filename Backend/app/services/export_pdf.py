@@ -28,7 +28,27 @@ def generate_pdf(entity_name, entity_scores, sentiment_history, news_items, outp
         output_path = os.path.join(UPLOAD_FOLDER, output_filename)
         pdf = FPDF()
         pdf.set_auto_page_break(auto=True, margin=15)
-        chart_width = (pdf.w - 20) / 2
+        page_width = (pdf.w - 20)
+
+        def get_sentiment_visuals(sentiment):
+            # String-based logic
+            if isinstance(sentiment, str):
+                if sentiment in ['bullish', 'Bullish']:
+                    return (0, 200, 0)
+                elif sentiment in ['bearish', 'Bearish']:
+                    return (255, 0, 0)
+                elif sentiment == 'neutral':
+                    return (255, 204, 0)
+            try:
+                sentiment_score = float(sentiment)
+                if sentiment_score > 0:
+                    return (0, 200, 0)
+                elif sentiment_score < 0:
+                    return (255, 0, 0)
+                else:
+                    return (255, 204, 0)
+            except (ValueError, TypeError):
+                return (128, 128, 128)
 
         # Add the first page
         pdf.add_page()  # Ensure a page is added before any content
@@ -36,26 +56,69 @@ def generate_pdf(entity_name, entity_scores, sentiment_history, news_items, outp
         # Set the title
         pdf.set_font("Arial", "B", 16)
         pdf.cell(0, 10, f"{entity_name} Report", ln=True, align='C')
-        pdf.ln(10)
+        pdf.ln(3)
 
-        # 1. Entity Name
+        # 1.  Entity Name
         entity_name = f"Entity Name: {entity_name}"  # Replace with dynamic data
         pdf.set_font("Arial", "B", 14)
         pdf.cell(0, 10, entity_name, ln=True)
-        pdf.ln(5)
+        pdf.ln(2)
 
-        sentiment = entity_scores['classification'].title()
+        # Set font
         pdf.set_font("Arial", "B", 12)
-        pdf.cell(0, 10, f"Sentiment: {sentiment}", ln=True)
 
-        # 2. Entity Sentiment Score and Sentiment
-        avg_sentiment = round(entity_scores['avg_score'],2) 
-        simple_avg = round(entity_scores['simple_average'],2)
-        time_decay = round(entity_scores['time_decay'],2)
-        sentiment_label = f"Average Sentiment: {avg_sentiment} | Simple Average Sentiment: {simple_avg} | Time-decay Sentiment: {time_decay} "
-        pdf.set_font("Arial", size=12)
-        pdf.multi_cell(chart_width*2, 10, sentiment_label, border=1)
-        pdf.ln(5)
+        # Column widths
+        col_widths = [70, 50]  # Adjust as needed
+
+        # Header Row
+        pdf.set_fill_color(200, 200, 200)  # Light gray background for header
+        pdf.set_text_color(0, 0, 0)  # Black text
+        pdf.cell(col_widths[0], 10, "Metric", border=1, fill=True, align="C")
+        pdf.cell(col_widths[1], 10, "Value", border=1, fill=True, align="C")
+        pdf.ln()  # Move to the next line
+
+        # Data Rows
+        pdf.set_fill_color(255, 255, 255)  # White background for data rows
+
+        # Sentiment Classification
+        sentiment = entity_scores['classification'].title()
+        sentiment_color = get_sentiment_visuals(sentiment)
+        pdf.set_text_color(0, 0, 0)  # Black for label
+        pdf.cell(col_widths[0], 10, "Sentiment Classification", border=1, align="L")
+        pdf.set_text_color(*sentiment_color)
+        pdf.cell(col_widths[1], 10, sentiment, border=1, align="C")
+        pdf.ln()
+
+        # Average Sentiment
+        avg_sentiment = round(entity_scores['avg_score'], 2)
+        avg_sentiment_color = get_sentiment_visuals(avg_sentiment)
+        pdf.set_text_color(0, 0, 0)
+        pdf.cell(col_widths[0], 10, "Average Sentiment", border=1, align="L")
+        pdf.set_text_color(*avg_sentiment_color)
+        pdf.cell(col_widths[1], 10, str(avg_sentiment), border=1, align="C")
+        pdf.ln()
+
+        # Simple Sentiment
+        simple_avg = round(entity_scores['simple_average'], 2)
+        simple_avg_color = get_sentiment_visuals(simple_avg)
+        pdf.set_text_color(0, 0, 0)
+        pdf.cell(col_widths[0], 10, "Simple Sentiment", border=1, align="L")
+        pdf.set_text_color(*simple_avg_color)
+        pdf.cell(col_widths[1], 10, str(simple_avg), border=1, align="C")
+        pdf.ln()
+
+        # Time-decay Sentiment
+        time_decay = round(entity_scores['time_decay'], 2)
+        time_decay_color = get_sentiment_visuals(time_decay)
+        pdf.set_text_color(0, 0, 0)
+        pdf.cell(col_widths[0], 10, "Time-decay Sentiment", border=1, align="L")
+        pdf.set_text_color(*time_decay_color)
+        pdf.cell(col_widths[1], 10, str(time_decay), border=1, align="C")
+        pdf.ln()
+
+        # Reset text color
+        pdf.set_text_color(0, 0, 0)
+        pdf.ln(2)
 
         # 3. Related Sectors
         # Initialize counters for regions and sectors
@@ -103,26 +166,28 @@ def generate_pdf(entity_name, entity_scores, sentiment_history, news_items, outp
         pdf.set_font("Arial", "B", 12)
         pdf.cell(0, 10, "Related Region & Sectors:", ln=True)
 
+        # Set background color for the header
+        pdf.set_fill_color(200, 200, 200)
         pdf.set_font("Arial", "B", 12)
-        regions_str = 'Region(s):\n'
-        pdf.multi_cell(chart_width*2, 10, regions_str, border=1)
+        pdf.cell(page_width, 10, 'Region(s):', border=1, ln=True, align="L", fill=True)
 
-        # Set the font back to normal for the list of regions
+        # Reset to normal font and remove background for data
+        pdf.set_fill_color(255, 255, 255)  # White background for actual text
         pdf.set_font("Arial", "", 12)
-        regions_list_str = ", ".join(top_5_regions)
-        pdf.multi_cell(chart_width*2, 10, regions_list_str, border=1)
+        regions_list_str = ", ".join(top_5_regions) if top_5_regions else "None"
+        pdf.multi_cell(page_width, 10, regions_list_str, border=1)
 
         # Bold "Sector(s):"
+        # Set background color for the header
+        pdf.set_fill_color(200, 200, 200)
         pdf.set_font("Arial", "B", 12)
-        sectors_str = 'Sector(s):\n'
-        pdf.multi_cell(chart_width*2, 10, sectors_str, border=1)
+        pdf.cell(page_width, 10, 'Sector(s):', border=1, ln=True, align="L", fill=True)
 
-        # Set the font back to normal for the list of sectors
+        # Reset to normal font and remove background for data
+        pdf.set_fill_color(255, 255, 255)  # White background for actual text
         pdf.set_font("Arial", "", 12)
-        sectors_list_str = ", ".join(top_5_sectors)
-        pdf.multi_cell(chart_width*2, 10, sectors_list_str, border=1)
-
-        pdf.ln(20)
+        sectors_list_str = ", ".join(top_5_sectors) if top_5_sectors else "None"
+        pdf.multi_cell(page_width, 10, sectors_list_str, border=1)
 
         # Generate the first chart (price history chart)
         entity_ticker = entity_scores['ticker']  # Get the ticker symbol from entity_scores
@@ -146,8 +211,18 @@ def generate_pdf(entity_name, entity_scores, sentiment_history, news_items, outp
         plt.savefig(chart_filename)
         plt.close()
 
-        # Embed the first chart directly (left side)
-        pdf.image(chart_filename, x=10, y=pdf.get_y(), w=chart_width)
+        current_y = pdf.get_y()  # Get current Y position
+        page_height = pdf.h - 20  # PDF page height (excluding margin)
+        
+        # Calculate available space for two charts and the gaps between them
+        remaining_space = page_height - current_y - 20  # Adjust for some space at the bottom
+        chart_height = remaining_space / 1.7  # Divide the space between two charts
+        x_position = (page_width - chart_height * 2) / 2  # Calculate X position to center the chart
+
+         # Embed the first chart (top chart)
+        pdf.set_xy(x_position+5, current_y)  # Set position for the first chart
+        pdf.image(chart_filename, x=x_position + 5, y=pdf.get_y() + 5, w=chart_height*2, h=chart_height)  # Place chart below title
+        pdf.ln(chart_height+2)  # Move down after the first chart (spacing)
 
         # Generate the second chart (e.g., news sentiment chart, or any other chart)
         sentiment_history_data = [entry['sentiment_score'] for entry in sentiment_history['sentiment_history']]
@@ -161,8 +236,13 @@ def generate_pdf(entity_name, entity_scores, sentiment_history, news_items, outp
 
         # For simplicity, using the same chart again (can be replaced with another chart)
         plt.figure(figsize=(6, 4))
-        plt.plot(hist_data.index, hist_data['Sentiment Score'], label='Sentiment Score', color='green', marker='o')
+        plt.plot(hist_data.index, hist_data['Sentiment Score'], label='Sentiment Score', color='black')
+        
+        for i in range(len(hist_data)):
+            color = 'green' if hist_data['Sentiment Score'].iloc[i] >= 0 else 'red'
+            plt.scatter(hist_data.index[i], hist_data['Sentiment Score'].iloc[i], color=color)
         plt.title(f"Sentiment History of {entity_name}")
+
         plt.xlabel('Date')
         plt.ylabel('Sentiment Score')
         plt.xticks(rotation=45)
@@ -173,8 +253,10 @@ def generate_pdf(entity_name, entity_scores, sentiment_history, news_items, outp
         plt.savefig(second_chart_filename)
         plt.close()
 
-        # Embed the second chart directly (right side)
-        pdf.image(second_chart_filename, x=10 + chart_width + 5, y=pdf.get_y(), w=chart_width)
+        # Embed the second chart (bottom chart)
+        pdf.set_xy(x_position + 5, pdf.get_y())  # Set position for the second chart
+        pdf.image(second_chart_filename, x=x_position + 5, y=pdf.get_y() + 5, w=chart_height*2, h=chart_height)  # Place chart below title
+
 
         # Page 2: Relevant News
         pdf.add_page()
