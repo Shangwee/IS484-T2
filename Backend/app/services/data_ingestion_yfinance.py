@@ -67,6 +67,7 @@ def get_stock_news(ticker):
             score = article_details['numerical_score']
             finbert_score = article_details['finbert_score']
             second_model_score = article_details['second_model_score']
+            third_model_score = article_details['third_model_score']
             sentiment = article_details['classification']
             tags = article_details['keywords']
             confidence = article_details['confidence']
@@ -75,7 +76,7 @@ def get_stock_news(ticker):
             regions = article_details['regions']
             sectors = article_details['sectors']
 
-            if description == "An error occurred while fetching the article details":
+            if description == "An error occurred while fetching the article details" or description == "":
                 continue
 
             print("title: ", title)
@@ -91,6 +92,7 @@ def get_stock_news(ticker):
                 score=score,
                 finbert_score=finbert_score,
                 second_model_score=second_model_score,
+                third_model_score=third_model_score,
                 sentiment=sentiment,
                 tags=tags,
                 confidence=confidence,
@@ -111,6 +113,7 @@ def get_stock_news(ticker):
                 "score": score,
                 "finbert_score": finbert_score,
                 "second_model_score": second_model_score,
+                "third_model_score": third_model_score,
                 "sentiment": sentiment,
                 "tags": tags,
                 "confidence": confidence,

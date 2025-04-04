@@ -114,7 +114,7 @@ def get_article_details(url, article_html):
             summary = article_result.summary
 
         # get the sentiment of the article
-        sentiment = get_sentiment(article_result.title + summary, False)
+        sentiment = get_sentiment(article_result.title + summary, use_openai=False, use_gemini=True)
 
         keyword = article_result.keywords
     
@@ -124,6 +124,7 @@ def get_article_details(url, article_html):
             'numerical_score': sentiment['numerical_score'],
             'finbert_score': sentiment['finbert_score'],
             'second_model_score': sentiment['second_model_score'],
+            'third_model_score': sentiment['third_model_score'],
             'classification': sentiment['classification'],
             'confidence': sentiment['confidence'],
             'agreement_rate': sentiment['agreement_rate'],
@@ -141,6 +142,7 @@ def get_article_details(url, article_html):
             'numerical_score': 0,
             'finbert_score': 0,
             'second_model_score': 0,
+            'third_model_score': 0,
             'classification': "neutral",
             'confidence': 0,
             'agreement_rate': 0,

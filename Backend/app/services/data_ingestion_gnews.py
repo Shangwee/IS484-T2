@@ -25,6 +25,7 @@ def insert_data_to_db(news, query):
         score=news['score'],
         finbert_score=news['finbert_score'],
         second_model_score=news['second_model_score'],
+        third_model_score=news['third_model_score'],
         sentiment=news['sentiment'],
         tags=news['tags'],
         confidence=news['confidence'],
@@ -54,7 +55,7 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
         start_date=start_date, 
         end_date=end_date, 
         exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com', "marketbeat.com", "benzinga.com", "streetinsider.com", "msn.com", "reuters.com", "uk.finance.yahoo.com", "seekingalpha.com", "fool.com", "GuruFocus.com", "mix941kmxj.com", "wibx950.com", "insidermonkey.com", "marketwatch.com", "cheap-sound.com", "retro1025.com", "wrrv.com", "apnnews.com", "fool.com"],
-        # max_results=5  # For testing purposes
+        max_results=5  # For testing purposes
     )
     data = gn.get_news(query)
 
@@ -99,6 +100,7 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
             news["score"] = article_details["numerical_score"]
             news['finbert_score'] = article_details['finbert_score']
             news['second_model_score'] = article_details['second_model_score']
+            news["third_model_score"] = article_details['third_model_score']
             news["confidence"] = article_details["confidence"]
             news["sentiment"] = article_details["classification"]
             news["agreement_rate"] = article_details["agreement_rate"]
@@ -187,6 +189,7 @@ def get_all_top_gnews():
             news["score"] = article_details["numerical_score"]
             news['finbert_score'] = article_details['finbert_score']
             news['second_model_score'] = article_details['second_model_score']
+            news["third_model_score"] = article_details['third_model_score']
             news["sentiment"] = article_details["classification"]
             news["tags"] = article_details["keywords"]
             news["confidence"] = article_details["confidence"]

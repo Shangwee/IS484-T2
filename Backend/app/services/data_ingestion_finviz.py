@@ -55,6 +55,7 @@ def get_finviz_news_by_ticker(query):
             score = article_details['numerical_score']
             finbert_score = article_details['finbert_score']
             second_model_score = article_details['second_model_score']
+            third_model_score = article_details['third_model_score']
             sentiment = article_details['classification']
             tags = article_details['keywords']
             confidence = article_details['confidence']
@@ -77,6 +78,7 @@ def get_finviz_news_by_ticker(query):
                 "score": score,
                 "finbert_score": finbert_score,
                 "second_model_score": second_model_score,
+                "third_model_score": third_model_score,
                 "sentiment": sentiment,
                 "tags": tags,
                 "confidence": confidence,
@@ -97,6 +99,7 @@ def get_finviz_news_by_ticker(query):
                 score=score,
                 finbert_score=finbert_score,
                 second_model_score=second_model_score,
+                third_model_score=third_model_score,
                 sentiment=sentiment,
                 tags=tags,
                 confidence=confidence,
@@ -162,6 +165,7 @@ def get_all_finviz():
             score = article_details['numerical_score']
             finbert_score = article_details['finbert_score']
             second_model_score = article_details['second_model_score']
+            third_model_score = article_details['third_model_score']
             sentiment = article_details['classification']
             tags = article_details['keywords']
             confidence = article_details['confidence']
@@ -183,6 +187,7 @@ def get_all_finviz():
                 "score": score,
                 "finbert_score": finbert_score,
                 "second_model_score": second_model_score,
+                "third_model_score": third_model_score,
                 "sentiment": sentiment,
                 "tags": tags,
                 "confidence": confidence,
@@ -203,6 +208,7 @@ def get_all_finviz():
                 score=score,
                 finbert_score=finbert_score,
                 second_model_score=second_model_score,
+                third_model_score=third_model_score,
                 sentiment=sentiment,
                 tags=tags,
                 confidence=confidence,
