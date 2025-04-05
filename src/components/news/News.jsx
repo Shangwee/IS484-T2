@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col } from 'react-bootstrap';
 import SentimentScore from '../ui/Sentimentscore';
 import SearchBar from '../ui/Searchbar';
-import { Link } from 'react-router-dom'; 
+import { useLocation, Link } from 'react-router-dom'; 
 import Pagination from 'react-bootstrap/Pagination';
 import Filter from "./Filter";
 import Sort from './Sort'; 
@@ -95,7 +95,8 @@ const News = () => {
     },
   };
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const location = useLocation();
+  const [searchTerm, setSearchTerm] = useState(location.state?.search || '');
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState("all"); // Default: all time
   const [sortOrder, setSortOrder] = useState('desc'); // Default: descending order
@@ -184,16 +185,16 @@ return (
   <Container fluid>
     {/* <h2 className="text-center my-4">Latest News</h2> */}
     <Row className="justify-content-center mt-3">
-      <Col xs={12} md={4} lg={3} className="mb-3 mb-md-0">
-        <SearchBar onSearchChange={handleSearchChange} />
+      <Col xs={12} md={12} lg={6} className="mb-3 mb-md-0">
+        <SearchBar searchTerm={searchTerm} onSearchChange={handleSearchChange} />
       </Col>
-      <Col xs={12} md={4} lg={3} className="mb-3 mb-md-0">
+      <Col xs={6} md={6} lg={3} className="mb-3 mb-md-0">
         <Filter onFilterChange={handleFilterChange} />
       </Col>
-      <Col xs={12} md={4} lg={3}>
+      <Col xs={6} md={6} lg={3}>
         <Sort onSortChange={handleSortChange} />
       </Col>
-    </Row>
+    </Row> 
 
     {/* News Content */}
     <Row className="mt-4">

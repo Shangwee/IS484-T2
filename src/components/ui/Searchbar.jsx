@@ -1,32 +1,26 @@
-import React, { useState } from 'react';
-import { BsJustify } from 'react-icons/bs';
+import React from 'react';
 import { FaSearch } from 'react-icons/fa';
 
-
-const SearchBar = ({ onSearchChange }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  
+const SearchBar = ({ searchTerm, onSearchChange }) => {
   const handleSearchChange = (event) => {
     const term = event.target.value;
-    console.log('Search Term:', term);  
-    setSearchTerm(term); // Update local state
-    onSearchChange(term); // Notify parent component
+    onSearchChange(term); // Notify the parent component about the change
   };
 
   return (
     <div style={styles.searchBar}>
-      <div style={styles.iconUp}>↗</div>
+      <div style={styles.iconSearch}><FaSearch /></div>
       <input
         type="text"
-        value={searchTerm}
-        onChange={handleSearchChange}
+        value={searchTerm} // Use the searchTerm passed from parent
+        onChange={handleSearchChange} // Call the parent callback when the input changes
         placeholder="Search News..."
         style={styles.input}
       />
-      <div style={styles.iconSearch}><FaSearch /></div>
     </div>
   );
 };
+
 const styles = {
   searchBar: {
     display: 'flex',
@@ -40,12 +34,12 @@ const styles = {
     maxWidth: 'none', // Remove max-width restriction
     height: 'auto', // Allow height to adjust dynamically
     boxSizing: 'border-box', // Ensures padding and border are included in width
-    // marginLeft: '-20px', // Pushes the search bar to the right
   },
-  iconUp: {
-    fontSize: 'calc(1rem + 0.5vw)', // Dynamic font size for responsiveness
+  iconSearch: {
+    fontSize: 'calc(1rem + 1vw)', // Dynamic font size for responsiveness
     color: '#ccc',
-    marginRight: '8px', // Added margin to separate from input
+    marginLeft: '8px', // Added margin to separate from input
+    marginBottom: '5px', // Adjusted margin for better alignment
   },
   input: {
     border: 'none',
@@ -55,12 +49,6 @@ const styles = {
     flex: 1, // Allow input to grow and take available space
     padding: '0 8px', // Added padding for better spacing
     minWidth: '100px', // Minimum width for smaller screens
-  },
-  iconSearch: {
-    fontSize: 'calc(1.2rem + 0.5vw)', // Dynamic font size for responsiveness
-    color: '#4267B2',
-    cursor: 'pointer',
-    marginLeft: '8px', // Added margin to separate from input
   },
 };
 
