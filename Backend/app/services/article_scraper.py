@@ -49,7 +49,7 @@ async def scrape_article_async(url, retries=2, delay=2):
             async with AsyncWebCrawler(config=BROWSER_CONFIG) as crawler:
                 result = await crawler.arun(url=url, config=RUN_CONFIG)
                 if result.success:
-                    return result.cleaned_html
+                    return result.fit_markdown
                 else:
                     logger.warning(f"[Attempt {attempt+1}] Error: {result.error_message}")
                     return None
