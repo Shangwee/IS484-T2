@@ -52,7 +52,7 @@ def generate_pdf(entity_name, entity_scores, sentiment_history, news_items, outp
         avg_sentiment = round(entity_scores['avg_score'],2) 
         simple_avg = round(entity_scores['simple_average'],2)
         time_decay = round(entity_scores['time_decay'],2)
-        sentiment_label = f"Average Sentiment: {avg_sentiment} | Simple Average Sentiment: {simple_avg} | Time-decay Sentiment: {time_decay} "
+        sentiment_label = f"Confidence Weighted Sentiment: {avg_sentiment} | Simple Average Sentiment: {simple_avg} | Time-decay Sentiment: {time_decay} "
         pdf.set_font("Arial", size=12)
         pdf.multi_cell(chart_width*2, 10, sentiment_label, border=1)
         pdf.ln(5)
