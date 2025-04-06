@@ -19,7 +19,7 @@ RUN python -m pip install --upgrade pip && python -m pip install --no-cache-dir 
 
 RUN python -m spacy download "en_core_web_trf"
 
-RUN python -m import nltk && nltk.download("punkt_tab")
+RUN python -c "import nltk; nltk.download('punkt')"
 
 # Run the custom setup script if necessary
 RUN crawl4ai-setup
