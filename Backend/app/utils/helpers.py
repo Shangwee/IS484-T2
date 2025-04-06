@@ -6,7 +6,43 @@ import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 import re
-import json
+import pandas as pd
+from rapidfuzz import process, fuzz
+import spacy
+import subprocess
+from .helpers_constants import sp500_plus2_dict, SECTOR_KEYWORDS, country_to_region, regions
+
+load_dotenv()
+
+sp500_plus2 = pd.DataFrame.from_dict(sp500_plus2_dict)
+
+# Add to the dictionary
+for region in regions:
+    country_to_region[region] = region
+
+# Load the spaCy model
+nlp = spacy.load("en_core_web_trf")
+
+# Get S&P 500 tickers from Wikipedia
+# url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
+# tables = pd.read_html(url)
+# sp500_df = tables[0]
+
+# Get only the necessary columns
+# sp500_plus2 = sp500_df[["Security", "GICS Sector"]]
+
+# Define new rows as DataFrames
+#new_row_1 = pd.DataFrame([{"Security": "HSBC Holdings plc", "GICS Sector": "Financials"}])
+#new_row_2 = pd.DataFrame([{"Security": "Taiwan Semiconductor Manufacturing Company Limited", "GICS Sector": "Information Technology"}])
+
+# Concatenate the new rows
+#sp500_plus2 = pd.concat([sp500_plus2, new_row_1, new_row_2], ignore_index=True)
+
+# Create list of known companies
+known_companies = sp500_plus2["Security"].tolist()
+
+# Create list of unique GICS sectors
+sectors = sp500_plus2["GICS Sector"].unique().tolist()
 
 # ** General-purpose helper functions for common tasks like formatting responses or handling dates.
 
@@ -59,12 +95,11 @@ def URL_decoder(url):
 def get_article_details(url, article_html):
     from app.services.sentiment_analysis import get_sentiment  # Move import here to avoid circular import
     try:
-        time.sleep(10)
         # Fetch the article details
         article_result = article(url, input_html=article_html)
         article_result.nlp()
 
-        # Summarise the article text
+        # Summaries the article text
         interpreted_news = news_interpreter(article_result.text, 100)
 
         # extract the metadata from the interpreted news
@@ -79,7 +114,7 @@ def get_article_details(url, article_html):
             summary = article_result.summary
 
         # get the sentiment of the article
-        sentiment = get_sentiment(article_result.title + summary, False)
+        sentiment = get_sentiment(article_result.title + summary, use_openai=False, use_gemini=True)
 
         keyword = article_result.keywords
     
@@ -89,6 +124,7 @@ def get_article_details(url, article_html):
             'numerical_score': sentiment['numerical_score'],
             'finbert_score': sentiment['finbert_score'],
             'second_model_score': sentiment['second_model_score'],
+            'third_model_score': sentiment['third_model_score'],
             'classification': sentiment['classification'],
             'confidence': sentiment['confidence'],
             'agreement_rate': sentiment['agreement_rate'],
@@ -106,6 +142,7 @@ def get_article_details(url, article_html):
             'numerical_score': 0,
             'finbert_score': 0,
             'second_model_score': 0,
+            'third_model_score': 0,
             'classification': "neutral",
             'confidence': 0,
             'agreement_rate': 0,
@@ -116,42 +153,19 @@ def get_article_details(url, article_html):
         }
 
 
-def news_interpreter(news_text, summary_length):
-
+def news_interpreter_summariser(news_text, summary_length):
     api_key = os.getenv("GEMINI_API_KEY")
 
     if not api_key:
         raise ValueError("API key not found. Please set the GEMINI_API_KEY in the .env file.")
 
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-2.0-flash")
 
     prompt = f"""
-        You are a financial news assistant.
-
-        Given the news article below, do the following:
-
-        1. Summarize the article in {summary_length} words or less.
-        2. Extract the involved company names, regions, and sectors.
+        Summarize the article in {summary_length} words or less.
 
         {news_text}
-
-        Output format:
-        {{
-            "summary": "your summary here (within {summary_length} words)",
-            "metadata": {{
-                "companies": "...", 
-                "regions": "...", 
-                "sectors": "..."
-            }}
-        }}
-
-        Important rules:
-        - Return ONLY the JSON object with no other text, markdown formatting, or code block markers.
-        - When returning company names, use their full security names (e.g. Taiwan Semiconductor Manufacturing Company Limited, not TSM).
-        - For sectors, return their full GICS sector names only.
-        - For regions, include both country name and World Bank region (e.g. United States, North America).
-        - Respond strictly in a single valid JSON object. Do not include any explanations, line breaks outside JSON, or extra characters. Invalid formats will be rejected.
     """
 
     response = model.generate_content(prompt)
@@ -168,18 +182,203 @@ def news_interpreter(news_text, summary_length):
     clean_text = re.sub(r'```json\s*|\s*```$', '', news_summary)
     clean_text = clean_text.strip()
 
-    # check if the response is a valid JSON object
-    parsed_response = safe_parse_gemini_response(clean_text)
+    # clean_text = "Hello world"
+    return clean_text
 
-    if parsed_response:
-        summary = parsed_response.get("summary")
-        metadata = parsed_response.get("metadata")
+### NEWS_INTERPRETER_TAGGER FUNCTIONS START HERE ###
 
-        companies = ensure_list(metadata.get("companies", []))
-        regions = ensure_list(metadata.get("regions", []))
-        sectors = ensure_list(metadata.get("sectors", []))
+def extract_info_from_article(article):
+    prompt = f"""
+    Based on the following article, write very briefly about the companies, regions and sectors involved. Your goal is to clearly and naturally mention:
+    Company names involved, using their full security names (e.g. Taiwan Semiconductor Manufacturing Company Limited, not TSM).
+    Countries or regions involved, using their full country name (e.g. United States) or World Bank region (i.e. 'South Asia', 'Europe & Central Asia', 'Middle East & North Africa', 'East Asia & Pacific', 'Sub-Saharan Africa', 'Latin America & Caribbean', 'North America').
+    Relevant business sectors using their full GICS sector names (i.e. 'Industrials', 'Health Care', 'Information Technology', 'Utilities', 'Financials', 'Materials', 'Consumer Discretionary', 'Real Estate', 'Communication Services', 'Consumer Staples', 'Energy').
+    In the event an article does not involve any companies or regions or sectors, then you need not write about that category. Avoid using bullet points or abbreviations. Make sure the summary sounds natural and uses full sentences.
+    Here is the article:
 
-        return {
+    {article}
+    """
+
+    try:
+        api_key = os.getenv("GEMINI_API_KEY")  # Replace with env management for security
+        if not api_key:
+            raise ValueError("API key not found. Please set the GEMINI_API_KEY.")
+
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel("gemini-2.0-flash")
+
+        response_obj = model.generate_content(prompt)
+
+        if not response_obj or not response_obj.candidates or not response_obj.candidates[0].content.parts:
+            print("Error: No valid response from Gemini model")
+            return None
+
+        raw = response_obj.candidates[0].content.parts[0].text
+        # print(raw)
+        return raw.strip()
+
+    except Exception as e:
+        print(f"Error processing article: {e}")
+        return None
+
+def combine_company_names(row):
+    ner = row.get("company_names_ner")
+    llm = row.get("company_names_llm_ner")
+    combined = list(set(
+        x for x in (
+            (ner if isinstance(ner, list) else [ner]) +
+            (llm if isinstance(llm, list) else [llm])
+        )
+        if x is not None
+    ))
+    return combined if combined else None
+
+def combine_sectors(row):
+    ner = row.get("sectors_ner")
+    llm = row.get("sectors_llm_ner")
+    combined = list(set(
+        x for x in (
+            (ner if isinstance(ner, list) else [ner]) +
+            (llm if isinstance(llm, list) else [llm])
+        )
+        if x is not None
+    ))
+    return combined if combined else None
+
+def combine_columns_single(val1, val2):
+    combined = list(set(
+        x for x in (
+            (val1 if isinstance(val1, list) else [val1]) +
+            (val2 if isinstance(val2, list) else [val2])
+        )
+        if x is not None
+    ))
+    return combined if combined else None
+
+# Extract company using spaCy NER and fuzzy match
+
+def extract_company(text, confidence_score_arg):
+    #print("Next article...")
+    doc = nlp(str(text))
+    orgs = list(set(ent.text for ent in doc.ents if ent.label_ == "ORG"))
+    #print("Orgs:" + ", ".join(orgs))
+
+    match_list = []
+
+    for org in orgs:
+        #print("Current org:" + org)
+        match, score, _ = process.extractOne(org, known_companies)
+        #print("Current match:" + match)
+        #print("Current score:" + str(score))
+        if score >= confidence_score_arg:
+            match_list.append(match)
+            #print("Current match list:" + ", ".join(match_list))
+
+    if match_list == []:
+        #print("Returned None")
+        return None
+        
+    else:
+        unique_list = list(set(match_list))
+        #print("Final match list:" + ", ".join(unique_list))
+        return unique_list
+    
+def extract_region(text, confidence_score_arg=85):
+    #cleaned_text = preprocess_text(str(text))
+    #print("cleaned text:" + cleaned_text)
+    doc = nlp(str(text))
+    #print("text:" + text)
+    regions = list(set(ent.text for ent in doc.ents if ent.label_ == "GPE"))
+    #print("regions:"+", ".join(regions))
+
+    match_list = []
+    article = 1
+
+    for region in regions:
+        #print("article" + str(article))
+        article += 1
+        #print("current region:" + region)
+        match, score, _ = process.extractOne(region, country_to_region.keys())
+        #print("match + score:" + match + str(score))
+        if score >= confidence_score_arg:
+            mapped_region = country_to_region[match]
+            match_list.append(mapped_region)
+            #print("current match_list:" + ", ".join(match_list))
+
+    if not match_list:
+        return None
+    else:
+        #print("returned match_list:" + ", ".join(match_list))
+        return list(set(match_list))  # Return unique mapped regions
+    
+def classify_sector(text, threshold=80):
+    #print("Running classify_sector function")
+    text = str(text).lower()
+    matched_sectors = []
+
+    for sector, keywords in SECTOR_KEYWORDS.items():
+        for keyword in keywords:
+            score = fuzz.partial_ratio(keyword.lower(), text)
+            if score >= threshold:
+                matched_sectors.append(sector)
+                break  # Stop after first match for this sector
+
+    return list(set(matched_sectors)) if matched_sectors else None
+
+def lookup_sectors_from_companies(company_list):
+    #print("Running lookup_sectors_from_companies function")
+    if not company_list:
+        return None
+    sectors = set()
+    for company in company_list:
+        #print("Current ner company:" + company)
+        match = sp500_plus2.loc[sp500_plus2["Security"] == company, "GICS Sector"]
+        #print("Current ner sector match:" + match)
+        if not match.empty:
+            sectors.add(match.iloc[0])
+    #print("Returned list of ner sectors:" + ", ".join(list(sectors)))
+    return list(sectors) if sectors else None
+
+### NEWS_INTERPRETER_TAGGER FUNCTIONS END HERE ###
+
+def news_interpreter_tagger(news_text):
+    # Step 1: Extract summary-like LLM response
+    llm_output = extract_info_from_article(news_text)
+
+    #print("Extracting from raw description...")
+    company_names_ner = extract_company(news_text, 90)
+    regions_ner = extract_region(news_text, 90)
+
+    #print("Extracting from LLM output...")
+    company_names_llm_ner = extract_company(llm_output, 90)
+    regions_llm_ner = extract_region(llm_output, 90)
+    sectors_llm_ner = classify_sector(llm_output, 90)
+
+    # Combine company names
+    company_names = combine_company_names({
+        "company_names_ner": company_names_ner,
+        "company_names_llm_ner": company_names_llm_ner
+    })
+
+    # Sector from company lookup
+    sectors_ner = lookup_sectors_from_companies(company_names)
+
+    # Combine sectors
+    sectors = combine_sectors({
+        "sectors_ner": sectors_ner,
+        "sectors_llm_ner": sectors_llm_ner
+    })
+
+    # Combine regions
+    regions = combine_columns_single(regions_ner, regions_llm_ner)
+
+    # Return result as tuple or dictionary
+    return company_names, regions, sectors
+
+def news_interpreter(news_text, summary_length):
+    summary = news_interpreter_summariser(news_text, summary_length)
+    companies, regions, sectors = news_interpreter_tagger(news_text)
+    return {
             "summary": summary,
             "metadata": {
                 "companies": companies,
@@ -187,29 +386,3 @@ def news_interpreter(news_text, summary_length):
                 "sectors": sectors
             }
         }
-    else:
-        print("Error: Invalid JSON format in response")
-        return None
-
-def safe_parse_gemini_response(text):
-    try:
-        result = json.loads(text)
-        if all(key in result for key in ("summary", "metadata")):
-            meta = result["metadata"]
-            if all(k in meta for k in ("companies", "regions", "sectors")):
-                return result
-            else:
-                raise ValueError("Missing keys in metadata")
-        else:
-            raise ValueError("Missing top-level keys")
-    except Exception as e:
-        print("❌ Invalid format:", e)
-        return None
-
-def ensure_list(item):
-    if isinstance(item, str):
-        return [i.strip() for i in item.split(',')]
-    elif isinstance(item, list):
-        return [i.strip() for i in item]
-    else:
-        return []

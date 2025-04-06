@@ -11,8 +11,7 @@ psycopg2-binary==2.9.10  # PostgreSQL database driver
 # Data Processing and Analysis
 pandas
 numpy
-matplotlib.pyplot
-matplotlib.patches
+matplotlib
 
 
 
@@ -24,7 +23,7 @@ yfinance[nospam]
 finvizfinance
 newspaper4k
 lxml
-crawl4ai
+crawl4ai == 0.4.248
 
 requests==2.32.3
 requests_cache
@@ -34,9 +33,17 @@ nltk==3.9.1
 transformers==4.47.0  # For advanced NLP (e.g., OpenAI GPT models)
 lxml[html_clean]
 lxml_html_clean
+spacy
+spacy-transformers
+spacy-curated-transformers
+# en-core-web-trf==3.8.0
+# en-core-web-trf
 
 # Summarisation and Text Generation
 google-generativeai
+
+# Fuzzy Matching
+rapidfuzz
 
 # Utility Libraries
 python-dotenv==1.0.1  # For environment variable management

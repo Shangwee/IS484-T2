@@ -32,14 +32,13 @@ def get_stock_history(ticker):
     }
     return data
 
-
 def get_stock_news(ticker):
     stock = yf.Search(ticker, session=session, enable_fuzzy_query = True, include_cb=False)
     news = stock.news
 
     newslist = []
 
-    rate_limit_interval = 60 / 4  # 15 requests per minute
+    rate_limit_interval = 60 / 15  # 15 requests per minute
 
     for news_item in news:
         time.sleep(rate_limit_interval)  # Sleep to respect rate limit
@@ -54,6 +53,9 @@ def get_stock_news(ticker):
 
             # Scrape the article details
             article = scrape_article(link)
+            if not article:
+                print(f"Failed to scrape article for URL: {link}")
+                continue
 
             # Get the article details
             article_details = get_article_details(link, article)
@@ -65,6 +67,7 @@ def get_stock_news(ticker):
             score = article_details['numerical_score']
             finbert_score = article_details['finbert_score']
             second_model_score = article_details['second_model_score']
+            third_model_score = article_details['third_model_score']
             sentiment = article_details['classification']
             tags = article_details['keywords']
             confidence = article_details['confidence']
@@ -73,7 +76,7 @@ def get_stock_news(ticker):
             regions = article_details['regions']
             sectors = article_details['sectors']
 
-            if description == "An error occurred while fetching the article details":
+            if description == "An error occurred while fetching the article details" or description == "":
                 continue
 
             print("title: ", title)
@@ -89,6 +92,7 @@ def get_stock_news(ticker):
                 score=score,
                 finbert_score=finbert_score,
                 second_model_score=second_model_score,
+                third_model_score=third_model_score,
                 sentiment=sentiment,
                 tags=tags,
                 confidence=confidence,
@@ -109,6 +113,7 @@ def get_stock_news(ticker):
                 "score": score,
                 "finbert_score": finbert_score,
                 "second_model_score": second_model_score,
+                "third_model_score": third_model_score,
                 "sentiment": sentiment,
                 "tags": tags,
                 "confidence": confidence,

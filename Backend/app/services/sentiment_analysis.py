@@ -48,7 +48,7 @@ class SentimentAnalyzer:
                 
             # Configure the Gemini API client
             genai.configure(api_key=api_key)
-            self.gemini_client = genai.GenerativeModel("gemini-1.5-flash")
+            self.gemini_client = genai.GenerativeModel("gemini-2.0-flash")
             
             logger.info("Gemini AI client initialized successfully")
             return True
@@ -454,28 +454,73 @@ class SentimentAnalyzer:
         }
 
 # Expose a simple interface for external use
-def get_sentiment(text, use_openai=True):
+def get_sentiment(text,  use_openai=False, use_gemini=True):
     """
     Analyze the sentiment of a financial text using the SentimentAnalyzer
     
     Parameters:
     - text: The text to analyze
     - use_openai: Whether to use OpenAI as the second model (if False, uses Gemini)
-    
+    - use_gemini: Whether to use Gemini as the second model (if False, uses OpenAI)
     Returns a dictionary with sentiment analysis results
     """
     analyzer = SentimentAnalyzer()
-    result = analyzer.analyze_sentiment(text, use_openai=False)
 
-    # Return a simplified result object for external use
-    return {
-        'numerical_score': result['numerical_score'],
-        'finbert_score': result['finbert_score'],
-        'second_model_score': result['second_model_score'],
-        'classification': result['classification'],
-        'confidence': result['confidence'],
-        'agreement_rate': result['agreement_rate']
-    }
+    if use_openai and use_gemini:
+        # Analyze with both models
+        result_with_open_ai = analyzer.analyze_sentiment(text, use_openai=True)
+        result_with_gemini = analyzer.analyze_sentiment(text, use_openai=False)
+
+        result = {
+            'numerical_score': 0,
+            'classification': 'neutral',
+            'finbert_score': 0,
+            'second_model_score': 0,
+            'third_model_score': 0,
+            'confidence': 0,
+            'agreement_rate': 0,
+        }
+
+        # Combine results
+        result['numerical_score'] = (result_with_open_ai['numerical_score'] + result_with_gemini['numerical_score']) / 2
+        result['finbert_score'] = (result_with_open_ai['finbert_score'] + result_with_gemini['finbert_score']) / 2
+        result['second_model_score'] = result_with_gemini['second_model_score']
+        result['third_model_score'] = result_with_open_ai['numerical_score']
+        result['confidence'] = (result_with_open_ai['confidence'] + result_with_gemini['confidence']) / 2
+        result['agreement_rate'] = (result_with_open_ai['agreement_rate'] + result_with_gemini['agreement_rate']) / 2
+
+        # get calculated classification
+        if result['numerical_score'] > 10:
+            result['classification'] = 'bullish'
+        elif result['numerical_score'] < -10:
+            result['classification'] = 'bearish'
+        else:
+            result['classification'] = 'neutral'
+
+        return {
+            'numerical_score': result['numerical_score'],
+            'finbert_score': result['finbert_score'],
+            'second_model_score': result['second_model_score'],
+            'third_model_score': result['third_model_score'],
+            'classification': result['classification'],
+            'confidence': result['confidence'],
+            'agreement_rate': result['agreement_rate']
+        }
+
+    elif use_gemini:
+        # Analyze with Gemini only
+        result = analyzer.analyze_sentiment(text, use_openai=False)
+
+        # Return a simplified result object for external use
+        return {
+            'numerical_score': result['numerical_score'],
+            'finbert_score': result['finbert_score'],
+            'second_model_score': result['second_model_score'],
+            'third_model_score': 0,
+            'classification': result['classification'],
+            'confidence': result['confidence'],
+            'agreement_rate': result['agreement_rate']
+        }
 
 # Example usage
 if __name__ == "__main__":

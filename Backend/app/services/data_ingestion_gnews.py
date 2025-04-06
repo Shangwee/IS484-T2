@@ -10,7 +10,6 @@ from datetime import datetime, timedelta
 
 def insert_data_to_db(news, query):
 
-    # change entities to this format e.g., ["Tesla", "Apple", "Microsoft"]
     entities_list = [query]
 
     print("inserting data to db")
@@ -26,6 +25,7 @@ def insert_data_to_db(news, query):
         score=news['score'],
         finbert_score=news['finbert_score'],
         second_model_score=news['second_model_score'],
+        third_model_score=news['third_model_score'],
         sentiment=news['sentiment'],
         tags=news['tags'],
         confidence=news['confidence'],
@@ -42,7 +42,9 @@ def insert_data_to_db(news, query):
 def check_if_data_exists(url):
     existing_news = News.query.filter_by(url=url).first()
     if existing_news:
+        print("Data already exists")
         return True
+    print("Data does not exist")
     return False
 
 ## ingest data by ticker
@@ -53,7 +55,7 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
         start_date=start_date, 
         end_date=end_date, 
         exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com', "marketbeat.com", "benzinga.com", "streetinsider.com", "msn.com", "reuters.com", "uk.finance.yahoo.com", "seekingalpha.com", "fool.com", "GuruFocus.com", "mix941kmxj.com", "wibx950.com", "insidermonkey.com", "marketwatch.com", "cheap-sound.com", "retro1025.com", "wrrv.com", "apnnews.com", "fool.com"],
-        # max_results=1  # For testing purposes
+        # max_results=1 # For testing purposes
     )
     data = gn.get_news(query)
 
@@ -65,71 +67,65 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
 
     for news in data:
         time.sleep(rate_limit_interval)  # Sleep to respect rate limit
+        
         # Decode the URL from Google RSS
         url = news["url"]
         decoded_url = URL_decoder(url)
         print("THIS IS THE DECODED URL", decoded_url)
         news["url"] = decoded_url["decoded_url"]  
-
-        # Check if the article is already in the database
-        existing_news = News.query.filter_by(url=news['url']).first()
-        if existing_news:
-            data.remove(news)  # Skip duplicate news
-            continue
     
-        try:
-            # check if the data exists in the database
-            check_data = check_if_data_exists(news['url'])
-                
-            if check_data:
+        # check if the data exists in the database
+        check_data = check_if_data_exists(news['url'])
+            
+        if check_data:
+            continue
+
+        # Get article scraped
+        article = scrape_article(decoded_url["decoded_url"])
+        if not article:
+            print(f"Failed to scrape article for URL: {decoded_url['decoded_url']}")
+            continue
+
+        # Get article details
+        article_details = get_article_details(decoded_url["decoded_url"], article)
+
+        if article_details:
+            # Place the article details in the news object
+            news["description"] = article_details["text"]
+
+            # Add summary to the news object
+            news["summary"] = article_details["summary"]
+
+            # Add score and sentiment to the news object
+            news["score"] = article_details["numerical_score"]
+            news['finbert_score'] = article_details['finbert_score']
+            news['second_model_score'] = article_details['second_model_score']
+            news["third_model_score"] = article_details['third_model_score']
+            news["confidence"] = article_details["confidence"]
+            news["sentiment"] = article_details["classification"]
+            news["agreement_rate"] = article_details["agreement_rate"]
+            news["tags"] = article_details["keywords"]
+            news["company_names"] = article_details["companies"]
+            news["regions"] = article_details["regions"]
+            news["sectors"] = article_details["sectors"]
+
+            if news["description"] == "An error occurred while fetching the article details":
                 continue
 
-            # Get article scraped
-            article = scrape_article(decoded_url["decoded_url"])
+            # Insert the data into the database
+            check_if_data_inserted = insert_data_to_db(news, query)
 
-            # Get article details
-            article_details = get_article_details(decoded_url["decoded_url"], article)
-
-            if article_details:
-                # Place the article details in the news object
-                news["description"] = article_details["text"]
-
-                # Add summary to the news object
-                news["summary"] = article_details["summary"]
-
-                # Add score and sentiment to the news object
-                news["score"] = article_details["numerical_score"]
-                news['finbert_score'] = article_details['finbert_score']
-                news['second_model_score'] = article_details['second_model_score']
-                news["confidence"] = article_details["confidence"]
-                news["sentiment"] = article_details["classification"]
-                news["agreement_rate"] = article_details["agreement_rate"]
-                news["tags"] = article_details["keywords"]
-                news["company_names"] = article_details["companies"]
-                news["regions"] = article_details["regions"]
-                news["sectors"] = article_details["sectors"]
-
-                if news["description"] == "An error occurred while fetching the article details":
-                    continue
-
-                # Insert the data into the database
-                check_if_data_inserted = insert_data_to_db(news, query)
-
-                if check_if_data_inserted:
-                    final_data.append(news)
-                else:
-                    print("Data not inserted")
-    
-        except Exception as e:
-            print(f"Error: {e}")
-            continue
+            if check_if_data_inserted:
+                final_data.append(news)
+            else:
+                print("Data not inserted")
     
     return final_data
 
 ## ingest data by top news
 def get_all_top_gnews():
     gn = GNews(
-        # max_results=5, # For testing purposes
+        # max_results=1, # For testing purposes
         exclude_websites=['investors.com', 'barrons.com', 'wsj.com', 'bloomberg.com', 'ft.com', "marketbeat.com", "benzinga.com", "streetinsider.com", "msn.com", "reuters.com", "uk.finance.yahoo.com", "seekingalpha.com", "fool.com", "GuruFocus.com", "mix941kmxj.com", "wibx950.com", "insidermonkey.com", "marketwatch.com", "cheap-sound.com", "retro1025.com", "wrrv.com", "apnnews.com","fool.com"],
     )
     data = gn.get_top_news()
@@ -149,13 +145,6 @@ def get_all_top_gnews():
         
         time.sleep(rate_limit_interval)  # sleep to respect rate limit
 
-        # check if the url in DB
-        existing_news = News.query.filter_by(url=news['url']).first()
-        if existing_news:
-            # skip the news and remove from the data
-            data.remove(news)
-            continue
-
         timestamp = news["published date"]
 
         # Define the format
@@ -168,15 +157,24 @@ def get_all_top_gnews():
             print("Date is not within the range")
             continue
 
-
         # decode the url
         decoded_url = URL_decoder(url)
 
         news["url"] = decoded_url["decoded_url"]
 
+        # check if the data exists in the database
+        check_data = check_if_data_exists(news['url'])
+
+        if check_data:
+            print("Data already exists")
+            continue
+
         try:
             # get article scraped
             article = scrape_article(decoded_url["decoded_url"])
+            if not article:
+                print(f"Failed to scrape article for URL: {decoded_url['decoded_url']}")
+                continue
 
             # get article details
             article_details = get_article_details(decoded_url["decoded_url"], article)
@@ -191,6 +189,7 @@ def get_all_top_gnews():
             news["score"] = article_details["numerical_score"]
             news['finbert_score'] = article_details['finbert_score']
             news['second_model_score'] = article_details['second_model_score']
+            news["third_model_score"] = article_details['third_model_score']
             news["sentiment"] = article_details["classification"]
             news["tags"] = article_details["keywords"]
             news["confidence"] = article_details["confidence"]
@@ -199,14 +198,7 @@ def get_all_top_gnews():
             news["regions"] = article_details["regions"]
             news["sectors"] = article_details["sectors"]
 
-            # check if the data exists in the database
-            check_data = check_if_data_exists(news['url'])
-
-            if check_data:
-                print("Data already exists")
-                continue
-
-            if news["description"] == "An error occurred while fetching the article details":
+            if news["description"] == "An error occurred while fetching the article details" or news["description"] == "":
                 continue
 
             # insert the data into the database

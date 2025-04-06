@@ -55,6 +55,7 @@ def get_finviz_news_by_ticker(query):
             score = article_details['numerical_score']
             finbert_score = article_details['finbert_score']
             second_model_score = article_details['second_model_score']
+            third_model_score = article_details['third_model_score']
             sentiment = article_details['classification']
             tags = article_details['keywords']
             confidence = article_details['confidence']
@@ -63,7 +64,7 @@ def get_finviz_news_by_ticker(query):
             regions = article_details['regions']
             sectors = article_details['sectors']
 
-            if description == "An error occurred while fetching the article details":
+            if description == "An error occurred while fetching the article details" or description == "":
                 continue
 
             news_list.append({
@@ -77,6 +78,7 @@ def get_finviz_news_by_ticker(query):
                 "score": score,
                 "finbert_score": finbert_score,
                 "second_model_score": second_model_score,
+                "third_model_score": third_model_score,
                 "sentiment": sentiment,
                 "tags": tags,
                 "confidence": confidence,
@@ -97,6 +99,7 @@ def get_finviz_news_by_ticker(query):
                 score=score,
                 finbert_score=finbert_score,
                 second_model_score=second_model_score,
+                third_model_score=third_model_score,
                 sentiment=sentiment,
                 tags=tags,
                 confidence=confidence,
@@ -151,6 +154,9 @@ def get_all_finviz():
 
             # Get article scraped
             article = scrape_article(row['Link'])
+            if not article:
+                print(f"Failed to scrape article for URL: {row['Link']}")
+                continue
 
             #get article details
             article_details = get_article_details(row['Link'], article)
@@ -159,6 +165,7 @@ def get_all_finviz():
             score = article_details['numerical_score']
             finbert_score = article_details['finbert_score']
             second_model_score = article_details['second_model_score']
+            third_model_score = article_details['third_model_score']
             sentiment = article_details['classification']
             tags = article_details['keywords']
             confidence = article_details['confidence']
@@ -180,6 +187,7 @@ def get_all_finviz():
                 "score": score,
                 "finbert_score": finbert_score,
                 "second_model_score": second_model_score,
+                "third_model_score": third_model_score,
                 "sentiment": sentiment,
                 "tags": tags,
                 "confidence": confidence,
@@ -200,6 +208,7 @@ def get_all_finviz():
                 score=score,
                 finbert_score=finbert_score,
                 second_model_score=second_model_score,
+                third_model_score=third_model_score,
                 sentiment=sentiment,
                 tags=tags,
                 confidence=confidence,
@@ -214,11 +223,6 @@ def get_all_finviz():
         except Exception as e:
             print(f"An error occurred: {e}")
     return all_news_list
-
-def get_stock_price(ticker):
-    quote = Quote()
-    price = quote.get_current(ticker)
-    return price
 
 def get_stock_fundamentals(ticker):
     stock = finvizfinance(ticker)
