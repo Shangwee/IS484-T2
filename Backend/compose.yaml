@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: backend:1.6
+    image: backend:1.9
     restart: always
     ports: ["5001:5001"]
     env_file: ".env"

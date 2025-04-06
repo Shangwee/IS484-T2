@@ -7,7 +7,7 @@ import numpy as np
 
 def get_sentiment_history_by_entity_id(entity_id, page=1, per_page=10, sort_order="desc"):
     """Get sentiment history by entity ID"""
-    query = SentimentHistory.query.filter(SentimentHistory.entity_id == entity_id)
+    query = SentimentHistory.query.filter(SentimentHistory.entity_id == entity_id) 
 
     # Apply sorting based on sentiment score
     if sort_order == 'asc':

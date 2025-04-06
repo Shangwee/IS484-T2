@@ -10,7 +10,6 @@ import ReportButton from '../../components/ui/export';
 import SendPDF from '../../components/ui/SendReport';
 import { Badge, Tooltip, OverlayTrigger } from 'react-bootstrap';
 
-
 const EntityPage = () => {
  
   const getColor = (sentimentType) => {
@@ -40,36 +39,14 @@ const EntityPage = () => {
     <div className="App">
       <main className="App-content">
 
-
-        {/* Top Row */}
+        {/* Top Row for Entity and Price & Buttons */}
         <div style={styles.topRow}>
           {/* Entity Ticker */}
           <div style={styles.entityWrapper}>
             <Entity EntityTicker={EntityTicker} />
           </div>
 
-          {/* Sentiment Scores */}
-          <div style={styles.sentimentWrapper}>
-           
-
-          <div style={styles.sentimentToggle}>
-          <div style={{ display: 'flex', gap: '6px' }}>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="finbert-tooltip">Average Sentiment Score: {sentimentTypes.AvgSentiment} is calculated with ...</Tooltip>}>
-                <Badge bg={getColor(sentimentTypes.AvgSentiment)} style={styles.badge}>Average Sentiment Score: {sentimentTypes.AvgSentiment}</Badge>
-              </OverlayTrigger>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Simple Average: {sentimentTypes.simpleAverage} is calculated with ...</Tooltip>}>
-                <Badge bg={getColor(sentimentTypes.simpleAverage)} style={styles.badge}>Simple Average: {sentimentTypes.simpleAverage}</Badge>
-              </OverlayTrigger>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="combined-tooltip">Time Decay: {sentimentTypes.TimeDecay} is calculated with ...</Tooltip>}>
-                <Badge bg={getColor(sentimentTypes.TimeDecay)} style={styles.badge}>Time Decay: {sentimentTypes.TimeDecay}</Badge>
-              </OverlayTrigger>
-            </div>
-            </div> 
-           
-          </div>
-
-
-          {/* Price and Buttons */} 
+          {/* Price and Buttons */}
           <div style={styles.priceAndButtonsContainer}>
             <div style={styles.priceWrapper}>
               <Price id={stockID} />
@@ -78,6 +55,25 @@ const EntityPage = () => {
               <ReportButton EntityName={EntityName} />
               <SendPDF EntityName={EntityName} />
             </div>
+          </div>
+        </div>
+
+        {/* Sentiment Scores in a Centered Row */}
+        <div style={styles.sentimentRow}>
+          <div style={styles.sentimentWrapper}>
+            <div style={styles.sentimentToggle}>
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <OverlayTrigger placement="top" overlay={<Tooltip id="finbert-tooltip">Weighted combination of multiple NLP models' sentiment predictions with confidence factored in.</Tooltip>}>
+                  <Badge bg={getColor(sentimentTypes.AvgSentiment)} style={styles.badge}>Confidence Weighted Sentiment Score: {sentimentTypes.AvgSentiment}</Badge>
+                </OverlayTrigger>
+                <OverlayTrigger placement="top" overlay={<Tooltip id="gemini-tooltip">Direct average of all article sentiment scores without weighting or adjustments.</Tooltip>}>
+                  <Badge bg={getColor(sentimentTypes.simpleAverage)} style={styles.badge}>Simple Average: {sentimentTypes.simpleAverage}</Badge>
+                </OverlayTrigger>
+                <OverlayTrigger placement="top" overlay={<Tooltip id="combined-tooltip">Recent articles weighted more heavily than older ones to reflect current market sentiment.</Tooltip>}>
+                  <Badge bg={getColor(sentimentTypes.TimeDecay)} style={styles.badge}>Time Decay: {sentimentTypes.TimeDecay}</Badge>
+                </OverlayTrigger>
+              </div>
+            </div> 
           </div>
         </div>
 
@@ -96,7 +92,7 @@ const EntityPage = () => {
 };
 
 const styles = {
-  // Single Row Layout
+  // Single Row Layout for Top Section
   topRow: {
     display: 'flex',
     alignItems: 'center',
@@ -104,52 +100,72 @@ const styles = {
     flexWrap: 'wrap', // Allows wrapping for smaller screens
     marginTop: '20px',
     padding: '0 10px',
-    gap: '10px', // Minimal gap between components
   },
   entityWrapper: {
     flex: '3 3 auto',
     textAlign: 'center',
     margin: '5px', // Reduced margin
   },
+
+  // Sentiment Scores in a new centered row
+  sentimentRow: {
+    display: 'flex',
+    justifyContent: 'center', // Centering Sentiment Scores
+    marginTop: '20px', // Space between other content
+  },
+
   sentimentWrapper: {
     flex: '1 1 auto',
     display: 'flex',
+    justifyContent: 'center', // Ensures the content is centered in the sentiment row
     alignItems: 'center',
-    gap: '6px', // Minimal gap
-    margin: '5px', // Reduced margin
   },
+  
+  sentimentToggle: {
+    display: 'flex',
+    gap: '10px',
+    justifyContent: 'center', // Center the badges in the row
+  },
+
   badge: {
     fontSize: '1rem',
     padding: '6px 12px',
     borderRadius: '20px',
     fontWeight: '500',
     cursor: 'pointer',
-},
+  },
+
   priceAndButtonsContainer: {
     display: 'flex',
-    flex: '2 2 auto'
+    flex: '3 3 auto', // Adjusted to take up 3 parts of the space
+    justifyContent: 'space-between', // Evenly space Price and Buttons
+    alignItems: 'center',
   },
+
   priceWrapper: {
     flex: '1 1 auto',
     textAlign: 'center',
     fontSize: 'clamp(0.8rem, 1vw, 1.2rem)',
-    margin: '5px', // Reduced margin
+    margin: '5px',
   },
+
   buttonWrapper: {
-    flex: '15  15 auto',
+    flex: '1 1 auto',
     display: 'flex',
     alignItems: 'center',
-    gap: '20px', // Minimal gap
-    // margin: '5px', // Reduced margin
+    gap: '20px',
   },
+
   visualsWrapper: {
     flex: '1 1 auto',
-    margin: '5px', // Reduced margin
+    margin: '5px',
   },
+
   newsWrapper: {
     flex: '1 1 auto',
-    margin: '5px', // Reduced margin
+    margin: '5px',
   },
+
   loading: {
     display: 'flex',
     justifyContent: 'center',
@@ -157,6 +173,7 @@ const styles = {
     height: '100vh',
     fontSize: '1.5rem',
   },
+
   error: {
     display: 'flex',
     justifyContent: 'center',

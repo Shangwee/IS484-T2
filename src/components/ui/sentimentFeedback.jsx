@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../../styles/sentimentFeedback.css'; // External CSS file
 import { Modal, Button } from 'react-bootstrap';
 import useFetch from '../../hooks/useFetch';
@@ -10,7 +10,9 @@ import 'react-toastify/dist/ReactToastify.css';  // Import Toastify styles
 const SentimentFeedbackForm = ({ newsTitle, onFeedbackSubmit }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [showModal, setShowModal] = useState(false); // State for modal visibility
-  const [isToastShown, setIsToastShown] = useState(false); // State to track if the toast has been shown
+  
+  // Use ref instead of state to track toast display
+  const toastDisplayed = useRef(false);
 
   const location = useLocation();
   const { id } = location.state || { id: null }; // Retrieve the id from state
@@ -18,9 +20,6 @@ const SentimentFeedbackForm = ({ newsTitle, onFeedbackSubmit }) => {
   const { data, loading, error } = useFetch(`/news/${id}`); // Fetch news data from the API with the id parameter
   const filteredNewsData = data ? data.data : []; // Extract news data from the response
   const agreementScore = filteredNewsData.agreement_rate;
-
-  // Debugging: Log re-renders
-  console.log('Component rendered:', { agreementScore, isToastShown });
 
   // Handle sentiment option changes
   const handleOptionChange = (event) => {
@@ -55,22 +54,29 @@ const SentimentFeedbackForm = ({ newsTitle, onFeedbackSubmit }) => {
       });
   };
 
-  // Use useEffect to show the toast only once when agreementScore is not 1
+  // Show toast only once when component mounts and meets condition
   useEffect(() => {
-    if (agreementScore !== 1 && !isToastShown) {
-      toast.info("Model disagreement detected!", {
-        position: "top-center",
-        autoClose: 2000,  // Duration in ms
-        hideProgressBar: true,
-        closeOnClick: true,
-        draggable: true,
-        pauseOnHover: true,
-      });
+    const showToastOnce = () => {
+      // Only show toast if agreement score is not 1 and toast hasn't already been displayed
+      if (agreementScore !== 1 && !toastDisplayed.current) {
+        toast.info("Model disagreement detected!", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          draggable: true,
+          pauseOnHover: true,
+        });
+        // Mark toast as displayed
+        toastDisplayed.current = true;
+      }
+    };
 
-      // Update the state to indicate that the toast has been shown
-      setIsToastShown(true);
+    // Only run if data is loaded
+    if (!loading && filteredNewsData) {
+      showToastOnce();
     }
-  }, [agreementScore]); // Only depend on agreementScore to avoid unnecessary triggers
+  }, [filteredNewsData, loading]); // Depend on data loading state instead
 
   // Loading state
   if (loading) {
@@ -89,7 +95,7 @@ const SentimentFeedbackForm = ({ newsTitle, onFeedbackSubmit }) => {
 
   return (
     <div className="feedback-form">
-      <ToastContainer />
+      <ToastContainer limit={1} /> {/* Limit to 1 toast at a time */}
       <h2>Sentiment Feedback Form</h2>
       <h3>Article: {newsTitle}</h3>
       <div>
