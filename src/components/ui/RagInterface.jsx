@@ -368,21 +368,57 @@ const RagInterface = () => {
     setError(null);
     
     try {
-      // Get the recent web data about the topic - simulating RAG retrieval
-      const retrievedData = getRecentNewsData(query);
+      // Track start time for performance monitoring
+      const startTime = performance.now();
       
-      // Enhance the data with personalized answer based on retrieved context
-      const personalizedAnswer = getPersonalizedAnswer(query, riskProfile);
+      // Use the real API or fall back to mock data if not available
+      let apiResult;
+      let usedMockData = false;
       
-      // Simulate RAG process - generation based on retrieved data
-      const mockResult = {
-        answer: personalizedAnswer,
-        summary: `RAG-enhanced insights based on ${retrievedData.sources.length} recent articles`,
-        sources: retrievedData.sources,
-        entities: retrievedData.entities,
-        entity_sentiment: retrievedData.entity_sentiment,
-        context_sentiment: retrievedData.context_sentiment
-      };
+      try {
+        // Import the queryRAG function
+        const { queryRAG } = await import('../../services/api');
+        
+        // Call the API with client profile
+        const response = await queryRAG(query, {
+          clientProfile: riskProfile,
+          entityFocus: null, // No entity focus by default
+          timeRange: 'week' // Default to 1 week of data
+        });
+        
+        // Check if the API call was successful
+        if (response.success) {
+          apiResult = response.data;
+        } else {
+          console.warn('API error, falling back to mock data:', response.error);
+          usedMockData = true;
+          throw new Error(response.error); // Will be caught by outer try/catch
+        }
+      } catch (apiError) {
+        console.warn('API error, falling back to mock data:', apiError);
+        usedMockData = true;
+        
+        // Get the recent web data about the topic - simulating RAG retrieval
+        const retrievedData = getRecentNewsData(query);
+        
+        // Enhance the data with personalized answer based on retrieved context
+        const personalizedAnswer = getPersonalizedAnswer(query, riskProfile);
+        
+        // Create mock result
+        apiResult = {
+          answer: personalizedAnswer,
+          summary: `RAG-enhanced insights based on ${retrievedData.sources.length} recent articles`,
+          sources: retrievedData.sources,
+          entities: retrievedData.entities,
+          entity_sentiment: retrievedData.entity_sentiment,
+          context_sentiment: retrievedData.context_sentiment,
+          follow_up_questions: [
+            "How does this impact my portfolio allocation?",
+            "What are the biggest risks to watch?",
+            "How does this compare to historical trends?"
+          ]
+        };
+      }
       
       // Add the search to recent searches history
       const now = new Date();
@@ -410,11 +446,19 @@ const RagInterface = () => {
         ]);
       }
       
-      // Add a small delay to simulate processing
+      // Calculate processing time
+      const processingTime = performance.now() - startTime;
+      console.log(`Query processed in ${processingTime.toFixed(0)}ms (${usedMockData ? 'mock data' : 'API data'})`);
+      
+      // If response was fast, add a minimum delay for UX
+      const minimumProcessingTime = 800; // milliseconds
+      const remainingDelay = Math.max(0, minimumProcessingTime - processingTime);
+      
+      // Set result after delay (if needed)
       setTimeout(() => {
-        setResult(mockResult);
+        setResult(apiResult);
         setLoading(false);
-      }, 1200);
+      }, remainingDelay);
     } catch (err) {
       console.error('Error querying RAG system:', err);
       setError('An error occurred while processing your query.');
@@ -1757,48 +1801,72 @@ const RagInterface = () => {
                     Suggested Follow-ups
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                    <button 
-                      onClick={() => setQuery("Tell me more about Tesla's recent earnings")}
-                      style={{
-                        backgroundColor: '#e0e0e0',
-                        border: 'none',
-                        borderRadius: '3px',
-                        padding: '4px 6px',
-                        fontSize: '10px',
-                        textAlign: 'left',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      Tesla's recent earnings impact
-                    </button>
-                    <button 
-                      onClick={() => setQuery("How should we adjust portfolio allocation given current sentiment?")}
-                      style={{
-                        backgroundColor: '#e0e0e0',
-                        border: 'none',
-                        borderRadius: '3px',
-                        padding: '4px 6px',
-                        fontSize: '10px',
-                        textAlign: 'left',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      Portfolio allocation strategy
-                    </button>
-                    <button 
-                      onClick={() => setQuery("What are the biggest risks to watch?")}
-                      style={{
-                        backgroundColor: '#e0e0e0',
-                        border: 'none',
-                        borderRadius: '3px',
-                        padding: '4px 6px',
-                        fontSize: '10px',
-                        textAlign: 'left',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      Key risks to monitor
-                    </button>
+                    {result.follow_up_questions ? (
+                      // Use follow-up questions from API result
+                      result.follow_up_questions.map((question, index) => (
+                        <button 
+                          key={index}
+                          onClick={() => setQuery(question)}
+                          style={{
+                            backgroundColor: '#e0e0e0',
+                            border: 'none',
+                            borderRadius: '3px',
+                            padding: '4px 6px',
+                            fontSize: '10px',
+                            textAlign: 'left',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          {question}
+                        </button>
+                      ))
+                    ) : (
+                      // Fallback questions
+                      <>
+                        <button 
+                          onClick={() => setQuery("Tell me more about Tesla's recent earnings")}
+                          style={{
+                            backgroundColor: '#e0e0e0',
+                            border: 'none',
+                            borderRadius: '3px',
+                            padding: '4px 6px',
+                            fontSize: '10px',
+                            textAlign: 'left',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Tesla's recent earnings impact
+                        </button>
+                        <button 
+                          onClick={() => setQuery("How should we adjust portfolio allocation given current sentiment?")}
+                          style={{
+                            backgroundColor: '#e0e0e0',
+                            border: 'none',
+                            borderRadius: '3px',
+                            padding: '4px 6px',
+                            fontSize: '10px',
+                            textAlign: 'left',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Portfolio allocation strategy
+                        </button>
+                        <button 
+                          onClick={() => setQuery("What are the biggest risks to watch?")}
+                          style={{
+                            backgroundColor: '#e0e0e0',
+                            border: 'none',
+                            borderRadius: '3px',
+                            padding: '4px 6px',
+                            fontSize: '10px',
+                            textAlign: 'left',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Key risks to monitor
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>

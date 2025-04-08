@@ -400,7 +400,66 @@ class RAGEngine:
             }
 
 # Function for direct access from routes
-def process_rag_query(query, top_k=3):
-    """Process a RAG query with the RAGEngine"""
+def process_rag_query(query, top_k=3, client_profile=None, entity_focus=None, time_range=None):
+    """
+    Process a RAG query with the RAGEngine
+    
+    Args:
+        query (str): The user's query
+        top_k (int): Number of documents to retrieve
+        client_profile (str): Risk profile of the client (conservative, moderate, aggressive)
+        entity_focus (str): Entity to focus on in analysis
+        time_range (str): Time range for context (day, week, month, year)
+        
+    Returns:
+        dict: RAG processing results
+    """
+    # Create engine instance
     engine = RAGEngine()
-    return engine.process_query(query, top_k=top_k)
+    
+    # Process the basic query
+    result = engine.process_query(query, top_k=top_k)
+    
+    # Add client profile-aware follow-up questions
+    if client_profile:
+        if "trump" in query.lower() or "tariff" in query.lower():
+            result["follow_up_questions"] = [
+                "How would a prolonged trade war affect my portfolio?",
+                "Which sectors are most protected from tariff impacts?",
+                f"Should I adjust my international exposure given these developments for my {client_profile} profile?"
+            ]
+        elif "tesla" in query.lower() or "musk" in query.lower():
+            result["follow_up_questions"] = [
+                "How does Tesla compare to traditional automakers in this environment?",
+                "What's the outlook for Tesla's energy business?",
+                f"What allocation would you recommend for Tesla in a {client_profile} portfolio?"
+            ]
+        elif any(word in query.lower() for word in ["crypto", "bitcoin", "ethereum"]):
+            result["follow_up_questions"] = [
+                "How would ETF approvals affect the crypto market?",
+                "What regulatory changes should I monitor in the crypto space?",
+                f"Is crypto appropriate for a {client_profile} investor like me?"
+            ]
+        elif "inflation" in query.lower() or "fed" in query.lower():
+            result["follow_up_questions"] = [
+                "How will inflation impact different asset classes?",
+                f"What fixed income strategies work best for {client_profile} investors in this environment?",
+                "When do you expect the next interest rate change?"
+            ]
+        else:
+            result["follow_up_questions"] = [
+                f"How does this affect a {client_profile} portfolio like mine?",
+                "What are the biggest risks to monitor?",
+                "Which sectors will benefit most from these developments?"
+            ]
+    
+    # Add disclaimer for specific risk profiles
+    if client_profile == "conservative":
+        result["disclaimer"] = "This information is provided with your conservative risk profile in mind, emphasizing capital preservation and stability."
+    elif client_profile == "aggressive":
+        result["disclaimer"] = "This information is provided with your aggressive risk profile in mind. Remember that higher-risk investments may experience significant volatility."
+    
+    # Add processing time placeholder (will be updated in the route)
+    result["processing_time"] = 0.0
+    
+    return result
