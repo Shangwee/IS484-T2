@@ -22,3 +22,12 @@ class Config:
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')  # Your email address
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')  # Your email password or app password
     MAIL_DEFAULT_SENDER = os.getenv('MAIL_USERNAME')  # Sender's email address
+    
+    # RAG and AI model API keys 
+    GEMINI_API_KEY = os.getenv('SW_GEMINI_API_KEY')
+    OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+    
+    # RAG system configuration
+    RAG_TOP_K_DOCUMENTS = 3
+    RAG_EMBEDDING_MODEL = 'all-MiniLM-L6-v2'
+    RAG_LLM_MODEL = 'gemini-1.5-flash'

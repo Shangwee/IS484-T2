@@ -10,6 +10,7 @@ import './styles/App.css';
 import { useParams } from 'react-router-dom';
 import EntityPage from './pages/Entities/EntityPage';
 import DashboardPage from './pages/DashboardPage';
+import RagPage from './pages/RagPage';
 
 function App() {
   const location = useLocation();
@@ -35,6 +36,7 @@ function App() {
           <Route path="/IndividualNewsPage" element={<IndividualNewsPage />} />
           <Route path="/entity/:ticker" element={<EntityPage />} />
           <Route path="/DashboardPage" element={<DashboardPage />} />
+          <Route path="/rag" element={<RagPage />} />
         </Routes>
       </main>'
     </div>
