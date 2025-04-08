@@ -63,11 +63,10 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
         return False
     
     final_data = []
-    rate_limit_interval = 60 / 15  # 15 requests per minute
 
-    for news in data:
-        time.sleep(rate_limit_interval)  # Sleep to respect rate limit
-        
+    number_of_request_start = 0
+
+    for news in data:        
         # Decode the URL from Google RSS
         url = news["url"]
         decoded_url = URL_decoder(url)
@@ -76,9 +75,18 @@ def get_gnews_news_by_ticker(query, start_date, end_date):
     
         # check if the data exists in the database
         check_data = check_if_data_exists(news['url'])
-            
+
+        # check if the data already exists in the database 
         if check_data:
             continue
+        
+        # time out to avoid rate limit
+        number_of_request_start += 1
+        if number_of_request_start > 15:
+            # set time out to 60 seconds
+            print("Rate limit reached. Sleeping for 60 seconds...")
+            time.sleep(60)
+            number_of_request_start = 0
 
         # Get article scraped
         article = scrape_article(decoded_url["decoded_url"])
@@ -136,14 +144,12 @@ def get_all_top_gnews():
 
     if len(data) == 0:
         return False
-    
-    rate_limit_interval = 60 / 15  # 15 requests per minute
+
+    number_of_request_start = 0    
 
     for news in data:
         # the url is encoded in google rss, so we need to decode it to get the actual url
         url = news["url"]
-        
-        time.sleep(rate_limit_interval)  # sleep to respect rate limit
 
         timestamp = news["published date"]
 
@@ -168,6 +174,15 @@ def get_all_top_gnews():
         if check_data:
             print("Data already exists")
             continue
+
+        number_of_request_start += 1
+
+        # time out to avoid rate limit
+        if number_of_request_start > 15:
+            # set time out to 60 seconds
+            print("Rate limit reached. Sleeping for 60 seconds...")
+            time.sleep(60)
+            number_of_request_start = 0
 
         try:
             # get article scraped

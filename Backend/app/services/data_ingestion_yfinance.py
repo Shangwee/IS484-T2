@@ -38,18 +38,27 @@ def get_stock_news(ticker):
 
     newslist = []
 
-    rate_limit_interval = 60 / 15  # 15 requests per minute
+    rate_limit_interval = 60 / 15  # 15 requests per minute\
+
+    timeout = 60 # seconds
+
+    number_of_request_start = 0
 
     for news_item in news:
-        time.sleep(rate_limit_interval)  # Sleep to respect rate limit
-
         link = news_item['link']
-
+        print(link)
         try:
             # Check if the URL already exists in the database
             existing_news = NewsModel.query.filter_by(url=link).first()
             if existing_news:
                 continue
+
+            number_of_request_start += 1
+            if number_of_request_start > 15:
+                #set time out to 60 seconds
+                print("Rate limit reached. Sleeping for 60 seconds...")
+                time.sleep(timeout)
+                number_of_request_start = 0
 
             # Scrape the article details
             article = scrape_article(link)
@@ -78,8 +87,6 @@ def get_stock_news(ticker):
 
             if description == "An error occurred while fetching the article details" or description == "":
                 continue
-
-            print("title: ", title)
 
             news_db = NewsModel(
                 publisher=news_item['publisher'],

@@ -1,5 +1,6 @@
 from flask import Blueprint, request
 from app.utils.decorators import jwt_required
+import time
 from app.services.news_services import news_by_ticker, news_by_id, all_news, resync_news_data
 from app.services.data_ingestion_finviz import get_finviz_news_by_ticker, get_all_finviz
 from app.services.data_ingestion_gnews import get_gnews_news_by_ticker, get_all_top_gnews
@@ -114,11 +115,15 @@ def automate_news_of_entity_and_all():
             gnews_result += result
         print("gnews done for ", ticker)
 
+        time.sleep(10)  # Sleep for 1 second to avoid rate limit
+
         # get news of ticker from finviz
         result = get_finviz_news_by_ticker(ticker)
         if isinstance(result, list):
             finviz_result += result
         print("finviz done for ", ticker)
+
+        time.sleep(10)  # Sleep for 1 second to avoid rate limit
 
     # get all news from gnews and finviz
     gnews_result = get_all_top_gnews()
