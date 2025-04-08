@@ -126,6 +126,9 @@ def generate_pdf(entity_name, entity_scores, sentiment_history, news_items, outp
         sector_counter = Counter()
 
         def clean_data(data):
+            if not data: # Check if data is empty or None
+                return []
+
             # Remove leading/trailing spaces and normalize multiple spaces
             cleaned_data = [item.strip() for item in data]
             
