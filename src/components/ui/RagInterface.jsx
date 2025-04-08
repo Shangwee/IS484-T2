@@ -21,6 +21,23 @@ const RagInterface = () => {
   const [riskProfile, setRiskProfile] = useState('conservative');
   const [greeting, setGreeting] = useState('');
   const [showInitialInsights, setShowInitialInsights] = useState(true);
+  const [clientMode, setClientMode] = useState(false);
+  const [showRecentSearches, setShowRecentSearches] = useState(false);
+  const [recentSearches, setRecentSearches] = useState([
+    { query: "Trump tariffs impact", timestamp: "Today, 10:23 AM" },
+    { query: "Tesla Q1 earnings", timestamp: "Yesterday, 3:45 PM" },
+    { query: "Bitcoin ETF outlook", timestamp: "Apr 5, 2025" },
+    { query: "Singapore REIT performance", timestamp: "Apr 3, 2025" },
+  ]);
+  const [clientPresets, setClientPresets] = useState([
+    { name: "Johnson Family", profile: "conservative", focus: "Retirement planning" },
+    { name: "Maria Chen", profile: "moderate", focus: "College savings" },
+    { name: "Robert Tan", profile: "aggressive", focus: "Growth investing" },
+  ]);
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [showClientSelector, setShowClientSelector] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(true);
+  const [onboardingStep, setOnboardingStep] = useState(1);
   const [trendingTopics, setTrendingTopics] = useState([
     { topic: "Tesla", sentiment: 42.5, change: "+7.2" },
     { topic: "Apple", sentiment: 23.7, change: "+3.1" },
@@ -47,6 +64,10 @@ const RagInterface = () => {
     // Try to get risk profile from local storage
     const savedRiskProfile = localStorage.getItem('riskProfile') || 'conservative';
     setRiskProfile(savedRiskProfile);
+    
+    // Check if the user has completed onboarding
+    const hasCompletedOnboarding = localStorage.getItem('hasCompletedOnboarding') === 'true';
+    setShowOnboarding(!hasCompletedOnboarding);
     
     // Auto-hide initial insights after 10 seconds
     const timer = setTimeout(() => {
@@ -363,6 +384,32 @@ const RagInterface = () => {
         context_sentiment: retrievedData.context_sentiment
       };
       
+      // Add the search to recent searches history
+      const now = new Date();
+      let timestamp;
+      const todayStr = now.toLocaleDateString();
+      const yesterdayStr = new Date(now.setDate(now.getDate() - 1)).toLocaleDateString();
+      now.setDate(now.getDate() + 1); // Reset to today
+      
+      if (todayStr === now.toLocaleDateString()) {
+        timestamp = `Today, ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+      } else if (yesterdayStr === now.toLocaleDateString()) {
+        timestamp = `Yesterday, ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+      } else {
+        timestamp = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      }
+      
+      // Check if this query already exists in recent searches
+      const queryExists = recentSearches.some(search => search.query.toLowerCase() === query.toLowerCase());
+      
+      if (!queryExists) {
+        // Add the new search to the beginning of the array
+        setRecentSearches(prevSearches => [
+          { query, timestamp },
+          ...prevSearches.slice(0, 3) // Keep only the most recent 4 searches (including the new one)
+        ]);
+      }
+      
       // Add a small delay to simulate processing
       setTimeout(() => {
         setResult(mockResult);
@@ -470,17 +517,397 @@ const RagInterface = () => {
     return classification.charAt(0).toUpperCase() + classification.slice(1);
   };
 
+  // Function to complete onboarding
+  const completeOnboarding = () => {
+    localStorage.setItem('hasCompletedOnboarding', 'true');
+    localStorage.setItem('userName', userName);
+    localStorage.setItem('riskProfile', riskProfile);
+    setShowOnboarding(false);
+  };
+  
   return (
     <div className="rag-interface" style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-      {/* Ultra-simplified header for internal tool */}
+      {showOnboarding ? (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '6px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            width: '520px',
+            padding: '24px',
+            position: 'relative'
+          }}>
+            {/* Close button */}
+            <button
+              onClick={() => completeOnboarding()}
+              style={{
+                position: 'absolute',
+                top: '12px',
+                right: '12px',
+                background: 'none',
+                border: 'none',
+                fontSize: '18px',
+                cursor: 'pointer',
+                color: '#888'
+              }}
+            >
+              ×
+            </button>
+            
+            {/* UBS Logo */}
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              <div style={{
+                backgroundColor: '#BB251A',
+                color: 'white',
+                fontSize: '22px',
+                fontWeight: 'bold',
+                padding: '8px 16px',
+                display: 'inline-block'
+              }}>
+                UBS
+              </div>
+            </div>
+            
+            {/* Onboarding Header */}
+            <div style={{ marginBottom: '15px' }}>
+              <h2 style={{ margin: '0 0 8px 0', color: '#333', fontSize: '18px' }}>
+                Welcome to the UBS Client Advisor RAG System
+              </h2>
+              <p style={{ margin: '0', color: '#666', fontSize: '14px' }}>
+                Let's set up your personalized environment for a better experience.
+              </p>
+            </div>
+            
+            {/* Onboarding Step Indicator */}
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              margin: '20px 0'
+            }}>
+              <div style={{
+                width: '10px',
+                height: '10px',
+                borderRadius: '50%',
+                backgroundColor: onboardingStep === 1 ? '#1976d2' : '#e0e0e0',
+                margin: '0 4px'
+              }}></div>
+              <div style={{
+                width: '10px',
+                height: '10px',
+                borderRadius: '50%',
+                backgroundColor: onboardingStep === 2 ? '#1976d2' : '#e0e0e0',
+                margin: '0 4px'
+              }}></div>
+              <div style={{
+                width: '10px',
+                height: '10px',
+                borderRadius: '50%',
+                backgroundColor: onboardingStep === 3 ? '#1976d2' : '#e0e0e0',
+                margin: '0 4px'
+              }}></div>
+            </div>
+            
+            {/* Step 1: Your Information */}
+            {onboardingStep === 1 && (
+              <div>
+                <h3 style={{ margin: '0 0 15px 0', color: '#333', fontSize: '16px' }}>
+                  Step 1: Your Information
+                </h3>
+                <div style={{ marginBottom: '15px' }}>
+                  <label 
+                    htmlFor="userName" 
+                    style={{ 
+                      display: 'block', 
+                      marginBottom: '5px', 
+                      fontSize: '14px', 
+                      color: '#555',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    Your Name
+                  </label>
+                  <input
+                    id="userName"
+                    type="text"
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                    placeholder="Enter your name"
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      fontSize: '14px',
+                      border: '1px solid #ddd',
+                      borderRadius: '4px'
+                    }}
+                  />
+                </div>
+                <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                  <button
+                    onClick={() => setOnboardingStep(2)}
+                    style={{
+                      backgroundColor: '#1976d2',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      padding: '10px 24px',
+                      fontSize: '14px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+            
+            {/* Step 2: Default Risk Profile */}
+            {onboardingStep === 2 && (
+              <div>
+                <h3 style={{ margin: '0 0 15px 0', color: '#333', fontSize: '16px' }}>
+                  Step 2: Default Risk Profile
+                </h3>
+                <p style={{ margin: '0 0 20px 0', color: '#666', fontSize: '14px' }}>
+                  Select your default risk profile for client recommendations:
+                </p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+                  <div 
+                    onClick={() => setRiskProfile('conservative')}
+                    style={{
+                      flex: '1',
+                      margin: '0 8px',
+                      padding: '15px',
+                      border: `2px solid ${riskProfile === 'conservative' ? '#1565C0' : '#e0e0e0'}`,
+                      borderRadius: '6px',
+                      backgroundColor: riskProfile === 'conservative' ? '#e3f2fd' : 'white',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <div style={{ 
+                      fontWeight: 'bold', 
+                      color: '#1565C0',
+                      fontSize: '14px',
+                      marginBottom: '5px'
+                    }}>
+                      Conservative
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#666' }}>
+                      Lower risk, stable returns
+                    </div>
+                  </div>
+                  <div 
+                    onClick={() => setRiskProfile('moderate')}
+                    style={{
+                      flex: '1',
+                      margin: '0 8px',
+                      padding: '15px',
+                      border: `2px solid ${riskProfile === 'moderate' ? '#7B8A31' : '#e0e0e0'}`,
+                      borderRadius: '6px',
+                      backgroundColor: riskProfile === 'moderate' ? '#f0f4c3' : 'white',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <div style={{ 
+                      fontWeight: 'bold', 
+                      color: '#7B8A31',
+                      fontSize: '14px',
+                      marginBottom: '5px'
+                    }}>
+                      Moderate
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#666' }}>
+                      Balanced risk-reward
+                    </div>
+                  </div>
+                  <div 
+                    onClick={() => setRiskProfile('aggressive')}
+                    style={{
+                      flex: '1',
+                      margin: '0 8px',
+                      padding: '15px',
+                      border: `2px solid ${riskProfile === 'aggressive' ? '#BF360C' : '#e0e0e0'}`,
+                      borderRadius: '6px',
+                      backgroundColor: riskProfile === 'aggressive' ? '#ffccbc' : 'white',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <div style={{ 
+                      fontWeight: 'bold', 
+                      color: '#BF360C',
+                      fontSize: '14px',
+                      marginBottom: '5px'
+                    }}>
+                      Aggressive
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#666' }}>
+                      Higher risk, growth focus
+                    </div>
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                  <button
+                    onClick={() => setOnboardingStep(1)}
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: '#666',
+                      border: '1px solid #ddd',
+                      borderRadius: '4px',
+                      padding: '10px 20px',
+                      fontSize: '14px',
+                      marginRight: '10px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={() => setOnboardingStep(3)}
+                    style={{
+                      backgroundColor: '#1976d2',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      padding: '10px 24px',
+                      fontSize: '14px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+            
+            {/* Step 3: Getting Started Tips */}
+            {onboardingStep === 3 && (
+              <div>
+                <h3 style={{ margin: '0 0 15px 0', color: '#333', fontSize: '16px' }}>
+                  Step 3: Getting Started
+                </h3>
+                <div style={{ 
+                  backgroundColor: '#f5f5f5',
+                  border: '1px solid #e0e0e0',
+                  borderRadius: '4px',
+                  padding: '15px',
+                  marginBottom: '20px'
+                }}>
+                  <h4 style={{ margin: '0 0 10px 0', color: '#333', fontSize: '14px' }}>
+                    Tips for using the RAG system:
+                  </h4>
+                  <ul style={{ 
+                    margin: '0',
+                    paddingLeft: '20px',
+                    color: '#555',
+                    fontSize: '14px',
+                    lineHeight: '1.5'
+                  }}>
+                    <li>Use natural language queries to get market insights</li>
+                    <li>Toggle between Advisor and Client modes for different views</li>
+                    <li>Select clients from the dropdown to personalize responses</li>
+                    <li>Review entity sentiment scores to understand market trends</li>
+                    <li>Use the export feature to save insights for client meetings</li>
+                  </ul>
+                </div>
+                <div style={{ 
+                  backgroundColor: '#e8f5e9',
+                  border: '1px solid #c8e6c9',
+                  borderRadius: '4px',
+                  padding: '12px',
+                  marginBottom: '20px',
+                  fontSize: '14px',
+                  color: '#388e3c'
+                }}>
+                  <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Get Started with Sample Queries:</div>
+                  <div style={{ fontSize: '13px' }}>
+                    "How will Trump tariffs impact the market?"<br />
+                    "What's Tesla's outlook for Q2?"<br />
+                    "Inflation trends for 2025"
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                  <button
+                    onClick={() => setOnboardingStep(2)}
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: '#666',
+                      border: '1px solid #ddd',
+                      borderRadius: '4px',
+                      padding: '10px 20px',
+                      fontSize: '14px',
+                      marginRight: '10px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={completeOnboarding}
+                    style={{
+                      backgroundColor: '#1976d2',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      padding: '10px 24px',
+                      fontSize: '14px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Get Started
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : null}
+    
+      {/* Enhanced header with client mode toggle */}
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: '10px',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <strong style={{ fontSize: '14px' }}>INTERNAL TOOL</strong>
+          <span style={{ fontSize: '12px', color: '#666' }}>|</span>
+          
+          {/* Client mode toggle switch */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <span style={{ fontSize: '11px', color: '#555' }}>Advisor Mode</span>
+            <div style={{ 
+              width: '32px', 
+              height: '16px', 
+              backgroundColor: clientMode ? '#1976d2' : '#ccc',
+              borderRadius: '8px',
+              position: 'relative',
+              cursor: 'pointer',
+              transition: 'background-color 0.3s'
+            }} onClick={() => setClientMode(!clientMode)}>
+              <div style={{
+                position: 'absolute',
+                width: '12px',
+                height: '12px',
+                backgroundColor: 'white',
+                borderRadius: '50%',
+                top: '2px',
+                left: clientMode ? '18px' : '2px',
+                transition: 'left 0.3s'
+              }}></div>
+            </div>
+            <span style={{ fontSize: '11px', color: '#555' }}>Client Mode</span>
+          </div>
+          
           <span style={{ fontSize: '12px', color: '#666' }}>|</span>
           <select
             value={riskProfile}
@@ -499,10 +926,179 @@ const RagInterface = () => {
           </select>
         </div>
         
-        <div style={{ fontSize: '12px', color: '#666' }}>
-          User: {userName || 'Advisor'}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* Client selector button */}
+          <button 
+            onClick={() => setShowClientSelector(!showClientSelector)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              border: '1px solid #ddd',
+              borderRadius: '3px',
+              padding: '3px 8px',
+              backgroundColor: '#f5f5f5',
+              fontSize: '11px',
+              cursor: 'pointer'
+            }}
+          >
+            <span>{selectedClient ? selectedClient.name : 'Select Client'}</span>
+            <span style={{ fontSize: '8px' }}>{showClientSelector ? '▲' : '▼'}</span>
+          </button>
+          
+          {/* Recent searches button */}
+          <button 
+            onClick={() => setShowRecentSearches(!showRecentSearches)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              border: '1px solid #ddd',
+              borderRadius: '3px',
+              padding: '3px 8px',
+              backgroundColor: '#f5f5f5',
+              fontSize: '11px',
+              cursor: 'pointer'
+            }}
+          >
+            <span>History</span>
+            <span style={{ fontSize: '8px' }}>{showRecentSearches ? '▲' : '▼'}</span>
+          </button>
+          
+          <div style={{ fontSize: '12px', color: '#666' }}>
+            User: {userName || 'Advisor'}
+          </div>
         </div>
       </div>
+      
+      {/* Client selector dropdown */}
+      {showClientSelector && (
+        <div style={{
+          position: 'absolute',
+          right: '160px',
+          top: '120px',
+          width: '220px',
+          backgroundColor: 'white',
+          border: '1px solid #ddd',
+          borderRadius: '4px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+          zIndex: 10
+        }}>
+          <div style={{ padding: '8px 10px', borderBottom: '1px solid #eee', fontSize: '12px', fontWeight: 'bold' }}>
+            Select Client
+          </div>
+          <div style={{ maxHeight: '180px', overflowY: 'auto' }}>
+            {clientPresets.map((client, index) => (
+              <div 
+                key={index}
+                onClick={() => {
+                  setSelectedClient(client);
+                  setRiskProfile(client.profile);
+                  setShowClientSelector(false);
+                }}
+                style={{
+                  padding: '8px 10px',
+                  borderBottom: index < clientPresets.length - 1 ? '1px solid #f5f5f5' : 'none',
+                  cursor: 'pointer',
+                  backgroundColor: selectedClient && selectedClient.name === client.name ? '#f0f7ff' : 'transparent',
+                  transition: 'background-color 0.2s',
+                  ':hover': { backgroundColor: '#f5f5f5' }
+                }}
+              >
+                <div style={{ fontSize: '12px', fontWeight: 'bold' }}>{client.name}</div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px' }}>
+                  <span style={{ 
+                    fontSize: '10px',
+                    padding: '1px 5px',
+                    borderRadius: '3px',
+                    backgroundColor: 
+                      client.profile === 'conservative' ? '#e3f2fd' : 
+                      client.profile === 'moderate' ? '#f0f4c3' :
+                      '#ffccbc',
+                    color: 
+                      client.profile === 'conservative' ? '#1565C0' : 
+                      client.profile === 'moderate' ? '#7B8A31' :
+                      '#BF360C'
+                  }}>
+                    {client.profile.charAt(0).toUpperCase() + client.profile.slice(1)}
+                  </span>
+                  <span style={{ fontSize: '10px', color: '#777' }}>{client.focus}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ padding: '6px 10px', borderTop: '1px solid #eee', fontSize: '11px' }}>
+            <div 
+              style={{ 
+                color: '#1976d2', 
+                cursor: 'pointer',
+                textAlign: 'center'
+              }}
+              onClick={() => {
+                // This would normally launch a new client form
+                alert("Add client functionality would go here");
+              }}
+            >
+              + Add New Client
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Recent searches dropdown */}
+      {showRecentSearches && (
+        <div style={{
+          position: 'absolute',
+          right: '65px',
+          top: '120px',
+          width: '250px',
+          backgroundColor: 'white',
+          border: '1px solid #ddd',
+          borderRadius: '4px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+          zIndex: 10
+        }}>
+          <div style={{ padding: '8px 10px', borderBottom: '1px solid #eee', fontSize: '12px', fontWeight: 'bold' }}>
+            Recent Searches
+          </div>
+          <div style={{ maxHeight: '180px', overflowY: 'auto' }}>
+            {recentSearches.map((search, index) => (
+              <div 
+                key={index}
+                onClick={() => {
+                  setQuery(search.query);
+                  setShowRecentSearches(false);
+                }}
+                style={{
+                  padding: '8px 10px',
+                  borderBottom: index < recentSearches.length - 1 ? '1px solid #f5f5f5' : 'none',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s',
+                  ':hover': { backgroundColor: '#f5f5f5' }
+                }}
+              >
+                <div style={{ fontSize: '12px' }}>{search.query}</div>
+                <div style={{ fontSize: '10px', color: '#777', marginTop: '3px' }}>{search.timestamp}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ padding: '6px 10px', borderTop: '1px solid #eee', fontSize: '11px' }}>
+            <div 
+              style={{ 
+                color: '#1976d2', 
+                cursor: 'pointer',
+                textAlign: 'center'
+              }}
+              onClick={() => {
+                // This would normally clear search history
+                setShowRecentSearches(false);
+              }}
+            >
+              Clear History
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Toggle button for insights panel */}
       <div style={{ 
@@ -918,6 +1514,89 @@ const RagInterface = () => {
               )}
             </div>
             
+            {/* Client-specific banner when in client mode and a client is selected */}
+            {clientMode && selectedClient && (
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                backgroundColor: '#f0f7ff',
+                border: '1px solid #bbdefb',
+                borderRadius: '3px',
+                padding: '8px 10px',
+                marginBottom: '10px'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <div style={{
+                    width: '32px',
+                    height: '32px',
+                    backgroundColor: '#1976d2',
+                    borderRadius: '50%',
+                    color: 'white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 'bold',
+                    fontSize: '16px'
+                  }}>
+                    {selectedClient.name.charAt(0)}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 'bold', fontSize: '14px' }}>{selectedClient.name}</div>
+                    <div style={{ display: 'flex', gap: '10px', fontSize: '11px', color: '#666', marginTop: '2px' }}>
+                      <div style={{ 
+                        padding: '1px 5px',
+                        borderRadius: '3px',
+                        backgroundColor: 
+                          selectedClient.profile === 'conservative' ? '#e3f2fd' : 
+                          selectedClient.profile === 'moderate' ? '#f0f4c3' :
+                          '#ffccbc',
+                        color: 
+                          selectedClient.profile === 'conservative' ? '#1565C0' : 
+                          selectedClient.profile === 'moderate' ? '#7B8A31' :
+                          '#BF360C'
+                      }}>
+                        {selectedClient.profile.charAt(0).toUpperCase() + selectedClient.profile.slice(1)}
+                      </div>
+                      <div>{selectedClient.focus}</div>
+                    </div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '5px' }}>
+                  <button
+                    style={{
+                      backgroundColor: 'transparent',
+                      border: '1px solid #1976d2',
+                      borderRadius: '3px',
+                      padding: '3px 8px',
+                      fontSize: '11px',
+                      color: '#1976d2',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Schedule Call
+                  </button>
+                  <button
+                    style={{
+                      backgroundColor: 'transparent',
+                      border: '1px solid #1976d2',
+                      borderRadius: '3px',
+                      padding: '3px 8px',
+                      fontSize: '11px',
+                      color: '#1976d2',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Export PDF
+                  </button>
+                </div>
+              </div>
+            )}
+            
             {/* Two column layout for content + market implications */}
             <div style={{ display: 'flex', gap: '10px' }}>
               {/* Copy-paste ready response */}
@@ -927,10 +1606,43 @@ const RagInterface = () => {
                 borderRadius: '3px',
                 backgroundColor: 'white',
                 padding: '10px',
-                fontFamily: 'Georgia, serif',
+                fontFamily: clientMode ? 'Arial, sans-serif' : 'Georgia, serif',
                 fontSize: '14px'
               }}>
-                <p style={{ lineHeight: '1.5', whiteSpace: 'pre-line', margin: 0 }}>{result.answer}</p>
+                {clientMode && selectedClient ? (
+                  <div>
+                    <div style={{ marginBottom: '10px', padding: '5px', backgroundColor: '#f9f9f9' }}>
+                      <div style={{ fontSize: '11px', color: '#666', marginBottom: '3px' }}>Personalized for {selectedClient.name}</div>
+                      <div style={{ fontWeight: 'bold' }}>{greeting}, {selectedClient.name.split(' ')[0]}!</div>
+                    </div>
+                    <p style={{ lineHeight: '1.5', whiteSpace: 'pre-line', margin: 0 }}>{result.answer}</p>
+                    <div style={{ marginTop: '15px', borderTop: '1px solid #eee', paddingTop: '10px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: 'bold', marginBottom: '5px' }}>Next Steps:</div>
+                      {selectedClient.profile === 'conservative' ? (
+                        <ul style={{ margin: '0', paddingLeft: '20px', fontSize: '12px' }}>
+                          <li>Review your portfolio's defensive positioning at our next quarterly meeting</li>
+                          <li>Consider reallocating funds from higher-risk to dividend-focused positions</li>
+                        </ul>
+                      ) : selectedClient.profile === 'moderate' ? (
+                        <ul style={{ margin: '0', paddingLeft: '20px', fontSize: '12px' }}>
+                          <li>Evaluate your current tech exposure in our upcoming portfolio review</li>
+                          <li>Discuss potential rebalancing strategies for Q3 2025</li>
+                        </ul>
+                      ) : (
+                        <ul style={{ margin: '0', paddingLeft: '20px', fontSize: '12px' }}>
+                          <li>Schedule a call to discuss tactical trading opportunities in the tech sector</li>
+                          <li>Review your cash position strategy for potential market volatility</li>
+                        </ul>
+                      )}
+                    </div>
+                    <div style={{ marginTop: '15px', textAlign: 'right', fontSize: '11px' }}>
+                      Best regards,<br />
+                      {userName || 'Your UBS Advisor'}
+                    </div>
+                  </div>
+                ) : (
+                  <p style={{ lineHeight: '1.5', whiteSpace: 'pre-line', margin: 0 }}>{result.answer}</p>
+                )}
               </div>
               
               {/* Market Implications Module */}
