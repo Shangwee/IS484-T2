@@ -119,7 +119,7 @@ const SentimentFeedbackForm = ({ newsTitle, onFeedbackSubmit }) => {
           Bullish
         </label>
         &nbsp;&nbsp;
-        <label>
+        {/* <label>
           <input
             type="radio"
             name="sentiment"
@@ -127,7 +127,7 @@ const SentimentFeedbackForm = ({ newsTitle, onFeedbackSubmit }) => {
             onChange={handleOptionChange}
           />
           Neutral
-        </label>
+        </label> */}
         &nbsp;&nbsp;
         <label>
           <input
