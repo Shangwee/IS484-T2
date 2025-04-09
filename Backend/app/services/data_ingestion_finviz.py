@@ -5,6 +5,7 @@ from finvizfinance.news import News
 from app.utils.helpers import get_article_details
 from app.services.article_scraper import scrape_article
 import pandas as pd
+import time
 from datetime import datetime, timedelta
 
 # Foe this service we will be using finviz to get the news
@@ -28,6 +29,8 @@ def get_finviz_news_by_ticker(query):
 
     news_list = []
 
+    number_of_request_start = 0
+
     # Convert the DataFrame into a list of dictionaries
     for index, row in news_df.iterrows():
         description = "" 
@@ -44,6 +47,15 @@ def get_finviz_news_by_ticker(query):
             if existing_news:
                 print("News already exists")
                 continue
+
+            print("Link:", row['Link'])
+
+            number_of_request_start += 1
+            if number_of_request_start > 15:
+                # set time out to 60 seconds
+                print("Rate limit reached. Sleeping for 60 seconds...")
+                time.sleep(60)
+                number_of_request_start = 0
 
             # Get article scraped
             article = scrape_article(row['Link'])
@@ -136,6 +148,8 @@ def get_all_finviz():
 
     all_news_list = []
 
+    number_of_request_start = 0
+
     # Convert the DataFrame into a list of dictionaries
     for index, row in all_news_df.iterrows():
         description = ""
@@ -151,6 +165,15 @@ def get_all_finviz():
 
             if existing_news:
                 continue
+
+            print("Link:", row['Link'])
+
+            number_of_request_start += 1
+            if number_of_request_start > 15:
+                # set time out to 60 seconds
+                print("Rate limit reached. Sleeping for 60 seconds...")
+                time.sleep(60)
+                number_of_request_start = 0
 
             # Get article scraped
             article = scrape_article(row['Link'])

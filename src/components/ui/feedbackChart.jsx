@@ -54,16 +54,16 @@ function PieChart({ key }) {
 
   // Calculate percentages for each sentiment (out of 100)
   const bearishPercentage = totalCount > 0 ? (bearishCount / totalCount) * 100 : 0;
-  const neutralPercentage = totalCount > 0 ? (neutralCount / totalCount) * 100 : 0;
+  // const neutralPercentage = totalCount > 0 ? (neutralCount / totalCount) * 100 : 0;
   const bullishPercentage = totalCount > 0 ? (bullishCount / totalCount) * 100 : 0;
 
   // Pie chart data
   const chartData = {
-    labels: ["Bearish", "Bullish", "Neutral"],
+    labels: ["Bearish", "Bullish"],
     datasets: [
       {
-        data: [bearishPercentage, bullishPercentage, neutralPercentage], // Percentages for each segment
-        backgroundColor: ["red", "green", "grey"], // Colors for each segment
+        data: [bearishPercentage, bullishPercentage], // Percentages for each segment
+        backgroundColor: ["red", "green"], // Colors for each segment
         borderColor: "black", // Border color for all segments
         borderWidth: 3, // Border width
       },
