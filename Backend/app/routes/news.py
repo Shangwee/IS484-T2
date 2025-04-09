@@ -71,72 +71,170 @@ def ingest_news_yfinance_entity():
     
     return format_response([], "No news data found", 404)
 
-# ** generate all news from latest news
 @news_bp.route('/all', methods=['POST'])
 def ingest_all_news():
-    # Get the news using gnews and save it to the database
+    # Get the news using GNews
     gnews_result = get_all_top_gnews()
     print("gnews done")
 
-    # Get the news using finviz and save it to the database
+    # Get the news using Finviz
     finviz_result = get_all_finviz()
     print("finviz done")
 
-    total_news = gnews_result + finviz_result
+    total_news = []
+    total_metrics = {
+        "total_articles_fetched": 0,
+        "successful_scrapes": 0,
+        "low_quality_skipped": 0,
+        "failed_scrapes": 0
+    }
+
+    def accumulate_metrics(metrics):
+        for key in total_metrics:
+            total_metrics[key] += metrics.get(key, 0)
+
+    # Accumulate GNews data & metrics
+    if isinstance(gnews_result, dict):
+        total_news.extend(gnews_result["data"])
+        accumulate_metrics(gnews_result["metrics"])
+
+    # Accumulate Finviz data & metrics
+    if isinstance(finviz_result, dict):
+        total_news.extend(finviz_result["data"])
+        accumulate_metrics(finviz_result["metrics"])
+
+    total_scraped = total_metrics["total_articles_fetched"]
+    success_rate = round((total_metrics["successful_scrapes"] / total_scraped), 2) if total_scraped else 0
+    total_metrics["scrape_success_rate"] = success_rate
 
     if len(total_news) > 0:
-        return format_response(total_news, "News data generated and saved successfully", 201)
-    
+        metrics_message = (
+            f"News data generated and saved successfully | "
+            f"Total: {total_metrics['total_articles_fetched']}, "
+            f"Success: {total_metrics['successful_scrapes']}, "
+            f"Low Quality: {total_metrics['low_quality_skipped']}, "
+            f"Failed: {total_metrics['failed_scrapes']}, "
+            f"Success Rate: {total_metrics['scrape_success_rate']}"
+        )
+        return format_response(total_news, metrics_message, 201)
+
+    return format_response([], "No news data found", 404)
+
+@news_bp.route('/IngestNewsOfAllEntityByGnews', methods=['POST'])
+def automate_news_of_all_entity_by_gnews():
+    tickers_list = get_all_ticker_entities()
+
+    start_date = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d")
+    end_date = date.today().strftime("%Y-%m-%d")
+
+    format_start_date = format_date_into_tuple_for_gnews(start_date)
+    format_end_date = format_date_into_tuple_for_gnews(end_date)
+
+    total_news = []
+    total_metrics = {
+        "total_articles_fetched": 0,
+        "successful_scrapes": 0,
+        "low_quality_skipped": 0,
+        "failed_scrapes": 0
+    }
+
+    for ticker in tickers_list:
+        gnews_result = get_gnews_news_by_ticker(ticker, format_start_date, format_end_date)
+        if isinstance(gnews_result, dict):
+            total_news.extend(gnews_result["data"])
+            for key in total_metrics:
+                total_metrics[key] += gnews_result["metrics"].get(key, 0)
+        print("gnews done for", ticker)
+        time.sleep(10)
+
+    total_scraped = total_metrics["total_articles_fetched"]
+    success_rate = round((total_metrics["successful_scrapes"] / total_scraped), 2) if total_scraped else 0
+    total_metrics["scrape_success_rate"] = success_rate
+
+    if len(total_news) > 0:
+        metrics_message = (
+            f"News data generated and saved successfully | "
+            f"Total: {total_metrics['total_articles_fetched']}, "
+            f"Success: {total_metrics['successful_scrapes']}, "
+            f"Low Quality: {total_metrics['low_quality_skipped']}, "
+            f"Failed: {total_metrics['failed_scrapes']}, "
+            f"Success Rate: {total_metrics['scrape_success_rate']}"
+        )
+        return format_response(total_news, metrics_message, 201)
+
     return format_response([], "No news data found", 404)
 
 # ** automate news of entity and all
 @news_bp.route('/IngestNewsOfEntityAndAll', methods=['POST'])
 def automate_news_of_entity_and_all():
-    # get all ticker from entities table
     tickers_list = get_all_ticker_entities()
 
-    # Get the start_date from 24hr before today and end_date as today
     start_date = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d")
     end_date = date.today().strftime("%Y-%m-%d")
 
-    # Format the date into a tuple for gnews
     format_start_date = format_date_into_tuple_for_gnews(start_date)
     format_end_date = format_date_into_tuple_for_gnews(end_date)
 
-    gnews_result = []
+    total_news = []
+    total_metrics = {
+        "total_articles_fetched": 0,
+        "successful_scrapes": 0,
+        "low_quality_skipped": 0,
+        "failed_scrapes": 0
+    }
 
-    finviz_result = []
+    def accumulate_metrics(metrics):
+        for key in total_metrics:
+            total_metrics[key] += metrics.get(key, 0)
 
-    # get news of each ticker from gnews and finviz
     for ticker in tickers_list:
-        # get news of ticker from gnews
-        result = get_gnews_news_by_ticker(ticker, format_start_date, format_end_date)
-        if isinstance(result, list):
-            gnews_result += result
-        print("gnews done for ", ticker)
+        # GNews per ticker
+        gnews_result = get_gnews_news_by_ticker(ticker, format_start_date, format_end_date)
+        if isinstance(gnews_result, dict):
+            total_news.extend(gnews_result["data"])
+            accumulate_metrics(gnews_result["metrics"])
+        print("gnews done for", ticker)
 
-        time.sleep(10)  # Sleep for 1 second to avoid rate limit
+        time.sleep(10)
 
-        # get news of ticker from finviz
-        result = get_finviz_news_by_ticker(ticker)
-        if isinstance(result, list):
-            finviz_result += result
-        print("finviz done for ", ticker)
+        # Finviz per ticker
+        finviz_result = get_finviz_news_by_ticker(ticker)
+        if isinstance(finviz_result, dict):
+            total_news.extend(finviz_result["data"])
+            accumulate_metrics(finviz_result["metrics"])
+        print("finviz done for", ticker)
 
-        time.sleep(10)  # Sleep for 1 second to avoid rate limit
+        time.sleep(10)
 
-    # get all news from gnews and finviz
-    gnews_result = get_all_top_gnews()
-    print("gnews done")
+    # GNews Top
+    gnews_top = get_all_top_gnews()
+    if isinstance(gnews_top, dict):
+        total_news.extend(gnews_top["data"])
+        accumulate_metrics(gnews_top["metrics"])
+    print("gnews top done")
 
-    finviz_result = get_all_finviz()
-    print("finviz done")
+    # Finviz All
+    finviz_all = get_all_finviz()
+    if isinstance(finviz_all, dict):
+        total_news.extend(finviz_all["data"])
+        accumulate_metrics(finviz_all["metrics"])
+    print("finviz all done")
 
-    total_news = gnews_result + finviz_result
+    total_scraped = total_metrics["total_articles_fetched"]
+    success_rate = round((total_metrics["successful_scrapes"] / total_scraped), 2) if total_scraped else 0
+    total_metrics["scrape_success_rate"] = success_rate
 
     if len(total_news) > 0:
-        return format_response(total_news, "News data generated and saved successfully", 201)
-    
+        metrics_message = (
+            f"News data generated and saved successfully | "
+            f"Total: {total_metrics['total_articles_fetched']}, "
+            f"Success: {total_metrics['successful_scrapes']}, "
+            f"Low Quality: {total_metrics['low_quality_skipped']}, "
+            f"Failed: {total_metrics['failed_scrapes']}, "
+            f"Success Rate: {total_metrics['scrape_success_rate']}"
+        )
+        return format_response(total_news, metrics_message, 201)
+
     return format_response([], "No news data found", 404)
 
 @news_bp.route('/resync', methods=['POST'])
