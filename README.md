@@ -8,6 +8,7 @@ News Screener For Relevant Investment Opportunities
 
 ## Backend 
 - navigate to `\Backend\Backend.md` for more information
+- To test the routs for backend, navigate to `\POSTMAN`
 
 ## Frontend 
 
