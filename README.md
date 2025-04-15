@@ -1,6 +1,11 @@
 # IS484-T2
 News Screener For Relevant Investment Opportunities
 
+## 📝Requirements
+
+1. Python more than `3.10` and less than `3.11`
+2. React version equivalent to `18` and above
+
 ## Backend 
 - navigate to `\Backend\Backend.md` for more information
 
