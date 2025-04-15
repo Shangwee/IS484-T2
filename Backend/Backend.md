@@ -7,9 +7,11 @@ This project is a Flask-based application that automates the ingestion, processi
 
 ## Features
 
-- User Authentication: Secure registration, login, and session management using JWT.
+- User Authentication: Secure registration, login, and session management using JWT. (Not yet implemented on the frontend)
 - News Aggregation: Fetch and summarize news articles by entity.
+- News Tagging: Analyze the news and tag the company, sector and region
 - Sentiment Analysis: Provide sentiment scores for categorized news
+- PDF Report: Generate PDF report Base on the entity and news related to it
 
 ## Tech Stack
 Backend:
@@ -25,7 +27,7 @@ Database:
 ## Project Structure
 
 ```
-project/
+Backend/
 ├── app/
 │   ├── models/               # Database models
 │   ├── routes/               # API endpoints (blueprints)
@@ -65,14 +67,20 @@ pip install -r requirements.txt
     JWT_SECRET_KEY=your_jwt_secret_key
     LOG_LEVEL=DEBUG
     APP_DEBUG=True
-    APP_PORT=5000
+    APP_PORT=5001
+    GEMINI_API_KEY=your_GEMINI_AI_key
+    GEMINI_API_KEY_SW=another_GEMINI_AI_key
+    OPEN_AI_KEY=your_open_AI_key
+    MAIL_USERNAME=your_email
+    MAIL_PASSWORD=password_from_gmail_app_key
     ```
 
 4. Run Database Migrations:
     - Ensure Liquibase is installed and configured
     - Navigate to the migrations directory:
-    - run `Backend\migrations\db\create_db.sql` in postgres to create the Database
-    - run migration: 
+    - Run Backend\migrations\db\create_db.sql in Postgres to create the Database
+    - Run migration:
+
     ```
     liquibase update
     ```

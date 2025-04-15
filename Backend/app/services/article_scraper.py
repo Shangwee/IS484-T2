@@ -31,7 +31,7 @@ BROWSER_CONFIG = BrowserConfig(
 # Reusable crawler run config
 RUN_CONFIG = CrawlerRunConfig(
     user_agent=DEFAULT_USER_AGENT,
-    word_count_threshold=50,
+    word_count_threshold=100,
     excluded_tags=['form', 'header', 'footer', 'aside'],
     exclude_external_links=True,
     exclude_social_media_links=True,
